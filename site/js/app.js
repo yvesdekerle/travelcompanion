@@ -163,13 +163,13 @@
   /* ───────── Navigation ───────── */
   const NAV = [
     { href: "/", t: "Itinéraire", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
+    { t: "Cartes", i: "map", sheet: "maps" },
+    { href: "/convertisseur", t: "Convertisseur", i: "conv" },
     { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
     { href: "/logements", t: "Logements", i: "bed" },
     { href: "/todo", t: "To-do", i: "todo", match: (p) => p.startsWith("/todo") },
-    { href: "/infos", t: "Infos", i: "info", deskOnly: true },
-    { href: "/convertisseur", t: "Convertisseur", i: "conv", deskOnly: true },
-    { href: "/annexes", t: "Annexes", i: "book", deskOnly: true },
-    { t: "Cartes", i: "map", deskOnly: true, sheet: "maps" },
+    { href: "/infos", t: "Infos", i: "info" },
+    { href: "/annexes", t: "Annexes", i: "book" },
     { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
   ];
   function renderNav(path) {
