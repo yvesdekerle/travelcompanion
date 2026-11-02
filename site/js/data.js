@@ -11,6 +11,7 @@ window.GUIDE = {
     subtitle: "Seize jours entre lagon et sommets — à neuf sur la côte ouest, puis à deux dans le nord",
     start: "2026-11-06", arrival: "2026-11-06T06:35",
     end: "2026-11-21",
+    map: { title: "Notre carte My Maps", url: "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", sub: "Tous les lieux repérés, dans Google Maps" },
     quote: "« Maurice a été créée en premier, puis le paradis — et le paradis fut copié sur Maurice. »",
     quoteBy: "Mark Twain · Following the Equator · 1897",
     intro: "Ce carnet a été pensé pour seize jours de lagon et de sommets : dauphins à l'aube, cascades dans la forêt, marchés qui sentent le cari et couchers de soleil qu'on ne se lasse pas d'attendre. Dix jours à neuf depuis Rivière Noire, puis six jours à deux depuis Trou aux Biches. Tu y trouveras tout ce qui est utile — et ce qui ne l'est pas, mais qui rendra le voyage meilleur.",
@@ -713,14 +714,16 @@ window.GUIDE = {
     ["Urgences — police", "999", "999"], ["SAMU", "114", "114"], ["Pompiers", "115", "115"],
     ["Ambassade de France · Port-Louis", "+230 202 0100", "+2302020100"],
     ["Clinique Darné · Floréal (privée)", "+230 601 2300", "+2306012300"],
-    ["Wellkin Hospital · Moka (privé)", "+230 605 1000", "+2306051000"],
+    ["Wellkin Hospital · Moka (privé)", "+230 605 1000", "+2306051000"]
+  ],
+  emergencyNote: "Les numéros des cliniques et de l'ambassade sont des standards : les vérifier une fois avant le départ, et enregistrer tous les contacts dans le téléphone.",
+  contacts: [
     ["JPH · dauphins, catamaran, pêche", "+230 5729 0901", "+23057290901", "+230 5727 6188 · bureau +230 483 50 60"],
     ["Baba Cool · Sophie", "+230 5723 4134", "+23057234134"],
     ["Nemo Speed Boat · Kenza", "+230 5753 9671", "+23057539671", "Jérôme +230 5771 7917"],
     ["Exploration Sous-Marine · plongée", "+230 5728 9127", "+23057289127"],
     ["Trekking Mauritius · Yanature", "+230 5251 4050", "+23052514050", "WhatsApp"]
   ],
-  emergencyNote: "Les numéros des cliniques et de l'ambassade sont des standards : les vérifier une fois avant le départ, et enregistrer tous les contacts dans le téléphone.",
 
   lexicon: [
     ["Bonjour", "Bonzour"], ["Comment ça va ?", "Ki manyer ?"], ["Merci beaucoup", "Mersi boukou"], ["S'il vous plaît", "Silvouple"],
@@ -751,6 +754,7 @@ window.GUIDE = {
   cashNote: "Le catamaran Baba Cool (33 000 Rs, cash uniquement) se paie le vendredi 13 au matin : commencer les retraits dès le lundi 9.",
 
   tools: [
+    ["Notre carte My Maps", "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", "Tous les lieux repérés, dans Google Maps"],
     ["Tricount du groupe", "https://tricount.com/tCAWMsJIjREvpRsXwq", "tricount.com/tCAWMsJIjREvpRsXwq"],
     ["Notre fichier d'activités (Google Sheets)", "https://docs.google.com/spreadsheets/d/1gLke_STZEBhsg7DzVOlgpgxQUh5tD4pWSiO6p80Ckz4/edit?usp=drivesdk", "Mauritius_activities — plages, randos, restos, votes"]
   ],

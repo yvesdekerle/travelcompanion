@@ -169,10 +169,11 @@
     { href: "/infos", t: "Infos", i: "info", deskOnly: true },
     { href: "/convertisseur", t: "Convertisseur", i: "conv", deskOnly: true },
     { href: "/annexes", t: "Annexes", i: "book", deskOnly: true },
+    { href: G.trip.map.url, t: "Carte", i: "map", deskOnly: true, ext: true },
     { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/infos", "/convertisseur", "/bons-plans", "/annexes", "/notes", "/bienvenue", "/installer"].includes(p), deskMatch: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
   ];
   function renderNav(path) {
-    $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
+    $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.ext ? `<a ${ext(n.href)}>${n.t}${I.ext}</a>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
     $("#tabbar").innerHTML = NAV.filter((n) => !n.deskOnly).map((n) => `<a class="tab ${(n.match ? n.match(path) : path === n.href) ? "active" : ""}" href="${n.href}" ${(n.match ? n.match(path) : path === n.href) ? 'aria-current="page"' : ""}><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`).join("");
   }
 
@@ -454,6 +455,7 @@
     <div class="grid c2">${G.tips.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${c.html}</div></div>`).join("")}</div></div>`;
 
   /* ───────── Annexes ───────── */
+  const tels = (list, sos = 0) => list.map((e, i) => `<a class="tel ${i < sos ? "sos" : ""}" href="tel:${e[2]}"><span class="t">${esc(e[0])}${e[3] ? `<small>${esc(e[3])}</small>` : ""}</span><span class="n">${esc(e[1])}</span></a>`).join("");
   function pageAnnex() {
     const from = (f) => `<div class="from"><span class="pill">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
     const hike = (h) => `<div class="card lc">
@@ -469,8 +471,9 @@
       <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a></div></div>`;
     const total = G.cash.reduce((a, r) => a + r[3], 0);
     return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, randonnées, plages, lexique créole, plats à goûter et cash à prévoir.")}
-      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#randos">Randonnées</a><a href="/annexes#plages">Plages</a><a href="/annexes#lexique">Lexique</a><a href="/annexes#plats">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a></nav>
-      ${section("urgences", "Annexes", "Urgences & numéros utiles", "", `<div class="tels">${G.emergency.map((e, i) => `<a class="tel ${i < 3 ? "sos" : ""}" href="tel:${e[2]}"><span class="t">${esc(e[0])}${e[3] ? `<small>${esc(e[3])}</small>` : ""}</span><span class="n">${esc(e[1])}</span></a>`).join("")}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
+      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#randos">Randonnées</a><a href="/annexes#plages">Plages</a><a href="/annexes#lexique">Lexique</a><a href="/annexes#plats">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a></nav>
+      ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
+      ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
       ${section("randos", "Annexes", "Les randonnées", "Celles du programme. Note AllTrails convertie sur 20 (note /5 × 4) ; distances, D+ et durées : ton programme.", `<div class="grid c3">${G.hikes.map(hike).join("")}</div>`)}
       ${section("autres-randos", "Annexes", "Autres randonnées possibles", "Les sommets et sentiers notés 15/20 ou plus, pour improviser une journée.", `<div class="grid c3">${G.hikesMore.map(hike).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>`)}
       ${section("plages", "Annexes", "Les plages", "Celles notées 15/20 ou plus, de la mieux notée à la moins. Note Google relevée le 28 octobre 2026.", `<div class="grid c3">${G.beaches.map(beach).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>`)}
@@ -543,11 +546,12 @@
 
   /* ───────── Plus ───────── */
   function pagePlus() {
-    const item = (href, icon, t, s, cls = "") => `<a href="${href}"><span class="mi ${cls}">${I[icon]}</span><span>${t}${s ? `<small>${s}</small>` : ""}</span><span class="chev">${I.chev}</span></a>`;
+    const item = (href, icon, t, s, cls = "") => { const out = /^https?:/.test(href); return `<a ${out ? ext(href) : `href="${href}"`}><span class="mi ${cls}">${I[icon]}</span><span>${t}${s ? `<small>${s}</small>` : ""}</span><span class="chev">${out ? I.ext : I.chev}</span></a>`; };
     return `<div class="container">${pageHead("", "Plus", "")}
       <div class="grid c2 top-align">
         <div>
           <div class="menu-group"><span class="eyebrow">Outils</span><div class="menu-list">
+            ${item(G.trip.map.url, "map", G.trip.map.title, G.trip.map.sub)}
             ${item("/convertisseur", "conv", "Convertisseur", "Roupies ⇄ euros, sans réseau")}
             ${item("/installer", "install", "Installer", "Sur l'écran d'accueil, et hors ligne")}
             ${item("/annexes#urgences", "sos", "Urgences", "Police 999, SAMU 114, pompiers 115", "sos")}
