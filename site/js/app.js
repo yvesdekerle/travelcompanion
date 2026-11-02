@@ -257,12 +257,14 @@
         </article></div>`;
     }).join("");
 
-    const facts = `<ul class="facts"><li>${I.car}${esc(d.drive.replace("≈ ", ""))}</li><li>${I.bed}${esc(stay.name.split(" by ")[0])}</li><li>${I.sun}${d.phase === "neuf" ? "À neuf" : "À deux"}</li></ul>`;
+    // Une ligne utile : heure du premier départ en voiture et total de route du jour
+    const firstDrive = d.steps.find((s) => s.t === "drive" && !s.icon);
+    const dep = firstDrive ? driveParts(firstDrive.d).dep : "";
+    const facts = `<p class="meta">${I.car}<span>${dep ? `Départ ${dep} · ` : ""}${esc(d.drive)}</span></p>`;
     const actions = `<div class="actions">
-        <a class="btn primary" ${ext(routeUrl(start, end, wps.slice(0, 9)))}>${I.route}Lancer l'itinéraire du jour</a>
-        <a class="btn" ${ext(dirUrl(end))}>${I.home}Rentrer</a>
-      </div>
-      <p class="hint">Le trajet part de ${PLACE_NAME[start]}. Chaque « Y aller » guide depuis ta position.</p>`;
+        <a class="btn primary" ${ext(routeUrl(start, end, wps.slice(0, 9)))}>${I.route}Itinéraire du jour dans Maps</a>
+        <a class="btn" ${ext(dirUrl(end))}>${I.home}${end === AIRPORT ? "Vers l'aéroport" : `Retour à ${PLACE_NAME[end]}`}</a>
+      </div>`;
     const notes = store.get("note:" + n, "");
     const notesBox = `<details class="notes" ${notes ? "open" : ""}><summary>${I.pen}Notes du jour<span class="count"><span class="saved" id="saved">Enregistré</span></span></summary><textarea id="dayNote" placeholder="Souvenirs, adresses, noms à retenir…">${esc(notes)}</textarea></details>`;
     const prev = G.days.find((x) => x.n === n - 1), next = G.days.find((x) => x.n === n + 1);
@@ -327,7 +329,7 @@
   function pageStays() {
     return `<div class="container">${pageHead("", "Logements", "Deux adresses pour quinze nuits. Note ici sur place les codes, le téléphone de l'hôte et le wifi : ils restent enregistrés sur ton téléphone.")}
       <div class="grid c2" style="margin-top:18px">${G.stays.map((s) => `
-        <article class="card stay">
+        <article class="card stay" id="${s.id}">
           ${img(s.img, s.name, false, "(min-width: 720px) 50vw, 100vw")}
           <div class="in">
             <div class="eyebrow">${esc(s.range)}</div>
