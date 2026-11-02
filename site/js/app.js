@@ -169,11 +169,12 @@
     { href: "/infos", t: "Infos", i: "info", deskOnly: true },
     { href: "/convertisseur", t: "Convertisseur", i: "conv", deskOnly: true },
     { href: "/annexes", t: "Annexes", i: "book", deskOnly: true },
-    { href: G.trip.map.url, t: "Carte", i: "map", deskOnly: true, ext: true },
+    { t: "Cartes", i: "map", deskOnly: true, sheet: "maps" },
     { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/infos", "/convertisseur", "/bons-plans", "/annexes", "/notes", "/bienvenue", "/installer"].includes(p), deskMatch: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
   ];
   function renderNav(path) {
-    $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.ext ? `<a ${ext(n.href)}>${n.t}${I.ext}</a>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
+    $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
+    $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
     $("#tabbar").innerHTML = NAV.filter((n) => !n.deskOnly).map((n) => `<a class="tab ${(n.match ? n.match(path) : path === n.href) ? "active" : ""}" href="${n.href}" ${(n.match ? n.match(path) : path === n.href) ? 'aria-current="page"' : ""}><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`).join("");
   }
 
@@ -306,6 +307,15 @@
     $("#sheetBody").innerHTML = `<h4>À neuf, Rivière Noire</h4>${G.days.filter((d) => d.phase === "neuf").map(row).join("")}<h4>À deux, Trou aux Biches</h4>${G.days.filter((d) => d.phase === "deux").map(row).join("")}`;
     const sh = $("#sheet"); sh.hidden = false;
     const act = $(".dl.active", sh); if (act) { act.scrollIntoView({ block: "center" }); act.focus({ preventScroll: true }); }
+    sh.onclick = (e) => { if (e.target.closest("[data-close]") || e.target.closest("a")) closeSheet(); };
+  }
+
+  // Nos cartes Google My Maps, depuis la barre du haut
+  function openMapsSheet() {
+    $("#sheetBody").innerHTML = `<h4>Nos cartes Google My Maps</h4>${G.trip.maps.map((m) =>
+      `<a class="dl" ${ext(m.url)}><span class="n">${I.map}</span><span class="t">${esc(m.title)}<small>${esc(m.sub)}</small></span><span class="out">${I.ext}</span></a>`).join("")}`;
+    const sh = $("#sheet"); sh.hidden = false;
+    $(".dl", sh).focus({ preventScroll: true });
     sh.onclick = (e) => { if (e.target.closest("[data-close]") || e.target.closest("a")) closeSheet(); };
   }
 
@@ -550,8 +560,10 @@
     return `<div class="container">${pageHead("", "Plus", "")}
       <div class="grid c2 top-align">
         <div>
+          <div class="menu-group"><span class="eyebrow">Cartes</span><div class="menu-list">
+            ${G.trip.maps.map((m) => item(m.url, "map", m.title, m.sub)).join("")}
+          </div></div>
           <div class="menu-group"><span class="eyebrow">Outils</span><div class="menu-list">
-            ${item(G.trip.map.url, "map", G.trip.map.title, G.trip.map.sub)}
             ${item("/convertisseur", "conv", "Convertisseur", "Roupies ⇄ euros, sans réseau")}
             ${item("/installer", "install", "Installer", "Sur l'écran d'accueil, et hors ligne")}
             ${item("/annexes#urgences", "sos", "Urgences", "Police 999, SAMU 114, pompiers 115", "sos")}

@@ -92,9 +92,9 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--safe-b) + 32p
 .brand b { font: 400 34px/1 var(--script); color: var(--brand-ink); display: block; transform: translateY(2px); }
 .brand small { display: block; font: 500 12px/1 var(--sans); color: var(--muted); white-space: nowrap; }
 .topnav { display: none; gap: 2px; margin-left: 20px; }
-.topnav a { text-decoration: none; color: var(--ink-2); font-size: 14.5px; font-weight: 500; padding: 8px 12px; border-radius: 99px; }
-.topnav a:hover { background: var(--surface-2); color: var(--ink); }
-.topnav a svg { width: 12px; height: 12px; margin-left: 5px; vertical-align: -1px; opacity: .55; }
+.topnav button { appearance: none; border: 0; background: none; font: inherit; cursor: pointer; }
+.topnav a, .topnav button { text-decoration: none; color: var(--ink-2); font-size: 14.5px; font-weight: 500; padding: 8px 12px; border-radius: 99px; }
+.topnav a:hover, .topnav button:hover { background: var(--surface-2); color: var(--ink); }
 .topnav a.active { color: var(--brand-ink); background: var(--brand-soft); font-weight: 600; }
 @media (min-width: 1024px) { .topnav { display: flex; } }
 .appbar-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
@@ -337,6 +337,9 @@ textarea.big { min-height: 55vh; background: var(--surface); font: 400 17.5px/1.
 .dl.active { background: var(--brand-soft); }
 .dl .n { width: 40px; flex: none; text-align: center; font: 600 9.5px var(--label); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 .dl .n b { display: block; font: 600 18px/1.15 var(--serif); color: var(--ink); letter-spacing: 0; }
+.dl .n svg { width: 22px; height: 22px; color: var(--brand-ink); }
+.dl .out { margin-left: auto; flex: none; color: var(--muted); }
+.dl .out svg { width: 16px; height: 16px; }
 .dl .t { font-weight: 600; font-size: 14.5px; line-height: 1.3; min-width: 0; }
 .dl .t small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
 .dl .today-tag { margin-left: auto; flex: none; font-size: 10.5px; font-weight: 700; color: #fff; background: var(--coral); padding: 3px 8px; border-radius: 99px; }
