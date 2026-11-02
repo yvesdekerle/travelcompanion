@@ -170,12 +170,22 @@
     { href: "/convertisseur", t: "Convertisseur", i: "conv", deskOnly: true },
     { href: "/annexes", t: "Annexes", i: "book", deskOnly: true },
     { t: "Cartes", i: "map", deskOnly: true, sheet: "maps" },
-    { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/infos", "/convertisseur", "/bons-plans", "/annexes", "/notes", "/bienvenue", "/installer"].includes(p), deskMatch: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
+    { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
   ];
   function renderNav(path) {
     $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
-    $("#tabbar").innerHTML = NAV.filter((n) => !n.deskOnly).map((n) => `<a class="tab ${(n.match ? n.match(path) : path === n.href) ? "active" : ""}" href="${n.href}" ${(n.match ? n.match(path) : path === n.href) ? 'aria-current="page"' : ""}><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`).join("");
+    const bar = $("#tabbar");
+    bar.innerHTML = NAV.map((n) => {
+      if (n.sheet) return `<button class="tab" type="button" data-sheet="${n.sheet}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></button>`;
+      const on = n.match ? n.match(path) : path === n.href;
+      return `<a class="tab ${on ? "active" : ""}" href="${n.href}" ${on ? 'aria-current="page"' : ""}><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`;
+    }).join("");
+    $$("[data-sheet]", bar).forEach((b) => (b.onclick = openMapsSheet));
+    const act = $(".tab.active", bar);
+    if (act) bar.scrollTo({ left: act.offsetLeft - (bar.clientWidth - act.offsetWidth) / 2, behavior: "instant" });
+    const edge = () => bar.classList.toggle("end", bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2);
+    bar.onscroll = edge; edge();
   }
 
   /* ───────── Itinéraire : un jour ───────── */
@@ -197,9 +207,10 @@
     const cd = countdown();
     if (!cd) return "";
     const [d, t] = todoCounts.checklist(), left = G.toBook.length - todoCounts.reserver()[0];
+    const todo = [d ? `Checklist ${d}/${t}` : "", left ? `${left} chose${left > 1 ? "s" : ""} encore à réserver` : ""].filter(Boolean).join(", ");
     return `<a class="banner count" href="/todo" id="countdown">
       <span class="cd">${cd.map(([n, l], i) => `<span><b data-cd="${i}">${n}</b><i data-cdl="${i}">${l}</i></span>`).join("")}</span>
-      <span class="cd-text"><b>avant l'atterrissage à Maurice</b><small>Vendredi 6 novembre, 06h35 heure de Maurice (03h35 à Paris)</small><small>Checklist ${d}/${t}, ${left} chose${left > 1 ? "s" : ""} encore à réserver</small></span>
+      <span class="cd-text"><b>avant l'atterrissage à Maurice</b><small>Vendredi 6 novembre, 06h35 heure de Maurice (03h35 à Paris)</small>${todo ? `<small>${todo}</small>` : ""}</span>
       <span class="arrow">›</span></a>`;
   }
   function tickCountdown() {
