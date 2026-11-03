@@ -613,7 +613,7 @@ window.GUIDE = {
     order: "Pour passer commande, contacter Sheila sur WhatsApp au +230 5986 3130. Toutes les commandes doivent être passées au moins 24 h à l'avance, pour un minimum de 2 personnes.",
     tel: "+23059863130", wa: "23059863130",
     sections: [
-      { title: "Plats à base de viande", items: [
+      { title: "Plats à base de viande", tone: "sea", icon: "spark", items: [
         { name: "Rougail saucisse", opt: "Porc ou poulet", rs: 500, text: "Saucisses fumées et boucané (lard fumé) dans leur sauce tomate, lentilles noires, le tout accompagné de riz blanc ou de pain, ainsi que d'une salade de concombre et d'un sauté de brèdes." },
         { name: "Chop suey de poulet", rs: 600, text: "Sauté de poulet, champignons, carottes, brèdes, mini épis de maïs et poivrons dans une sauce aux champignons, huîtres et soja." },
         { name: "Curry classique", opt: "Poisson ou porc", rs: 500, text: "L'option choisie avec des aubergines, accompagnée de lentilles corail, de riz blanc ou de pain, ainsi que d'un chatini de tomate ou d'une salade de concombre." },
@@ -622,14 +622,14 @@ window.GUIDE = {
         { name: "Pilau", opt: "Porc ou poulet", rs: 500, text: "Riz mijoté dans du curcuma et épices, accompagné de saucisses et de boucané (lard fumé) et d'un chatini tomate." },
         { name: "Moofan", rs: 500, text: "Riz mijoté, accompagné de poulet, de saucisses chinoises (porc ou poulet), d'œufs rôtis et de petites crevettes séchées, avec un chatini de tomate." }
       ] },
-      { title: "Plats végétariens", items: [
+      { title: "Plats végétariens", tone: "coral", icon: "flower", items: [
         { name: "Chop suey de légumes", rs: 600, text: "Sauté de champignons, carottes, brèdes, mini épis de maïs, poivrons et tofu dans une sauce aux champignons, huîtres et soja." },
         { name: "Currys au choix", rs: 600, text: "Curry de pommes de terre et de petits pois, ou curry d'aubergines et tofu, accompagné de riz ou de pain." },
         { name: "Chouchou et compagnie", rs: 600, text: "Christophines mijotées accompagnées de haricots rouges, de riz blanc ou de pain, ainsi que d'une salade de concombre." },
         { name: "Gratin aux légumes", opt: "Légumes selon la saison", rs: 600, text: "Gratin de légumes, accompagné d'une salade verte ou d'une salade mixte, selon la demande." },
         { name: "Mijoté de légumes", opt: "Selon la saison", rs: 600, text: "Un mijoté de carottes, fruit à pain et christophines, accompagné de pain et d'une salade verte." }
       ] },
-      { title: "Salades", note: "Pour 2, 4 ou 6 personnes · prix par personne", items: [
+      { title: "Salades", tone: "leaf", icon: "leaf", note: "Pour 2, 4 ou 6 personnes · prix par personne", items: [
         { name: "Salade exotique", opt: "Marlin fumé, crevettes ou végétarienne", rs: 500, per: true, text: "Avocat, poivron, tomates, concombre et ananas sur un lit de laitue, accompagnés de pain." },
         { name: "Salade russe", opt: "Version végétarienne sur demande", rs: 300, per: true, text: "Légumes cuits (betteraves, carottes, pommes de terre), œufs durs et mayonnaise maison, accompagnés de saucisses au miel (porc ou poulet)." },
         { name: "Salade de pâtisson et d'œufs durs", opt: "Version végétarienne sur demande", rs: 300, per: true, text: "Pâtisson et œufs durs accompagnés de salade verte, de concombre et d'une mayonnaise maison." }
@@ -796,6 +796,7 @@ window.GUIDE = {
     ["Desserts", [["Gato patate", "beignet de patate douce à la coco"], ["Napolitaine", "biscuit sablé fourré à la confiture, glaçage rose"], ["Gato sucre", "petits gâteaux sucrés des marchés (foire de Mahébourg)"], ["Biscuits manioc Rault", "cuits au feu de bois depuis 1870, Mahébourg"]]],
     ["Boissons", [["Alouda", "lait, graines de basilic, agar et vanille — glacée, au marché"], ["Fangourin", "jus de canne pressé, à la foire"], ["Phoenix", "la bière locale"], ["Rhum arrangé", "rhum macéré aux fruits et épices, à goûter à Chamarel"], ["Thé à la vanille", "Bois Chéri, avec un peu de lait"]]]
   ],
+  foodIntro: "Rien à voir avec la carte de Sheila : les classiques mauriciens à goûter sur place, au marché, au snack ou à la table d'hôte. Une case par plat, cochée sur le téléphone.",
   foodNote: "Où : le marché central de Port-Louis (jeudi 12), la foire de Mahébourg (lundi 16), les tables d'hôte (La Karaye, Escale Créole), et n'importe quel snack au bord de la route.",
 
   cash: [

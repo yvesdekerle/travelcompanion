@@ -54,6 +54,10 @@
     dl: sv('<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>'),
     wave: sv('<path d="M2 12c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 17c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><circle cx="17" cy="5" r="2"/>'),
     food: sv('<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2.5 1.5-4 4-4 8h4"/>'),
+    // Les trois pictos du Menu Morisyen : astérisque (viande), hibiscus (végétarien), feuille (salades)
+    spark: sv('<path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>', 'stroke-width="2.2"'),
+    flower: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5c1.6 0 2.9 1.6 2.9 3.6 0 .5-.1.9-.2 1.3 1.2-.8 2.7-1 3.9-.3 1.4.8 1.8 2.8 1 4.2-.3.4-.6.8-1 1 1.2.3 2.2 1.3 2.5 2.6.4 1.6-.6 3.3-2.2 3.6-.5.1-1 .1-1.4 0 .5 1.1.4 2.5-.4 3.5-1 1.3-2.9 1.5-4.1.5-.4-.3-.7-.7-1-1.1-.3.4-.6.8-1 1.1-1.2 1-3.1.8-4.1-.5-.8-1-.9-2.4-.4-3.5-.4.1-.9.1-1.4 0-1.6-.3-2.6-2-2.2-3.6.3-1.3 1.3-2.3 2.5-2.6-.4-.2-.7-.6-1-1-.8-1.4-.4-3.4 1-4.2 1.2-.7 2.7-.5 3.9.3-.1-.4-.2-.8-.2-1.3 0-2 1.3-3.6 2.9-3.6zm0 7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>',
+    leaf: sv('<path d="M20 4c-9 0-15 4-15 11a5 5 0 0 0 5 5c7 0 10-6 10-16z"/><path d="M4 20c3-5 7-8 11-10"/>'),
     lex: sv('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'),
     cash: sv('<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v.01M18 15v.01"/>'),
     conv: sv('<path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/>'),
@@ -1047,9 +1051,7 @@
       ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
       ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
       ${section("lexique", "Annexes", "Mini-lexique créole", esc(G.lexiconNote), `<div class="lex">${G.lexicon.map(([fr, kr]) => `<div><small>${esc(fr)}</small><b>${esc(kr)}</b></div>`).join("")}</div>`)}
-      ${section("plats", "Annexes", "Plats à goûter", "Une case par plat : on coche ce qu'on a goûté, ça reste enregistré sur le téléphone.", `<div class="grid c2">${G.food.map(([t, rows], g) => {
-        const keys = rows.map((_, i) => `food:${g}:${i}`), done = keys.filter((k) => store.get(k, false)).length;
-        return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single">${rows.map(([n, d], i) => { const c = store.get(keys[i], false); return `<div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`)}
+      ${section("plats", "Annexes", "Plats à goûter", "Une case par plat : on coche ce qu'on a goûté, ça reste enregistré sur le téléphone.", foodCards())}
       ${section("cash", "Annexes", "Cash à prévoir", "Les prestations à régler sur place, en roupies et en espèces.", `
         <div class="grid c2 totals">
           <div class="card"><div class="eyebrow">Total groupe, en espèces</div><div class="bignum">${esc(G.cashTotals.group)}</div><p class="muted">${esc(G.cashTotals.groupEur)}</p></div>
@@ -1150,16 +1152,25 @@
   }
 
   /* ───────── Menu Morisyen (Catering Sheila) ───────── */
+  // Plats à goûter sur place : une carte par catégorie, cases partagées entre /annexes et /menu (clés food:g:i)
+  const foodCards = () => `<div class="grid c2">${G.food.map(([t, rows], g) => {
+    const keys = rows.map((_, i) => `food:${g}:${i}`), done = keys.filter((k) => store.get(k, false)).length;
+    return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single">${rows.map(([n, d], i) => { const c = store.get(keys[i], false); return `<div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`;
+
   function pageMenu() {
     const m = G.menu, eur = (rs) => (rs / G.rate).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
-    const dish = (it) => `<div class="dish"><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
+    // Chaque section garde la couleur et le picto de la carte imprimée (astérisque bleu, hibiscus rouge, feuille verte)
+    const dish = (it, ic) => `<div class="dish"><i class="pic">${ic}</i><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
       <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p></div>`;
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
       <div class="menu-page">
+        <div class="strokes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         <div class="card order"><div><h3>Commander</h3><p class="text">${linkify(m.order)}</p></div>
           <div class="card-actions"><a class="btn wa" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a></div></div>
-        ${m.sections.map((sec, k) => `<section class="section" id="menu-${k + 1}"><h2>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map(dish).join("")}</div></section>`).join("")}
+        ${m.sections.map((sec, k) => `<section class="section menu-sec ${sec.tone}" id="menu-${k + 1}"><h2><i>${I[sec.icon]}</i>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map((it) => dish(it, I[sec.icon])).join("")}</div></section>`).join("")}
         <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
+        <hr class="rule">
+        ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
       </div></div>`;
   }
 

@@ -35,12 +35,12 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
 | `/plages` | Les 17 plages notées, triables par note, par temps de route depuis chaque logement ou par zone |
 | `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, mêmes tris |
-| `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros), commande sur WhatsApp |
+| `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
-Dans `/annexes`, la liste « Plats à goûter » (entrées, plats, desserts, boissons) a une case par plat, cochée sur
-l'appareil, avec un compteur par catégorie.
+La liste « Plats à goûter » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec un
+compteur par catégorie ; elle apparaît sous le menu de Sheila (`/menu#a-gouter`) et dans `/annexes`, mêmes coches.
 
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
 Tous les numéros de téléphone du carnet sont cliquables : un mobile mauricien (+230 5…) s'affiche en bloc vert
