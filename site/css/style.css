@@ -818,6 +818,45 @@ button.dl { width: 100%; border: 0; background: none; font: inherit; text-align:
 .enter { animation: enter .3s var(--ease); }
 @keyframes enter { from { opacity: 0; transform: translateY(6px); } }
 @media (prefers-reduced-motion: reduce) { .enter, .sheet-panel, .sheet-bg { animation: none; } * { transition: none !important; } }
+
+/* ───────── Clin d'œil : un personnage surgit (cinq touchers rapides) ───────── */
+.cameo { position: fixed; inset: 0; z-index: 70; display: grid; align-items: end; justify-items: center; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 18px); overflow: hidden; cursor: pointer; background: radial-gradient(ellipse 70% 60% at 50% 70%, rgba(245, 241, 232, .9), rgba(245, 241, 232, 0) 70%); animation: fade .25s; }
+@media (min-width: 720px) { .cameo { padding-bottom: 4vh; } }
+.cameo.out { opacity: 0; transition: opacity .25s; }
+.cameo .fig { position: relative; display: grid; justify-items: center; gap: 2px; will-change: transform, opacity; transform-origin: 50% 100%; animation: 3.6s var(--ease) both; }
+.cameo img { height: min(58vh, 520px); width: auto; max-width: 84vw; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(26, 43, 61, .22)); }
+.cameo .who { font: 400 44px/1 var(--script); color: var(--brand-ink); background: rgba(255, 255, 255, .85); padding: 6px 18px 10px; border-radius: 999px; animation: fade .4s .5s both; }
+.cameo.a1 .fig { animation-name: cam-pop; }
+.cameo.a2 .fig { animation-name: cam-walk; animation-timing-function: ease-in-out; animation-duration: 4.2s; }
+.cameo.a3 .fig { animation-name: cam-drop; animation-timing-function: linear; }
+.cameo.a4 .fig { animation-name: cam-spin; }
+.cameo.a5 .fig { animation-name: cam-peek; animation-timing-function: ease-in-out; }
+.cameo.a6 .fig { animation-name: cam-flip; transform-origin: 50% 50%; }
+.cameo.a7 .fig { animation-name: cam-balloon; animation-timing-function: ease-in-out; animation-duration: 4.4s; }
+.cameo.a8 .fig { animation-name: cam-swing; transform-origin: 50% -40vh; animation-timing-function: ease-in-out; animation-duration: 4.2s; }
+.cameo.a9 .fig { animation-name: cam-zoom; }
+.cameo.a10 .fig { animation-name: cam-dance; animation-timing-function: ease-in-out; animation-duration: 4.4s; }
+/* 1 · surgit en rebondissant, puis disparaît en se rétrécissant */
+@keyframes cam-pop { 0% { transform: scale(0); opacity: 0; } 14% { transform: scale(1.12); opacity: 1; } 22% { transform: scale(.96); } 30% { transform: scale(1); } 84% { transform: scale(1); opacity: 1; } 100% { transform: scale(0) rotate(-12deg); opacity: 0; } }
+/* 2 · entre par la gauche en se dandinant, ressort par la droite */
+@keyframes cam-walk { 0% { transform: translateX(-120vw) rotate(-3deg); } 8% { transform: translateX(-90vw) rotate(3deg); } 16% { transform: translateX(-60vw) rotate(-3deg); } 24% { transform: translateX(-30vw) rotate(3deg); } 32% { transform: translateX(0) rotate(0); } 68% { transform: translateX(0) rotate(0); } 76% { transform: translateX(30vw) rotate(3deg); } 84% { transform: translateX(60vw) rotate(-3deg); } 92% { transform: translateX(90vw) rotate(3deg); } 100% { transform: translateX(120vw) rotate(-3deg); } }
+/* 3 · tombe du ciel, s'écrase un peu, rebondit, puis passe par la trappe */
+@keyframes cam-drop { 0% { transform: translateY(-110vh); } 20% { transform: translateY(0) scale(1); animation-timing-function: ease-out; } 25% { transform: translateY(0) scale(1.12, .82); } 32% { transform: translateY(-9vh) scale(.96, 1.06); } 40% { transform: translateY(0) scale(1); } 44% { transform: translateY(0) scale(1.05, .94); } 48% { transform: translateY(0) scale(1); } 86% { transform: translateY(0); opacity: 1; animation-timing-function: ease-in; } 100% { transform: translateY(110vh); opacity: 1; } }
+/* 4 · arrive en toupie, repart en toupie */
+@keyframes cam-spin { 0% { transform: scale(0) rotate(-720deg); opacity: 0; } 25% { transform: scale(1) rotate(0); opacity: 1; } 78% { transform: scale(1) rotate(0); opacity: 1; } 100% { transform: scale(0) rotate(720deg); opacity: 0; } }
+/* 5 · jette un œil depuis le bas de l'écran, fait coucou, redescend */
+@keyframes cam-peek { 0% { transform: translateY(105%); } 18% { transform: translateY(30%) rotate(0); } 26% { transform: translateY(30%) rotate(-6deg); } 34% { transform: translateY(30%) rotate(6deg); } 42% { transform: translateY(30%) rotate(-6deg); } 50% { transform: translateY(30%) rotate(6deg); } 58% { transform: translateY(30%) rotate(0); } 82% { transform: translateY(30%); } 100% { transform: translateY(105%); } }
+/* 6 · pivote comme une carte à jouer */
+@keyframes cam-flip { 0% { transform: perspective(900px) rotateY(90deg); opacity: 0; } 22% { transform: perspective(900px) rotateY(-12deg); opacity: 1; } 32% { transform: perspective(900px) rotateY(0); } 80% { transform: perspective(900px) rotateY(0); opacity: 1; } 100% { transform: perspective(900px) rotateY(-90deg); opacity: 0; } }
+/* 7 · monte comme un ballon, en se balançant, jusqu'à sortir par le haut */
+@keyframes cam-balloon { 0% { transform: translate(0, 45vh); opacity: 0; } 15% { opacity: 1; } 25% { transform: translate(-3vw, 0) rotate(-3deg); } 45% { transform: translate(3vw, -4vh) rotate(3deg); } 65% { transform: translate(-3vw, -8vh) rotate(-3deg); } 80% { transform: translate(2vw, -20vh) rotate(2deg); opacity: 1; } 100% { transform: translate(0, -130vh) rotate(0); opacity: 1; } }
+/* 8 · se balance au bout d'un fil invisible, puis lâche prise */
+@keyframes cam-swing { 0% { transform: rotate(-28deg); opacity: 0; } 8% { opacity: 1; } 20% { transform: rotate(22deg); } 38% { transform: rotate(-14deg); } 54% { transform: rotate(8deg); } 68% { transform: rotate(-3deg); } 78% { transform: rotate(0); opacity: 1; animation-timing-function: ease-in; } 100% { transform: rotate(0) translateY(130vh); opacity: 1; } }
+/* 9 · fonce vers l'écran depuis très près, tremble, puis s'efface */
+@keyframes cam-zoom { 0% { transform: scale(5); opacity: 0; filter: blur(6px); } 18% { transform: scale(1) translateX(0); opacity: 1; filter: blur(0); } 21% { transform: translateX(-7px); } 24% { transform: translateX(7px); } 27% { transform: translateX(-5px); } 30% { transform: translateX(4px); } 33% { transform: translateX(0); } 82% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+/* 10 · monte sur scène et danse, puis saute hors de l'écran */
+@keyframes cam-dance { 0% { transform: translateY(110%); } 12% { transform: translateY(0); } 20% { transform: translateY(-10px) rotate(-8deg); } 28% { transform: translateY(0) rotate(8deg); } 36% { transform: translateY(-10px) rotate(-8deg); } 44% { transform: translateY(0) rotate(8deg); } 52% { transform: translateY(-10px) rotate(-8deg); } 60% { transform: translateY(0) rotate(8deg); } 68% { transform: translateY(-10px) rotate(-8deg); } 76% { transform: translateY(0) rotate(0); } 84% { transform: translateY(0) scale(1.06, .92); } 100% { transform: translateY(-130vh) scale(.96, 1.06); } }
+@media (prefers-reduced-motion: reduce) { .cameo .fig { animation: cam-still 3s both !important; } @keyframes cam-still { 0% { opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; } } }
 @media print { .appbar, .tabbar, .strip-wrap, .btn, .place .see, .place .go, .pager { display: none !important; } .day-head { margin: 0; } }
 
 .script { font-family: var(--script); font-weight: 400; color: var(--brand-ink); }

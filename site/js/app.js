@@ -1047,11 +1047,10 @@
   function pageAnnex() {
     const total = G.cash.reduce((a, r) => a + r[3], 0);
     return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, lexique créole, plats à goûter et cash à prévoir.")}
-      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#lexique">Lexique</a><a href="/annexes#plats">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a><a href="/plages">Plages</a><a href="/randos">Randonnées</a></nav>
+      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#lexique">Lexique</a><a href="/menu#a-gouter">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a><a href="/plages">Plages</a><a href="/randos">Randonnées</a></nav>
       ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
       ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
       ${section("lexique", "Annexes", "Mini-lexique créole", esc(G.lexiconNote), `<div class="lex">${G.lexicon.map(([fr, kr]) => `<div><small>${esc(fr)}</small><b>${esc(kr)}</b></div>`).join("")}</div>`)}
-      ${section("plats", "Annexes", "Plats à goûter", "Une case par plat : on coche ce qu'on a goûté, ça reste enregistré sur le téléphone.", foodCards())}
       ${section("cash", "Annexes", "Cash à prévoir", "Les prestations à régler sur place, en roupies et en espèces.", `
         <div class="grid c2 totals">
           <div class="card"><div class="eyebrow">Total groupe, en espèces</div><div class="bignum">${esc(G.cashTotals.group)}</div><p class="muted">${esc(G.cashTotals.groupEur)}</p></div>
@@ -1145,14 +1144,14 @@
           ${item("/randos", "boot", "Les randonnées", "Fiches, traces et temps de route")}
           ${item("/annexes#cash", "cash", "Cash à prévoir", G.cashTotals.group + " pour le groupe")}
           ${item("/annexes#lexique", "lex", "Lexique créole", "Bonzour, mersi boukou…")}
-          ${item("/annexes#plats", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
+          ${item("/menu#a-gouter", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
           ${item("/menu", "food", "Menu Morisyen", "La carte de Sheila, commande sur WhatsApp")}
         </div></div>
       </div></div>`;
   }
 
   /* ───────── Menu Morisyen (Catering Sheila) ───────── */
-  // Plats à goûter sur place : une carte par catégorie, cases partagées entre /annexes et /menu (clés food:g:i)
+  // Plats à goûter sur place : une carte par catégorie, cases enregistrées sous les clés food:g:i
   const foodCards = () => `<div class="grid c2">${G.food.map(([t, rows], g) => {
     const keys = rows.map((_, i) => `food:${g}:${i}`), done = keys.filter((k) => store.get(k, false)).length;
     return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single">${rows.map(([n, d], i) => { const c = store.get(keys[i], false); return `<div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`;
@@ -1459,6 +1458,34 @@
     }).catch(() => {});
     navigator.serviceWorker.addEventListener("message", (e) => { if (e.data === "updated") toast("Nouvelle version du carnet — toucher pour recharger", () => location.reload()); });
   }
+
+  // Clin d'œil : cinq touchers rapides n'importe où font surgir un personnage du groupe, avec une animation au hasard
+  const CAMEO_ANIMS = 10; let taps = [], lastCast = -1, lastAnim = -1;
+  const pick = (n, last) => { let i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === last); return i; };
+  function cameo() {
+    if ($(".cameo")) return;
+    const c = pick(G.cast.length, lastCast), a = pick(CAMEO_ANIMS, lastAnim); lastCast = c; lastAnim = a;
+    const [file, name] = G.cast[c], el = document.createElement("div");
+    el.className = `cameo a${a + 1}`; el.setAttribute("role", "img"); el.setAttribute("aria-label", name);
+    el.innerHTML = `<div class="fig"><img src="/img/p/${file}.png" alt=""><span class="who">${esc(name)}</span></div>`;
+    const bye = () => { if (!el.isConnected) return; el.classList.add("out"); setTimeout(() => el.remove(), 260); };
+    const fig = $(".fig", el), img = $("img", el);
+    fig.addEventListener("animationend", (e) => { if (e.target === fig) bye(); }); // pas celle du prénom, qui remonte aussi
+    // L'animation ne démarre qu'une fois l'image décodée (au plus 1,5 s d'attente), sinon le personnage arrive en cours de route
+    fig.style.animationPlayState = "paused";
+    Promise.race([img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]).then(() => { fig.style.animationPlayState = "running"; });
+    el.addEventListener("pointerdown", (e) => { e.stopPropagation(); bye(); });
+    document.body.appendChild(el);
+    setTimeout(bye, 7000); // au cas où l'animation ne se termine pas (image absente, onglet en arrière-plan)
+  }
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("input, textarea, select, .cameo")) return;
+    const now = Date.now(); taps = taps.filter((t) => now - t < 1600); taps.push(now);
+    if (taps.length >= 5) { taps = []; cameo(); }
+  });
+  // Les images des personnages ne sont pas dans le cache initial : on les demande une fois le carnet prêt, à un moment calme
+  const prefetchCast = () => G.cast.forEach(([f]) => fetch(`/img/p/${f}.png`, { priority: "low" }).catch(() => {}));
+  if ("serviceWorker" in navigator && !devHost) navigator.serviceWorker.ready.then(() => (window.requestIdleCallback || ((fn) => setTimeout(fn, 4000)))(prefetchCast, { timeout: 15000 }));
 
   render();
   netState();

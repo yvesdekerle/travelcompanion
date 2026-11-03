@@ -637,6 +637,9 @@ window.GUIDE = {
     ]
   },
 
+  /* Les personnages du groupe (site/img/p/*.png) : cinq touchers rapides n'importe où en font surgir un au hasard */
+  cast: [["ade", "Adé"], ["alex", "Alex"], ["amly", "Amly"], ["audrey", "Audrey"], ["chloe", "Chloé"], ["july", "July"], ["mathieu", "Mathieu"], ["quentin", "Quentin"], ["yves", "Yves"]],
+
   rate: 52.5,
   info: {
     timezone: "L'île est à UTC+4 ; en novembre Paris est en heure d'hiver (UTC+1) : trois heures d'avance sur la France. Quand il est 9h à Paris, il est midi à Maurice. Le jour se lève vers 5h30 et le soleil se couche vers 18h15 — les journées commencent tôt et les soirées sont déjà nocturnes à 19h.",

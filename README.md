@@ -18,6 +18,7 @@ scripts/
   serve.py            ← serveur local avec les URL propres
   build_sw.py         ← régénère site/sw.js
   build_geo.mjs       ← régénère site/js/geo.js (Nominatim + OSRM, réponses gardées dans geo-cache.json)
+  cutout_cast.py      ← détoure et réduit les dessins des personnages (tmp/personnage → site/img/p)
   sw.template.js
 vercel.json           ← Vercel sert site/ tel quel (aucun build) et renvoie index.html pour toutes les pages
 ```
@@ -39,8 +40,13 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
-La liste « Plats à goûter » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec un
-compteur par catégorie ; elle apparaît sous le menu de Sheila (`/menu#a-gouter`) et dans `/annexes`, mêmes coches.
+La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec
+un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
+
+Clin d'œil : cinq touchers rapides n'importe où font surgir un personnage du groupe (dessins dans `site/img/p/`,
+liste `cast` dans data.js) avec une animation tirée au sort parmi dix (CSS `cam-*` dans style.css) ; un toucher le
+fait disparaître. Ces images ne sont pas dans le cache initial du service worker : elles sont demandées en tâche de
+fond une fois le carnet prêt, et gardées en cache à ce moment-là.
 
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
 Tous les numéros de téléphone du carnet sont cliquables : un mobile mauricien (+230 5…) s'affiche en bloc vert
