@@ -43,8 +43,9 @@ Le menu (barre du haut sur ordinateur, barre du bas sur mobile) change à l'atte
 
 Sur chaque jour, les étapes réservées (bateaux, plongée, pêche, hélico, Vanill'Art) portent le badge
 « Réservé · horaire fixe » et sont rappelées en tête de page : elles ne se déplacent pas dans le planning.
-Après chaque randonnée, le programme repasse par le logement pour la douche (sauf Gris-Gris et Ferney, trop loin
-ou sans logement ce jour-là). Le bouton « Itinéraire du jour dans Maps » enchaîne tous les lieux du jour, retour au
+Après une randonnée, le programme repasse par le logement pour la douche quand c'est à côté (Piton, Le Morne,
+Pieter Both) ; quand la rando et la suite de la journée sont loin du logement (Gris-Gris, 7 cascades) ou qu'il n'y a
+plus de logement (Ferney, jour du départ), on enchaîne sans revenir. Le bouton « Itinéraire du jour dans Maps » enchaîne tous les lieux du jour, retour au
 logement compris, et la carte « Le parcours du jour » (SVG hors ligne) reprend le même parcours.
 
 ## Modifier le contenu
