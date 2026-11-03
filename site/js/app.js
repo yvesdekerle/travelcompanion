@@ -134,7 +134,7 @@
     d.split(" · ").map((x) => x.trim()).forEach((x) => {
       if (!out.dep && !out.dur && /^(départ\s+)?\d{1,2}h\d{2}$/i.test(x)) out.dep = x.replace(/^départ\s+/i, "");
       else if (!out.dur && /^\d+\s*(min|h)(\s*\d{2})?$/i.test(x)) out.dur = x;
-      else if (!out.dist && /^[\d,.]+\s*km$/i.test(x)) out.dist = x;
+      else if (!out.dist && /^[\d,.]+\s*k?m$/i.test(x)) out.dist = x;
       else out.rest.push(x);
     });
     return out;

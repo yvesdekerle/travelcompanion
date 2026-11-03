@@ -42,7 +42,7 @@ window.GUIDE = {
         { t: "drive", d: "53 min · 55 km · M2 puis Phoenix → Rivière Noire · +10 min en heure de pointe" },
         { when: "Mi-journée", where: "Rivière Noire · La Jetée Road", title: "Récupérer le logement, cocktail et piscine",
           text: "Clés, valises posées, puis courses au Super U de Tamarin (10 min) ou au Winner's de Cascavelle (15 min) : eau, fruits, petit-déjeuner, rhum et citrons verts. Premier cocktail au bord de la piscine, les montagnes en face — le voyage commence là.",
-          places: [["La Jetée Road, Grande Rivière Noire", "La Jetée Road, Grande Rivière Noire, Mauritius"]],
+          places: [["River Haven, La Jetée Road", "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius"]],
           tags: [["info", "Courses Super U Tamarin · 10 min"], ["info", "Cascavelle Winner's · 15 min"]] },
         { t: "drive", d: "24 min · 18 km · A3 vers Flic-en-Flac" },
         { when: "Après-midi", where: "Flic-en-Flac", title: "Première plage — Flic-en-Flac",
@@ -73,7 +73,7 @@ window.GUIDE = {
         { t: "drive", d: "27 min · 16,5 km · redescente vers Rivière Noire" },
         { when: "Matin · 10h00 — 10h45", where: "Rivière Noire · la villa", title: "Retour à la villa : douche et deuxième petit-déjeuner", home: true,
           text: "On redescend se laver et se changer avant la suite de la journée. Trois quarts d'heure, pas plus : le lac et le thé attendent.",
-          places: [["La villa, La Jetée Road", "La Jetée Road, Grande Rivière Noire, Mauritius"]] },
+          places: [["La villa, La Jetée Road", "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius"]] },
         { t: "drive", d: "43 min · 29 km · Rivière Noire → Grand Bassin par Plaine Champagne" },
         { when: "Mi-journée · 11h30", where: "Grand Bassin · Ganga Talao", title: "Le lac sacré hindou",
           text: "Lac de cratère tenu pour un bras du Gange, temples au bord de l'eau, Shiva de 33 m à l'entrée. Arrêt de 30 min. Épaules et genoux couverts, chaussures retirées dans les temples.",
@@ -100,7 +100,7 @@ window.GUIDE = {
       img: "j03", caption: "Cascade de Chamarel · 100 m de chute",
       alert: "<b>Divali aujourd'hui</b> — la fête des lumières, jour férié : certains sites et commerces peuvent fermer plus tôt, vérifier les horaires de la rhumerie. Ce soir, les villages s'illuminent.",
       steps: [
-        { t: "drive", icon: "walk", d: "départ 06h40 · 18 min à pied · 1,4 km · Rivière Noire → La Balise Marina" },
+        { t: "drive", icon: "walk", d: "départ 06h50 · 6 min à pied · 400 m · Rivière Noire → La Balise Marina" },
         { when: "Matin · 07h00 — 09h30", where: "La Balise Marina · Black River", title: "Sortie dauphins avec JPH", star: true, fixed: true,
           text: "Les dauphins long-becs se reposent dans la baie de Tamarin tôt le matin, souvent avec quelques grands dauphins. Sortie en bateau, mise à l'eau avec masque et tuba au passage des groupes — on observe, on ne poursuit pas. Déjà payé.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · fin de matinée libre au logement ensuite",
@@ -129,7 +129,7 @@ window.GUIDE = {
       img: "j04", caption: "Crystal Rock · face au Morne",
       intro: "Journée entière sur l'eau avec JPH, catamaran rien que pour nous : on longe la côte ouest jusqu'au Morne, on nage, on mange à bord, on rentre avec le soleil.",
       steps: [
-        { t: "drive", icon: "walk", d: "départ 08h40 · 18 min à pied · 1,4 km · Rivière Noire → La Balise Marina · retour à pied" },
+        { t: "drive", icon: "walk", d: "départ 08h50 · 6 min à pied · 400 m · Rivière Noire → La Balise Marina · retour à pied" },
         { when: "Matin · 09h00", where: "La Balise Marina · Black River", title: "Embarquement — catamaran JPH", star: true, fixed: true,
           text: "Catamaran privatisé de 9h au coucher du soleil, déjà payé. Cap au sud le long de la côte ouest, jusqu'au lagon du Morne.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · 9h",
@@ -212,7 +212,7 @@ window.GUIDE = {
       drive: "≈ 1 h 30 de route · 67 km",
       img: "j07", caption: "Pêche au gros · au large du Morne",
       steps: [
-        { t: "drive", icon: "walk", d: "départ 06h40 · 18 min à pied · 1,4 km · Rivière Noire → La Balise Marina" },
+        { t: "drive", icon: "walk", d: "départ 06h50 · 6 min à pied · 400 m · Rivière Noire → La Balise Marina" },
         { when: "Matin · 07h00 — 12h00", where: "La Balise Marina · Black River", title: "Pêche au gros avec JPH — Alex, Yves et Quentin", star: true, fixed: true,
           text: "Cinq heures au large de la côte ouest : marlin bleu, thon, dorade coryphène, wahoo — novembre ouvre la bonne saison. Acompte de 208 € déjà payé ; reste 64 € par personne (≈ 3 370 Rs), en cash sur place.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River",
@@ -283,7 +283,7 @@ window.GUIDE = {
         { t: "drive", d: "21 min · 17 km · Le Morne → Rivière Noire" },
         { when: "Mi-journée · 11h00 — 13h30", where: "Rivière Noire · la villa", title: "Retour à la villa : douche, déjeuner, sieste", home: true,
           text: "Douche, déjeuner côté villa ou à Tamarin (10 min), un peu de repos à l'ombre : les jambes ont donné ce matin.",
-          places: [["La villa, La Jetée Road", "La Jetée Road, Grande Rivière Noire, Mauritius"]] },
+          places: [["La villa, La Jetée Road", "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius"]] },
         { t: "drive", d: "21 min · 17 km · Rivière Noire → plage du Morne" },
         { when: "Après-midi · 14h00", where: "Le Morne · plage publique", title: "Après-midi sur la plage du Morne",
           text: "La plus belle plage publique de l'île : sable blanc, lagon turquoise et la montagne qui tombe dans l'eau. Kitesurfeurs au loin sur le spot du One Eye. Baignade, lecture, rien.",
@@ -513,12 +513,12 @@ window.GUIDE = {
       id: "riverhaven", range: "J1 → J11", dates: "5 → 16 nov · 11 nuits · à neuf · Airbnb",
       name: "River Haven", place: "Rivière Noire (Black River)", img: "logement1",
       address: "La Jetée Road, Rivière Noire, Rivière Noire District 90605",
-      mapsQ: "La Jetée Road, Grande Rivière Noire, Mauritius",
+      mapsQ: "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
       host: "Amelie (Airbnb)",
       checkin: "Arrivée jeu. 5 nov. dès 15h — la nuit du 5 est réservée : on peut entrer dès l'arrivée le 6 au matin",
       checkout: "Départ lun. 16 nov. avant 10h",
-      around: ["La Balise Marina (JPH) · 4 min", "Super U Tamarin · 10 min", "Winner's Cascavelle · 15 min"],
-      desc: "Villa avec piscine et jardin à Rivière Noire, à quatre minutes de la marina de La Balise d'où partent dauphins, catamaran et pêche au gros : les montagnes dans le dos, la baie devant, et le soleil qui se couche en face tous les soirs vers 18h15. Base de la première semaine, à neuf.",
+      around: ["La Balise Marina (JPH) · 6 min à pied", "Super U Tamarin · 10 min", "Winner's Cascavelle · 15 min"],
+      desc: "Villa avec piscine et jardin à Rivière Noire, à six minutes à pied de la marina de La Balise d'où partent dauphins, catamaran et pêche au gros : les montagnes dans le dos, la baie devant, et le soleil qui se couche en face tous les soirs vers 18h15. Base de la première semaine, à neuf.",
       fields: ["Code d'entrée / clés", "Téléphone de l'hôte", "Wifi"],
       note: ["Check-out", "Lundi 16 novembre : on part à 6h30, bien avant la limite de 10h — bagages bouclés la veille au soir."]
     },
@@ -680,7 +680,7 @@ window.GUIDE = {
     carOut: ["Photos et vidéo du tour complet de chaque voiture : rayures, bosses, jantes, pare-brise, intérieur", "Niveau d'essence noté sur le contrat (plein ? à rendre pareil)", "Kilométrage noté", "Pression des pneus, roue de secours, cric, triangle", "Clim, phares, essuie-glaces, klaxon : on teste", "Caution : montant et mode (empreinte CB) — un seul payeur par voiture, noté dans Tricount", "Assurance : franchise, ce qui est exclu (pneus, vitres, bas de caisse)", "Contrat + permis international dans la boîte à gants"],
     carBack: ["Plein refait au même niveau qu'au départ (station la plus proche : Plaine Magnien)", "Nouvelles photos du tour, intérieur vidé", "État des lieux signé en présence de l'agent, copie du PV", "Libération de la caution : délai demandé par écrit"],
     routes: {
-      a: ["Depuis la villa (Rivière Noire)", [["La Balise Marina (JPH)", "4 min · 1,4 km"], ["Le Morne", "21 min · 17 km"], ["Flic-en-Flac (plage)", "24 min · 18 km"], ["Plaine Champagne", "27 min · 16 km"], ["Chamarel (7 couleurs)", "29 min · 16 km"], ["Port-Louis (marché)", "43 min · 33 km"], ["Chamouny (Vanill'Art)", "45 min · 36 km"], ["Gris-Gris", "50 min · 41 km"], ["Aéroport SSR", "53 min · 55 km"], ["Triolet (hélico)", "54 min · 46 km"], ["Grand Baie", "59 min · 57 km"], ["Mahébourg · Pointe Jérôme", "1 h · 60 km"], ["Pereybère", "1 h 07 · 61 km"]]],
+      a: ["Depuis la villa (Rivière Noire)", [["La Balise Marina (JPH)", "6 min à pied · 400 m"], ["Le Morne", "21 min · 17 km"], ["Flic-en-Flac (plage)", "24 min · 18 km"], ["Plaine Champagne", "27 min · 16 km"], ["Chamarel (7 couleurs)", "29 min · 16 km"], ["Port-Louis (marché)", "43 min · 33 km"], ["Chamouny (Vanill'Art)", "45 min · 36 km"], ["Gris-Gris", "50 min · 41 km"], ["Aéroport SSR", "53 min · 55 km"], ["Triolet (hélico)", "54 min · 46 km"], ["Grand Baie", "59 min · 57 km"], ["Mahébourg · Pointe Jérôme", "1 h · 60 km"], ["Pereybère", "1 h 07 · 61 km"]]],
       b: ["Depuis Trou aux Biches", [["Triolet (hélico)", "6 min · 5 km"], ["Grand Baie · La Croisette", "8 min · 6 km"], ["Turtle Bay (Balaclava)", "15 min · 9 km"], ["Calodyne", "18 min · 15 km"], ["Port-Louis (marché)", "21 min · 17 km"], ["La Laura (Pieter Both)", "29 min · 22 km"], ["Moka (Eureka)", "30 min · 30 km"], ["Henrietta (7 cascades)", "46 min · 43 km"], ["Tamarin", "52 min · 46 km"], ["Aéroport SSR", "56 min · 61 km"], ["Rivière Noire (villa)", "58 min · 49 km"], ["Mahébourg", "1 h 01 · 65 km"], ["Vallée de Ferney", "1 h 02 · 68 km"]]],
       note: "Temps relevés sur Google Maps en conditions fluides (vrais pour les départs de 5h à 7h). Ajouter 10 à 20 min pour tout trajet qui passe par Port-Louis ou Phoenix entre 7h et 9h30 et entre 16h et 18h30."
     }

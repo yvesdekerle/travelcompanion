@@ -374,10 +374,16 @@
    ]
   },
   "Le Morne Public Beach": {
-   "miss": true
+   "fix": [
+    -20.4505,
+    57.3245
+   ]
   },
   "La Prairie Public Beach": {
-   "miss": true
+   "fix": [
+    -20.4815,
+    57.3535
+   ]
   },
   "Belle Mare Beach": {
    "ll": [
@@ -387,7 +393,10 @@
    "name": "Belle Mare Public Beach, Belle Mare Palmar Trou d'Eau Douce Road"
   },
   "La Cambuse Public Beach": {
-   "miss": true
+   "fix": [
+    -20.4515,
+    57.6875
+   ]
   },
   "Pointe d'Esny Beach": {
    "ll": [
@@ -397,7 +406,10 @@
    "name": "Pointe d’Esny Beach, Pointe d’Esny"
   },
   "Riambel Plage Publique": {
-   "miss": true
+   "fix": [
+    -20.5165,
+    57.5265
+   ]
   },
   "Blue Bay Public Beach": {
    "ll": [
@@ -421,11 +433,10 @@
    "name": "Mont Choisy Public Beach, Domaine Palmy"
   },
   "Palmar Public Beach": {
-   "ll": [
-    -20.19112,
-    57.77521
-   ],
-   "name": "Belle Mare Public Beach, Belle Mare Palmar Trou d'Eau Douce Road"
+   "fix": [
+    -20.2225,
+    57.7785
+   ]
   },
   "St Felix Public Beach": {
    "ll": [
@@ -456,18 +467,69 @@
    "name": "Baie du Jacotet, Beau Champ"
   },
   "Poudre d'Or Public Beach": {
-   "miss": true
+   "fix": [
+    -20.064,
+    57.6865
+   ]
   },
   "Bel Ombre Public Beach": {
-   "miss": true
+   "fix": [
+    -20.504,
+    57.4275
+   ]
   },
   "Pomponette Public Beach": {
-   "miss": true
+   "fix": [
+    -20.5135,
+    57.5095
+   ]
+  },
+  "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius": {
+   "fix": [
+    -20.364095,
+    57.375731
+   ]
+  },
+  "Lion Mountain trailhead, Vieux Grand Port, Mauritius": {
+   "fix": [
+    -20.3745,
+    57.7215
+   ]
+  },
+  "Tourelle du Tamarin trailhead, Tamarin, Mauritius": {
+   "fix": [
+    -20.3305,
+    57.391
+   ]
+  },
+  "Trois Mamelles trailhead, Cascavelle, Mauritius": {
+   "fix": [
+    -20.312,
+    57.433
+   ]
+  },
+  "Macchabée trail, Le Pétrin, Mauritius": {
+   "fix": [
+    -20.405,
+    57.467
+   ]
+  },
+  "Parakeet Trail, Le Pétrin, Mauritius": {
+   "fix": [
+    -20.405,
+    57.467
+   ]
+  },
+  "Nicolière Reservoir, Mauritius": {
+   "fix": [
+    -20.162,
+    57.609
+   ]
   }
  },
  "routes": {
   "1": {
-   "key": "SSR International Airport, Plaine Magnien, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius|Flic en Flac Public Beach, Mauritius|La Preneuse Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "SSR International Airport, Plaine Magnien, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Flic en Flac Public Beach, Mauritius|La Preneuse Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
      -20.4259,
@@ -854,24 +916,20 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3664,
-     57.3718
+     -20.3646,
+     57.3738
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.364,
+     57.3736
     ],
     [
      -20.3629,
@@ -1138,39 +1196,35 @@
      57.3686
     ],
     [
-     -20.3616,
-     57.3729
+     -20.3613,
+     57.3722
     ],
     [
-     -20.3623,
-     57.3719
+     -20.3629,
+     57.376
     ],
     [
-     -20.3651,
-     57.3728
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 93,
-   "min": 99
+   "km": 92,
+   "min": 95
   },
   "2": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Black River Peak trailhead Plaine Champagne, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius|Ganga Talao Grand Bassin, Mauritius|Bois Cheri Tea Factory, Mauritius|Tamarin Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Black River Peak trailhead Plaine Champagne, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Ganga Talao Grand Bassin, Mauritius|Bois Cheri Tea Factory, Mauritius|Tamarin Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -1209,8 +1263,8 @@
      57.3819
     ],
     [
-     -20.3895,
-     57.3819
+     -20.3905,
+     57.3818
     ],
     [
      -20.3917,
@@ -1793,24 +1847,20 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3664,
-     57.3718
+     -20.3646,
+     57.3738
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.364,
+     57.3736
     ],
     [
      -20.3629,
@@ -2397,12 +2447,20 @@
      57.4929
     ],
     [
-     -20.36,
+     -20.3601,
+     57.4998
+    ],
+    [
+     -20.3592,
      57.5
     ],
     [
-     -20.3557,
-     57.4987
+     -20.3583,
+     57.4993
+    ],
+    [
+     -20.3556,
+     57.4986
     ],
     [
      -20.346,
@@ -2461,12 +2519,16 @@
      57.4388
     ],
     [
-     -20.286,
-     57.4257
+     -20.2884,
+     57.4304
     ],
     [
-     -20.2848,
-     57.4218
+     -20.2866,
+     57.4272
+    ],
+    [
+     -20.2849,
+     57.4226
     ],
     [
      -20.2822,
@@ -2569,43 +2631,39 @@
      57.3666
     ],
     [
-     -20.3583,
-     57.3683
+     -20.3579,
+     57.3679
     ],
     [
-     -20.3616,
-     57.3729
+     -20.3612,
+     57.3721
     ],
     [
-     -20.3623,
-     57.3719
+     -20.3629,
+     57.376
     ],
     [
-     -20.3651,
-     57.3728
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 120,
-   "min": 158
+   "km": 119,
+   "min": 153
   },
   "3": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Le Chamarel Restaurant, Mauritius|Chamarel Seven Coloured Earth Geopark, Mauritius|Rhumerie de Chamarel, Mauritius|La Prairie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Le Chamarel Restaurant, Mauritius|Chamarel Seven Coloured Earth Geopark, Mauritius|Rhumerie de Chamarel, Mauritius|La Prairie Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -2656,8 +2714,8 @@
      57.3819
     ],
     [
-     -20.3895,
-     57.3819
+     -20.3905,
+     57.3818
     ],
     [
      -20.3917,
@@ -2784,7 +2842,7 @@
      57.3896
     ],
     [
-     -20.4311,
+     -20.431,
      57.3901
     ],
     [
@@ -2796,7 +2854,7 @@
      57.3907
     ],
     [
-     -20.4341,
+     -20.4343,
      57.3917
     ],
     [
@@ -2828,16 +2886,16 @@
      57.3836
     ],
     [
-     -20.4425,
-     57.3836
+     -20.4429,
+     57.3835
     ],
     [
-     -20.4439,
-     57.3826
+     -20.444,
+     57.3823
     ],
     [
      -20.4441,
-     57.3815
+     57.3814
     ],
     [
      -20.4434,
@@ -2860,12 +2918,16 @@
      57.3757
     ],
     [
-     -20.4411,
-     57.3744
+     -20.4409,
+     57.3748
+    ],
+    [
+     -20.4414,
+     57.3742
     ],
     [
      -20.4419,
-     57.3743
+     57.3744
     ],
     [
      -20.4414,
@@ -3128,12 +3190,8 @@
      57.4053
     ],
     [
-     -20.4565,
+     -20.4568,
      57.4057
-    ],
-    [
-     -20.4574,
-     57.4054
     ],
     [
      -20.4581,
@@ -3257,7 +3315,7 @@
     ],
     [
      -20.4919,
-     57.3753
+     57.3752
     ],
     [
      -20.4898,
@@ -3436,35 +3494,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 57,
-   "min": 82
+   "km": 56,
+   "min": 80
   },
   "4": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -3487,35 +3537,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 2,
-   "min": 5
+   "km": 1,
+   "min": 2
   },
   "5": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Vanill Art Chamouny, Mauritius|Cascade 500 Pieds Chamouny, Mauritius|Pointe Jerome Embarkation Point, Mahebourg, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Vanill Art Chamouny, Mauritius|Cascade 500 Pieds Chamouny, Mauritius|Pointe Jerome Embarkation Point, Mahebourg, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -4874,35 +4916,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 149,
-   "min": 186
+   "km": 148,
+   "min": 184
   },
   "6": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Exploration Sous-Marine Flic en Flac, Mauritius|L'Aventure du Sucre Beau Plan, Mauritius|SSR Botanical Garden Pamplemousses, Mauritius|Trou aux Biches Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Exploration Sous-Marine Flic en Flac, Mauritius|L'Aventure du Sucre Beau Plan, Mauritius|SSR Botanical Garden Pamplemousses, Mauritius|Trou aux Biches Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -5573,8 +5607,8 @@
      57.429
     ],
     [
-     -20.2278,
-     57.4256
+     -20.2275,
+     57.4257
     ],
     [
      -20.2363,
@@ -5665,7 +5699,7 @@
      57.4074
     ],
     [
-     -20.3601,
+     -20.36,
      57.4075
     ],
     [
@@ -5693,35 +5727,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 121,
-   "min": 141
+   "km": 120,
+   "min": 139
   },
   "7": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Central Market Port Louis, Mauritius|Aapravasi Ghat, Mauritius|Fort Adelaide Port Louis, Mauritius|Caudan Waterfront, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Central Market Port Louis, Mauritius|Aapravasi Ghat, Mauritius|Fort Adelaide Port Louis, Mauritius|Caudan Waterfront, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -6252,35 +6278,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 74,
-   "min": 94
+   "km": 73,
+   "min": 91
   },
   "8": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Pereybere Public Beach, Mauritius|Notre Dame Auxiliatrice Cap Malheureux, Mauritius|Grand Baie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Pereybere Public Beach, Mauritius|Notre Dame Auxiliatrice Cap Malheureux, Mauritius|Grand Baie Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -7083,35 +7101,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 130,
-   "min": 131
+   "km": 129,
+   "min": 129
   },
   "9": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Le Morne Brabant trail entrance, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius|Le Morne Public Beach, Mauritius|La Prairie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Le Morne Brabant trail entrance, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Le Morne Public Beach, Mauritius|La Prairie Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -7314,24 +7324,20 @@
      57.3761
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3664,
-     57.3718
+     -20.3646,
+     57.3738
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.364,
+     57.3736
     ],
     [
      -20.3629,
@@ -7686,35 +7692,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 76,
-   "min": 99
+   "km": 74,
+   "min": 94
   },
   "10": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Gris Gris Beach Souillac, Mauritius|Pont Naturel, Mauritius|Mahébourg Waterfront, Mauritius|Blue Bay Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Gris Gris Beach Souillac, Mauritius|Pont Naturel, Mauritius|Mahébourg Waterfront, Mauritius|Blue Bay Public Beach, Mauritius|River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -8853,35 +8851,27 @@
      57.376
     ],
     [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ]
    ],
-   "km": 143,
-   "min": 174
+   "km": 142,
+   "min": 171
   },
   "11": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Corail Helicopteres Triolet, Mauritius|Mahebourg Market, Mauritius|Pointe d'Esny Public Beach, Mauritius|Serge's Beachfront by Serenity, Trou aux Biches, Mauritius",
+   "key": "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius|Corail Helicopteres Triolet, Mauritius|Mahebourg Market, Mauritius|Pointe d'Esny Public Beach, Mauritius|Serge's Beachfront by Serenity, Trou aux Biches, Mauritius",
    "pts": [
     [
-     -20.3664,
-     57.3719
+     -20.3641,
+     57.3756
     ],
     [
-     -20.3651,
-     57.3728
-    ],
-    [
-     -20.3642,
-     57.3726
+     -20.3632,
+     57.3753
     ],
     [
      -20.3629,
@@ -10172,8 +10162,8 @@
      57.5445
     ]
    ],
-   "km": 186,
-   "min": 175
+   "km": 185,
+   "min": 174
   },
   "12": {
    "key": "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius|Turtle Bay Balaclava, Mauritius|Mont Choisy Public Beach, Mauritius|Pereybere Public Beach, Mauritius|Grand Baie Public Beach, Mauritius|La Karaye de Val Calodyne, Mauritius|Serge's Beachfront by Serenity, Trou aux Biches, Mauritius",

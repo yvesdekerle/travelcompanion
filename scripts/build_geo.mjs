@@ -42,6 +42,8 @@ const FIX = {
   "La Karaye de Val Calodyne, Mauritius": [-19.9972, 57.6446],
   "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius": [-20.0376, 57.5447],
   "La Jetée Road, Grande Rivière Noire, Mauritius": [-20.3663, 57.3718],
+  // La villa elle-même (pin Google « River Haven - Five-Bedroom House »), à 400 m à pied de l'embarcadère JPH
+  "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius": [-20.364095, 57.375731],
   "SSR International Airport, Plaine Magnien, Mauritius": [-20.4302, 57.6836],
   "Pont Naturel, Mauritius": [-20.5010, 57.6072],
   "Gris Gris Beach Souillac, Mauritius": [-20.5253, 57.5277],
