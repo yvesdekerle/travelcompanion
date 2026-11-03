@@ -41,7 +41,7 @@
     home: sv('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
     boot: sv('<path d="m3 20 7-14 4 6 2-3 5 11z"/>'),
     phone: sv('<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>'),
-    wa: sv('<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z" fill="currentColor" stroke="none"/>'),
+    wa: sv('<path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>'),
     ext: sv('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
     share: sv('<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>'),
     list: sv('<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>'),
@@ -167,14 +167,18 @@
   const digits = (s) => String(s).replace(/\D/g, "");
   const isMobile = (num) => num.length === 11 && num[3] === "5";
   const waUrl = (num) => "https://wa.me/" + String(num).replace(/^\+/, "");
-  const waIcon = (num, label = "") => `<a class="wa-ic" ${ext(waUrl(num))} aria-label="WhatsApp ${esc(label)}" title="WhatsApp">${I.wa}</a>`;
+  // Un mobile s'affiche en bloc vert WhatsApp, logo en tête (ouvre la conversation), suivi d'un petit bouton d'appel
+  const waNum = (num, label) => `<a class="wa-num" ${ext(waUrl(num))} aria-label="WhatsApp ${esc(label)}" title="WhatsApp"><i>${I.wa}</i>${esc(label)}</a>`;
+  const callIcon = (num, label) => `<a class="tl-call" href="tel:+${num}" aria-label="Appeler ${esc(label)}" title="Appeler">${I.phone}</a>`;
   // Sur du HTML (échappé ou de confiance) : on ne touche pas à l'intérieur des balises
   const linkifyHtml = (html) => String(html).split(/(<[^>]*>)/).map((part, k) => (k % 2 ? part : part
     .replace(MAIL, (m) => `<a class="tl" href="mailto:${m}">${m}</a>`)
-    .replace(PHONE, (m) => { const num = digits(m); return `<a class="tl" href="tel:+${num}">${m}</a>${isMobile(num) ? waIcon(num, m) : ""}`; }))).join("");
+    .replace(PHONE, (m) => { const num = digits(m); return isMobile(num) ? `<span class="mob">${waNum(num, m)}${callIcon(num, m)}</span>` : `<a class="tl" href="tel:+${num}">${m}</a>`; }))).join("");
   const linkify = (s) => linkifyHtml(esc(s));
   const telBtn = (num, label = "Appeler") => `<a class="btn sm" href="tel:${num}">${I.phone}${esc(label)}</a>`;
-  const waBtn = (num) => `<a class="btn sm" ${ext(waUrl(num))}>${I.wa}WhatsApp</a>`;
+  const waBtn = (num) => `<a class="btn sm wa" ${ext(waUrl(num))}>${I.wa}WhatsApp</a>`;
+  // Site qui héberge la trace d'une rando, d'après l'adresse
+  const traceSite = (url) => /alltrails/i.test(url) ? "AllTrails" : /wikiloc/i.test(url) ? "Wikiloc" : /visorando/i.test(url) ? "Visorando" : /komoot/i.test(url) ? "Komoot" : "en ligne";
   // Boutons d'une fiche : appel, WhatsApp (mobile), page interne (ex. le menu)
   const contactBtns = (b) => { const tel = b.tel || (b.wa ? "+" + b.wa : ""); return (tel ? telBtn(tel) : "") + (b.wa || (tel && isMobile(digits(tel))) ? waBtn(b.wa || tel) : "") + (b.page ? `<a class="btn sm" href="${b.page[0]}">${I.food}${esc(b.page[1])}</a>` : ""); };
   const placeRow = ([label, q], origin) => `
@@ -310,7 +314,7 @@
     if (!it || it.name !== title) return null;
     const text = esc(it.see) + (it.warn ? ` <b>${esc(it.warn)}</b>` : "");
     const s = kind === "hike"
-      ? { when: when || "", where: `Randonnée · ${it.zone}`, title: it.name, text, places: [[it.name, it.q || it.name + ", Mauritius"]], links: it.url ? [[`${it.src || "Fiche"} · trace`, it.url, "trail"]] : [], tags: [["info", [it.diff, it.prog].filter(Boolean).join(" · ")], ...(it.note && it.note !== "—" ? [["info", `Note ${it.note}/20`]] : [])] }
+      ? { when: when || "", where: `Randonnée · ${it.zone}`, title: it.name, text, places: [[it.name, it.q || it.name + ", Mauritius"]], links: it.url ? [[`${traceSite(it.url)} · ${it.name}`, it.url, "trail"]] : [], tags: [["info", [it.diff, it.prog].filter(Boolean).join(" · ")], ...(it.note && it.note !== "—" ? [["info", `Note ${it.note}/20`]] : [])] }
       : { when: when || "", where: `Plage · ${it.zone}`, title: it.name, text, places: [[it.name, it.q]], tags: [["info", `Note ${it.note}/20 · Google ${it.g}`]] };
     return { n, i: -1, id, s, custom: kind, when: when || "" };
   }
@@ -979,7 +983,7 @@
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
-    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
+    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Trace ${traceSite(h.url)}</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
   const beachCard = (b, by) => `<div class="card lc">
     ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
@@ -1008,7 +1012,9 @@
   }
 
   /* ───────── Annexes ───────── */
-  const tels = (list, sos = 0) => list.map((e, i) => `<div class="tel ${i < sos ? "sos" : ""}"><span class="t">${esc(e[0])}${e[3] ? `<small>${linkify(e[3])}</small>` : ""}</span><a class="n" href="tel:${e[2]}" aria-label="Appeler ${esc(e[0])}">${I.phone}${esc(e[1])}</a>${isMobile(digits(e[2])) ? `<a class="wa" ${ext(waUrl(e[2]))} aria-label="WhatsApp ${esc(e[0])}" title="WhatsApp">${I.wa}</a>` : ""}</div>`).join("");
+  const tels = (list, sos = 0) => list.map((e, i) => `<div class="tel ${i < sos ? "sos" : ""}"><span class="t">${esc(e[0])}${e[3] ? `<small>${linkify(e[3])}</small>` : ""}</span>${isMobile(digits(e[2]))
+    ? `<a class="n wa-num" ${ext(waUrl(e[2]))} aria-label="WhatsApp ${esc(e[0])}" title="WhatsApp"><i>${I.wa}</i>${esc(e[1])}</a><a class="call" href="tel:${e[2]}" aria-label="Appeler ${esc(e[0])}" title="Appeler">${I.phone}</a>`
+    : `<a class="n" href="tel:${e[2]}" aria-label="Appeler ${esc(e[0])}">${I.phone}${esc(e[1])}</a>`}</div>`).join("");
   function pageAnnex() {
     const total = G.cash.reduce((a, r) => a + r[3], 0);
     return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, lexique créole, plats à goûter et cash à prévoir.")}
@@ -1124,7 +1130,7 @@
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
       <div class="menu-page">
         <div class="card order"><div><h3>Commander</h3><p class="text">${linkify(m.order)}</p></div>
-          <div class="card-actions"><a class="btn primary" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a></div></div>
+          <div class="card-actions"><a class="btn wa" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a></div></div>
         ${m.sections.map((sec, k) => `<section class="section" id="menu-${k + 1}"><h2>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map(dish).join("")}</div></section>`).join("")}
         <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
       </div></div>`;

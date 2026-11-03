@@ -36,6 +36,9 @@
   --ok: #4FCE9F;
   --ok-ink: #1B8A5E;
   --ok-soft: #E1F6EC;
+  --wa: #25D366;
+  --wa-ink: #107C41;
+  --wa-soft: #E4F8EC;
   --r-lg: 22px;
   --r: 14px;
   --r-sm: 10px;
@@ -651,12 +654,23 @@ input[type="checkbox"].chk:checked::after { content: ""; width: 6px; height: 11p
 /* ───────── Téléphones et WhatsApp cliquables dans le texte ───────── */
 a.tl { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 1.5px; text-underline-offset: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 a.tl:hover { color: var(--brand-ink); }
-.wa-ic { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-left: 4px; border-radius: 50%; background: var(--ok-soft); color: var(--ok-ink); vertical-align: -5px; }
-.wa-ic svg { width: 13px; height: 13px; }
-.wa-ic:hover { background: var(--ok); color: var(--navy); }
-.pill .wa-ic, .tel .t small .wa-ic { width: 17px; height: 17px; margin-left: 3px; vertical-align: -4px; }
-.pill .wa-ic svg, .tel .t small .wa-ic svg { width: 11px; height: 11px; }
+/* Mobile mauricien (+230 5…) : bloc vert WhatsApp, logo en tête, qui ouvre la conversation ; petit bouton d'appel à côté */
+.wa-num { display: inline-flex; align-items: center; gap: 5px; margin: -2px 0; padding: 2px 9px 2px 3px; border-radius: 99px; background: var(--wa-soft); color: var(--wa-ink); font-weight: 700; text-decoration: none; white-space: nowrap; font-variant-numeric: tabular-nums; vertical-align: -1px; line-height: 1.3; }
+.wa-num i { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--wa); color: #fff; flex: none; }
+.wa-num i svg { width: 13px; height: 13px; }
+.wa-num:hover { background: #D2F2DE; }
+.mob { white-space: nowrap; }
+.tl-call { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-left: 3px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); vertical-align: -7px; }
+.tl-call svg { width: 13px; height: 13px; }
+.tl-call:hover { background: #D5EBF3; }
+.pill .wa-num { padding: 1px 7px 1px 2px; font-size: 12px; }
+.pill .wa-num i { width: 17px; height: 17px; }
+.pill .wa-num i svg { width: 11px; height: 11px; }
+.pill .tl-call { width: 20px; height: 20px; vertical-align: -5px; }
+.pill .tl-call svg { width: 11px; height: 11px; }
 .pill a.tl { text-decoration-color: currentColor; }
+.btn.wa { background: var(--wa); border-color: var(--wa); color: #fff; }
+.btn.wa:hover { background: #1FC05C; }
 .rdv > span { min-width: 0; }
 /* Fiches contact : numéro appelable, WhatsApp pour les mobiles */
 .tel { padding: 10px 10px 10px 14px; flex-wrap: wrap; justify-content: flex-end; }
@@ -664,9 +678,13 @@ a.tl:hover { color: var(--brand-ink); }
 .tel a.n { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 9px; background: var(--brand-soft); color: var(--brand-ink); text-decoration: none; }
 .tel a.n svg { width: 14px; height: 14px; }
 .tel a.n:hover { background: #D5EBF3; }
-.tel .wa { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; background: var(--ok-soft); color: var(--ok-ink); flex: none; }
-.tel .wa svg { width: 18px; height: 18px; }
-.tel .wa:hover { background: var(--ok); color: var(--navy); }
+.tel a.n.wa-num { gap: 8px; margin: 0; padding: 0 12px 0 5px; border-radius: 9px; background: var(--wa-soft); color: var(--wa-ink); font-size: 14px; }
+.tel a.n.wa-num i { width: 26px; height: 26px; border-radius: 7px; }
+.tel a.n.wa-num i svg { width: 17px; height: 17px; }
+.tel a.n.wa-num:hover { background: #D2F2DE; }
+.tel .call { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; background: var(--brand-soft); color: var(--brand-ink); flex: none; }
+.tel .call svg { width: 16px; height: 16px; }
+.tel .call:hover { background: #D5EBF3; }
 .tel.sos a.n { background: var(--coral); color: #fff; padding: 0 14px; border-radius: 99px; font-size: 17px; }
 .tel.sos a.n svg { display: none; }
 .tel.sos a.n:hover { background: var(--coral-ink); }

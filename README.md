@@ -40,8 +40,11 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
-Tous les numéros de téléphone du carnet sont appelables d'un toucher ; les mobiles mauriciens (+230 5…) ont en plus
-un bouton WhatsApp, les adresses e-mail ouvrent la messagerie.
+Tous les numéros de téléphone du carnet sont cliquables : un mobile mauricien (+230 5…) s'affiche en bloc vert
+WhatsApp, logo en tête, qui ouvre la conversation, avec un petit bouton d'appel à côté ; un fixe se compose d'un
+toucher ; les adresses e-mail ouvrent la messagerie.
+Chaque randonnée a sa trace en ligne : AllTrails quand la fiche existe, sinon Wikiloc (Gris-Gris, Pieter Both) ou
+Visorando (Tourelle du Tamarin) ; le bouton « Trace … » de la page Randos nomme le site.
 
 Sur mobile : glisser à gauche ou à droite pour changer de jour. Sur clavier : flèches ← →.
 
