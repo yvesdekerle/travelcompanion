@@ -41,6 +41,8 @@
     home: sv('<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
     boot: sv('<path d="m3 20 7-14 4 6 2-3 5 11z"/>'),
     phone: sv('<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>'),
+    mail: sv('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7.5l9 6 9-6"/>'),
+    walk: sv('<circle cx="13" cy="4" r="1.2"/><path d="M7 21l3-4"/><path d="M16 21l-2-4-3-3 1-6"/><path d="M6 12l2-3 4-1 3 3 3 1"/>'),
     wa: sv('<path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>'),
     ext: sv('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
     share: sv('<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>'),
@@ -177,14 +179,21 @@
   const linkify = (s) => linkifyHtml(esc(s));
   const telBtn = (num, label = "Appeler") => `<a class="btn sm" href="tel:${num}">${I.phone}${esc(label)}</a>`;
   const waBtn = (num) => `<a class="btn sm wa" ${ext(waUrl(num))}>${I.wa}WhatsApp</a>`;
+  // Contacts d'une fiche : une ligne par moyen — mobile → WhatsApp (+ appel), fixe → appel, e-mail → messagerie.
+  // Chaque entrée est "valeur" ou [libellé, valeur]
+  const contactRows = (list) => `<div class="contact">${list.map((e) => {
+    const [label, v] = Array.isArray(e) ? e : ["", e], num = digits(v), sub = label ? `<small>${esc(label)}</small>` : "";
+    if (v.includes("@")) return `<a class="c em" href="mailto:${v}"><i>${I.mail}</i><span>${esc(v)}${sub}</span></a>`;
+    if (isMobile(num)) return `<div class="c wa"><a class="lnk" ${ext(waUrl(num))} aria-label="WhatsApp ${esc(v)}"><i>${I.wa}</i><span>${esc(v)}${sub}</span></a><a class="call" href="tel:+${num}" aria-label="Appeler ${esc(v)}" title="Appeler">${I.phone}</a></div>`;
+    return `<a class="c ph" href="tel:+${num}"><i>${I.phone}</i><span>${esc(v)}${sub}</span></a>`;
+  }).join("")}</div>`;
   // Site qui héberge la trace d'une rando, d'après l'adresse
   const traceSite = (url) => /alltrails/i.test(url) ? "AllTrails" : /wikiloc/i.test(url) ? "Wikiloc" : /visorando/i.test(url) ? "Visorando" : /komoot/i.test(url) ? "Komoot" : "en ligne";
   // Boutons d'une fiche : appel, WhatsApp (mobile), page interne (ex. le menu)
   const contactBtns = (b) => { const tel = b.tel || (b.wa ? "+" + b.wa : ""); return (tel ? telBtn(tel) : "") + (b.wa || (tel && isMobile(digits(tel))) ? waBtn(b.wa || tel) : "") + (b.page ? `<a class="btn sm" href="${b.page[0]}">${I.food}${esc(b.page[1])}</a>` : ""); };
   const placeRow = ([label, q], origin) => `
-    <div class="place"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span>
-      <a class="see" ${ext(searchUrl(q))} aria-label="Voir ${esc(label)} sur la carte">${I.map}</a>
-      <a class="go" ${ext(dirUrl(q, origin))}>${I.nav}Y aller</a></div>`;
+    <div class="place two"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span>
+      <span class="acts"><a class="see" ${ext(searchUrl(q))} aria-label="Voir ${esc(label)} sur la carte">${I.map}Carte</a><a class="go" ${ext(dirUrl(q, origin))}>${I.nav}Y aller</a></span></div>`;
   const linkRow = ([label, url, kind]) => kind === "map"
     ? `<div class="place"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span><a class="go" ${ext(url)}>${I.nav}Y aller</a></div>`
     : kind === "page"
@@ -196,7 +205,7 @@
 
   /* ───────── Navigation ───────── */
   const NAV_ITEMS = {
-    route: { href: "/", t: "Itinéraire", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
+    route: { href: "/", t: "Voyage", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
     maps: { t: "Cartes", i: "map", sheet: "maps" },
     conv: { href: "/convertisseur", t: "Convertir", tl: "Convertisseur", i: "conv" },
     booked: { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
@@ -466,7 +475,7 @@
     $("#sheetBody").innerHTML = `<h4>Ajouter au programme</h4>
       <div class="add-head"><b>${esc(it.name)}</b><label>${I.clock}<input type="time" id="addTime" value="${kind === "hike" ? "07:00" : "14:00"}" aria-label="Heure"></label></div>
       <h4>Quel jour ?</h4>${G.days.map((d) => `<button type="button" class="dl" data-add-day="${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${esc(d.sub)}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</button>`).join("")}`;
-    const sh = $("#sheet"); sh.hidden = false;
+    const sh = showSheet();
     $$("[data-add-day]", sh).forEach((b) => (b.onclick = () => { const t = $("#addTime").value; addToDay(id, +b.dataset.addDay, t ? t.replace(":", "h") : ""); closeSheet(); }));
     sh.onclick = (e) => { if (e.target.closest("[data-close]")) closeSheet(); };
   }
@@ -709,7 +718,7 @@
           ? `${dp.dep && !mod ? `<span class="dep">départ ${esc(dp.dep)}</span>` : ""}<b>${esc(dp.dur)}</b>${dp.dist ? `<span>${esc(dp.dist)}</span>` : ""}`
           : `<span class="plain">${esc(s.d)}</span>`;
         const sub = dp.dur && dp.rest.length ? `<div class="drive-sub">${esc(dp.rest.join(" · "))}</div>` : "";
-        return `<div class="tl-item tl-drive ${x.est ? "est" : ""}"><div class="tl-time"><span class="car">${s.icon === "plane" ? I.plane : I.car}</span></div>
+        return `<div class="tl-item tl-drive ${x.est ? "est" : ""}"><div class="tl-time"><span class="car">${s.icon === "plane" ? I.plane : s.icon === "walk" ? I.walk : I.car}</span></div>
           <div class="drive"><div class="drive-body"><div class="drive-main">${main}</div>${sub}</div>${leg}</div></div>`;
       }
       const origin = here;
@@ -727,6 +736,7 @@
           <div class="text"><p>${linkifyHtml(s.text)}</p></div>
           ${s.rdv ? `<div class="rdv"><b>Rendez-vous</b><span>${linkify(s.rdv)}</span></div>` : ""}
           ${tags(s.tags)}
+          ${s.contact ? contactRows(s.contact) : ""}
           ${s.note ? `<div class="callout ${s.note[2] || ""}"><span class="k">${esc(s.note[0])}</span><span>${linkify(s.note[1])}</span></div>` : ""}
           ${placesHtml ? `<div class="places">${placesHtml}</div>` : ""}
         </article></div>`;
@@ -789,12 +799,23 @@
       </div>`;
   }
 
-  function closeSheet() { const sh = $("#sheet"); if (sh.hidden) return; sh.hidden = true; const b = $("#allDays"); if (b) b.focus({ preventScroll: true }); }
+  // Feuille du bas : la page derrière est figée tant qu'elle est ouverte (sinon, sur mobile, c'est elle qui défile)
+  let lockY = 0;
+  function showSheet() {
+    const sh = $("#sheet");
+    if (sh.hidden) { lockY = window.scrollY; document.body.style.top = -lockY + "px"; document.body.classList.add("sheet-open"); }
+    sh.hidden = false; return sh;
+  }
+  function closeSheet() {
+    const sh = $("#sheet"); if (sh.hidden) return; sh.hidden = true;
+    document.body.classList.remove("sheet-open"); document.body.style.top = ""; window.scrollTo(0, lockY);
+    const b = $("#allDays"); if (b) b.focus({ preventScroll: true });
+  }
   function openDaysSheet(current) {
     const td = todayDay();
     const row = (d) => `<a class="dl ${d.n === current ? "active" : ""}" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}${fixedStar(d)}<small>${esc(d.drive.replace("≈ ", ""))}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</a>`;
     $("#sheetBody").innerHTML = `<h4>À neuf, Rivière Noire</h4>${G.days.filter((d) => d.phase === "neuf").map(row).join("")}<h4>À deux, Trou aux Biches</h4>${G.days.filter((d) => d.phase === "deux").map(row).join("")}`;
-    const sh = $("#sheet"); sh.hidden = false;
+    const sh = showSheet();
     const act = $(".dl.active", sh); if (act) { act.scrollIntoView({ block: "center" }); act.focus({ preventScroll: true }); }
     sh.onclick = (e) => { if (e.target.closest("[data-close]") || e.target.closest("a")) closeSheet(); };
   }
@@ -803,7 +824,7 @@
   function openMapsSheet() {
     $("#sheetBody").innerHTML = `<h4>Nos cartes Google My Maps</h4>${G.trip.maps.map((m) =>
       `<a class="dl" ${ext(m.url)}><span class="n">${I.map}</span><span class="t">${esc(m.title)}<small>${esc(m.sub)}</small></span><span class="out">${I.ext}</span></a>`).join("")}`;
-    const sh = $("#sheet"); sh.hidden = false;
+    const sh = showSheet();
     $(".dl", sh).focus({ preventScroll: true });
     sh.onclick = (e) => { if (e.target.closest("[data-close]") || e.target.closest("a")) closeSheet(); };
   }
@@ -817,7 +838,7 @@
         <article class="card">
           <div class="top"><span class="eyebrow">${esc(b.when)}</span>${pill(b.status)}</div>
           <h3>${esc(b.title)}</h3><p class="text it">${linkify(b.desc)}</p>
-          <dl class="kv">${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${linkify(v)}</dd>`).join("")}</dl>
+          <dl class="kv">${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${Array.isArray(v) ? contactRows(v) : linkify(v)}</dd>`).join("")}</dl>
           ${b.note ? `<div class="callout warn"><span class="k">Attention</span><span>${linkify(b.note)}</span></div>` : ""}
           <div class="card-actions">${contactBtns(b)}<a class="btn sm" href="/jour/${b.day}">${I.route}Jour ${b.day}</a></div>
         </article>`).join("")}</div>
@@ -1311,7 +1332,7 @@
     const m = /^\/jour\/(\d+)$/.exec(path);
     if (m && G.days.some((d) => d.n === +m[1])) { day = +m[1]; html = pageDay(day, false); title = `Jour ${day} · ${G.days[day - 1].title}`; }
     else if (PAGES[path]) { html = PAGES[path][0](); title = PAGES[path][1]; }
-    else { path = "/"; day = defaultDay().n; html = pageDay(day, true); title = "Itinéraire"; if (location.pathname !== "/") history.replaceState(null, "", "/"); }
+    else { path = "/"; day = defaultDay().n; html = pageDay(day, true); title = "Voyage"; if (location.pathname !== "/") history.replaceState(null, "", "/"); }
     const keepY = path === lastPath ? window.scrollY : 0;
     main.dataset.day = day;
     main.innerHTML = html;

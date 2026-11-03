@@ -323,20 +323,26 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 
 /* Lieux */
 .places { display: grid; margin-top: 14px; border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; }
-.place { display: flex; align-items: center; gap: 10px; padding: 7px 7px 7px 12px; background: var(--surface); border-top: 1px solid var(--line); }
+/* Une ligne par lieu : épingle, nom, action(s) à droite ; sur mobile, les deux boutons Carte / Y aller passent sous le nom, alignés sur lui */
+.place { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 10px; padding: 9px 9px 9px 12px; background: var(--surface); border-top: 1px solid var(--line); }
 .place:first-child { border-top: 0; }
-.place .pin { color: var(--coral); display: grid; place-items: center; flex: none; }
+.place .pin { color: var(--coral); display: grid; place-items: center; }
 .place .pin svg { width: 16px; height: 16px; }
 .place.trail .pin { color: var(--ok-ink); }
-/* Un nom de lieu trop long pour tenir à côté des boutons passe au-dessus, les boutons sur la ligne suivante */
-.place { flex-wrap: wrap; justify-content: flex-end; }
-.place .name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
-.place .see { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: var(--ink-2); background: var(--bg); text-decoration: none; flex: none; }
+.place .name { min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
+.place .acts { display: flex; gap: 8px; }
+.place .see, .place .go { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 13px; border-radius: 9px; font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.place .see { color: var(--ink-2); background: var(--bg); }
 .place .see:hover { color: var(--ink); background: var(--surface-2); }
-.place .see svg { width: 16px; height: 16px; }
-.place .go { display: inline-flex; align-items: center; gap: 6px; flex: none; background: var(--brand-soft); color: var(--brand-ink); text-decoration: none; font-size: 13px; font-weight: 700; padding: 0 13px; height: 36px; border-radius: 9px; }
+.place .go { background: var(--brand-soft); color: var(--brand-ink); }
 .place .go:hover { background: #D5EBF3; }
-.place .go svg { width: 13px; height: 13px; }
+.place .see svg, .place .go svg { width: 14px; height: 14px; }
+.place.trail .see { width: 36px; padding: 0; }
+@media (max-width: 719px) {
+  .place.two { grid-template-columns: auto minmax(0, 1fr); }
+  .place.two .acts { grid-column: 2; }
+  .place.two .acts > a { flex: 1; }
+}
 
 /* Pastilles */
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
@@ -408,7 +414,9 @@ textarea.big { min-height: 55vh; background: var(--surface); font: 400 17.5px/1.
 /* Feuille « tous les jours » */
 .sheet { position: fixed; inset: 0; z-index: 60; }
 .sheet-bg { position: absolute; inset: 0; background: rgba(26, 43, 61, .4); animation: fade .2s; }
-.sheet-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; overflow-y: auto; background: var(--surface); border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 8px 12px calc(20px + var(--safe-b)); animation: up .3s var(--ease); }
+body.sheet-open { position: fixed; left: 0; right: 0; overflow: hidden; }
+.sheet-bg { touch-action: none; }
+.sheet-panel { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; background: var(--surface); border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 8px 12px calc(20px + var(--safe-b)); animation: up .3s var(--ease); }
 @media (min-width: 720px) { .sheet-panel { left: 50%; right: auto; width: 520px; margin-left: -260px; bottom: 24px; border-radius: var(--r-lg); animation: fade .2s; max-height: 80vh; } }
 .sheet-grip { width: 38px; height: 5px; border-radius: 9px; background: var(--line-2); margin: 4px auto 8px; }
 .sheet h4 { font: 600 12.5px var(--sans); color: var(--muted); margin: 14px 8px 4px; }
@@ -669,6 +677,24 @@ a.tl:hover { color: var(--brand-ink); }
 .pill .tl-call { width: 20px; height: 20px; vertical-align: -5px; }
 .pill .tl-call svg { width: 11px; height: 11px; }
 .pill a.tl { text-decoration-color: currentColor; }
+/* Contacts d'une étape ou d'une résa : une ligne par moyen, badge coloré en tête (vert WhatsApp, bleu appel, rouge e-mail) */
+.contact { display: grid; gap: 6px; margin-top: 10px; }
+.kv .contact { margin-top: 0; }
+.contact .c { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 4px 5px; border-radius: 10px; background: var(--bg); color: var(--ink); text-decoration: none; }
+.contact .lnk { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; color: inherit; text-decoration: none; }
+.contact .c i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; color: #fff; flex: none; }
+.contact .c i svg { width: 17px; height: 17px; }
+.contact .c span { min-width: 0; font-size: 14px; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.contact .c span small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); white-space: normal; }
+.contact .wa i { background: var(--wa); }
+.contact .wa span { color: var(--wa-ink); }
+.contact .ph i { background: var(--brand-ink); }
+.contact .ph span { color: var(--brand-ink); }
+.contact .em i { background: #D93025; }
+.contact .em span { white-space: normal; overflow-wrap: anywhere; }
+.contact .call { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--brand-soft); color: var(--brand-ink); flex: none; }
+.contact .call svg { width: 15px; height: 15px; }
+.contact .call:hover { background: #D5EBF3; }
 .btn.wa { background: var(--wa); border-color: var(--wa); color: #fff; }
 .btn.wa:hover { background: #1FC05C; }
 .rdv > span { min-width: 0; }

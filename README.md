@@ -28,7 +28,7 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 
 | URL | Contenu |
 | --- | --- |
-| `/` | Itinéraire, ouvert sur le jour en cours (J1 avant le voyage, J16 après) |
+| `/` | Voyage (l'itinéraire), ouvert sur le jour en cours (J1 avant le voyage, J16 après) |
 | `/jour/3` | Un jour : photo, programme horaire, lieux avec « Y aller », carte du parcours, notes du jour |
 | `/reservations` | Activités déjà réservées, contacts, points de rendez-vous |
 | `/logements` | Les deux adresses ; codes, téléphone et wifi à noter sur place |
