@@ -58,6 +58,8 @@
     back: sv('<path d="m14.5 5-7 7 7 7"/>'),
     search: sv('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
     beach: sv('<path d="M3 12.5a9 9 0 0 1 18 0z"/><path d="M12 3.5c-2.6 0-4.6 4-4.6 9M12 3.5c2.6 0 4.6 4 4.6 9M12 12.5V21M9 21h6"/>'),
+    lock: sv('<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+    sort: sv('<path d="M4 7h16M7 12h10M10 17h4"/>'),
     brain: sv('<path d="M12 5.2a3 3 0 0 0-5.7 1.1 3.3 3.3 0 0 0-2.1 5.1 3.3 3.3 0 0 0 .9 5.5A3.2 3.2 0 0 0 12 19.2"/><path d="M12 5.2a3 3 0 0 1 5.7 1.1 3.3 3.3 0 0 1 2.1 5.1 3.3 3.3 0 0 1-.9 5.5A3.2 3.2 0 0 1 12 19.2"/><path d="M12 5.2v14M9.2 9.6c.9.5 1.5 1.3 1.7 2.4M14.8 9.6c-.9.5-1.5 1.3-1.7 2.4M6.4 12.6c.9-.2 1.7 0 2.3.6M17.6 12.6c-.9-.2-1.7 0-2.3.6M8.2 16.4c.8-.1 1.5.1 2 .6M15.8 16.4c-.8-.1-1.5.1-2 .6"/>')
   };
   const ico = (name, size) => (size ? I[name].replace("<svg", `<svg width="${size}" height="${size}"`) : I[name]);
@@ -181,8 +183,6 @@
     ? ["route", "maps", "conv", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
     : ["route", "maps", "conv", "booked", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   const bar = $("#tabbar");
-  const barEdge = () => bar.classList.toggle("end", bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2);
-  bar.addEventListener("scroll", barEdge, { passive: true });
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
   function renderNav(path) {
@@ -213,7 +213,6 @@
       const to = Math.max(0, Math.min(act.offsetLeft - 12 - 2 * act.offsetWidth, bar.scrollWidth - bar.clientWidth));
       if (fresh) bar.scrollLeft = to; else if (hidden) bar.scrollTo({ left: to, behavior: reducedMotion.matches ? "instant" : "smooth" });
     }
-    barEdge();
   }
 
   /* ───────── Itinéraire : un jour ───────── */
@@ -254,6 +253,128 @@
   setInterval(tickCountdown, 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) tickCountdown(); });
 
+  /* ───────── Carte du jour (SVG dessiné hors ligne à partir de geo.js) ───────── */
+  const GEO = window.GEO;
+  const NAVY = "#1A2B3D", LAGOON = "#1E7C99";
+  // Les arrêts du jour dans l'ordre : départ, lieux de chaque étape (et spots en mer), arrivée — même logique que scripts/build_geo.mjs
+  function dayStops(d) {
+    const kindOf = (q) => (q === AIRPORT ? "plane" : q === VILLA || q === SERGE ? "home" : "stop");
+    const start = dayStart(d.n), end = dayEnd(d.n), out = [{ q: start, kind: kindOf(start), i: -1 }];
+    const last = () => out[out.length - 1];
+    d.steps.forEach((s, i) => {
+      (s.places || []).forEach(([label, q]) => { if (last().q !== q) out.push({ q, label, kind: kindOf(q), i, where: (s.where || "").split(" · ")[0] }); });
+      const port = [...out].reverse().find((o) => o.kind !== "sea").q;
+      (s.sea || []).forEach((q) => out.push({ q, label: q, kind: "sea", i, from: port }));
+    });
+    if (last().q !== end) out.push({ q: end, kind: kindOf(end), i: -1 });
+    return out;
+  }
+  // Nom court pour l'étiquette sur la carte
+  const shortName = (l) => l.replace(/^Départ du sentier( du| de la| de|,)?\s*/i, "").split(",")[0].replace(/\s+Public Beach$/i, "").replace(/\s*\(.*$/, "").trim();
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  function dayMap(d, cur, stops, mapsUrl) {
+    const route = GEO && GEO.routes[d.n];
+    if (!route) return "";
+    const pts = stops.filter((s) => GEO.places[s.q]);
+    const all = [...pts.map((s) => GEO.places[s.q]), ...route];
+    const cos = Math.cos((-20.2 * Math.PI) / 180), W = 320;
+    const las = all.map((p) => p[0]), los = all.map((p) => p[1]);
+    const la0 = Math.min(...las), la1 = Math.max(...las), lo0 = Math.min(...los), lo1 = Math.max(...los);
+    // Cadre carré autour de la journée : un tiers d'air, au moins ~15 km de côté
+    const span = Math.max(Math.max(la1 - la0, (lo1 - lo0) * cos) * 1.35 + 0.02, 0.14);
+    const cla = (la0 + la1) / 2, clo = (lo0 + lo1) / 2, k = W / span;
+    const P = ([la, lo]) => [+((lo - clo) * cos * k + W / 2).toFixed(1), +((cla - la) * k + W / 2).toFixed(1)];
+    const path = (arr, close) => "M" + arr.map((p) => P(p).join(" ")).join("L") + (close ? "Z" : "");
+
+    // Marqueurs : les arrêts très proches sont regroupés (« 2–4 »), les logements ne sont pas numérotés
+    const marks = []; let num = 0;
+    pts.forEach((s) => {
+      const [x, y] = P(GEO.places[s.q]);
+      if (s.kind === "sea") { marks.push({ x, y, kind: "sea", labels: [s.label] }); return; }
+      const near = marks.find((m) => m.kind === s.kind && Math.hypot(m.x - x, m.y - y) < 13);
+      if (s.kind !== "stop") { if (!near) marks.push({ x, y, kind: s.kind, q: s.q, labels: [cap(PLACE_NAME[s.q] || s.q)] }); return; }
+      num++;
+      if (near) { near.nums.push(num); near.labels.push(s.label); near.wheres.push(s.where); near.now = near.now || s.i === cur; }
+      else marks.push({ x, y, kind: "stop", nums: [num], labels: [s.label], wheres: [s.where], now: s.i === cur });
+    });
+    // Lignes en mer : du port vers chaque spot, puis retour
+    const seaPaths = [];
+    pts.forEach((s, j) => { if (s.kind === "sea" && (j === 0 || pts[j - 1].kind !== "sea" || pts[j - 1].i !== s.i)) {
+      const run = []; for (let m = j; m < pts.length && pts[m].kind === "sea" && pts[m].i === s.i; m++) run.push(GEO.places[pts[m].q]);
+      seaPaths.push(path([GEO.places[s.from], ...run, GEO.places[s.from]]));
+    } });
+
+    // Vignette de l'île (en haut à droite) si le cadre ne couvre pas déjà l'île : ses dimensions servent aussi à placer les étiquettes
+    const cl = GEO.coast.map((p) => p[0]), co = GEO.coast.map((p) => p[1]);
+    const ila0 = Math.min(...cl), ila1 = Math.max(...cl), ilo0 = Math.min(...co), ilo1 = Math.max(...co);
+    const iw = 54, ki = iw / ((ilo1 - ilo0) * cos), ih = (ila1 - ila0) * ki, insetOn = span < 0.45;
+    // Étiquettes : à droite du marqueur si la place est libre, sinon à gauche, dessous, dessus
+    const boxes = marks.map((m) => ({ x0: m.x - 9, y0: m.y - 9, x1: m.x + 9, y1: m.y + 9 }));
+    if (insetOn) boxes.push({ x0: W - iw - 17, y0: 3, x1: W - 7, y1: ih + 13 });
+    const hit = (b) => b.x0 < 2 || b.x1 > W - 2 || b.y0 < 2 || b.y1 > W - 2 || boxes.some((o) => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+    const labelOf = (m) => {
+      if (m.kind !== "stop") return m.labels[0];
+      if (m.nums.length > 1 && m.wheres.every((w) => w && w === m.wheres[0])) return m.wheres[0];
+      return shortName(m.labels[0]) + (m.nums.length > 1 ? ` +${m.nums.length - 1}` : "");
+    };
+    const texts = marks.map((m) => {
+      // Un logement collé à un arrêt numéroté n'a pas besoin d'étiquette (la légende le dit)
+      if (m.kind !== "stop" && m.kind !== "sea" && marks.some((o) => o.kind === "stop" && Math.hypot(o.x - m.x, o.y - m.y) < 16)) return "";
+      const t = labelOf(m), w = t.length * 4.4 + 2, h = 10, r = m.kind === "stop" ? 9 : 8;
+      const cands = [
+        { x: m.x + r + 2, y: m.y + 3, a: "start", b: { x0: m.x + r + 1, x1: m.x + r + 1 + w, y0: m.y - 5, y1: m.y + 5 } },
+        { x: m.x - r - 2, y: m.y + 3, a: "end", b: { x0: m.x - r - 1 - w, x1: m.x - r - 1, y0: m.y - 5, y1: m.y + 5 } },
+        { x: m.x, y: m.y + r + 10, a: "middle", b: { x0: m.x - w / 2, x1: m.x + w / 2, y0: m.y + r + 1, y1: m.y + r + 1 + h } },
+        { x: m.x, y: m.y - r - 4, a: "middle", b: { x0: m.x - w / 2, x1: m.x + w / 2, y0: m.y - r - 1 - h, y1: m.y - r - 1 } }
+      ];
+      const c = cands.find((o) => !hit(o.b)) || cands[0];
+      boxes.push(c.b);
+      return `<text x="${c.x.toFixed(1)}" y="${c.y.toFixed(1)}" text-anchor="${c.a}" class="lbl ${m.kind}">${esc(t)}</text>`;
+    });
+
+    const numLabel = (nums) => nums.length === 1 ? String(nums[0]) : nums.every((v, j) => !j || v === nums[j - 1] + 1) ? `${nums[0]}–${nums[nums.length - 1]}` : nums.join(",");
+    const marker = (m) => {
+      if (m.kind === "sea") return `<circle cx="${m.x}" cy="${m.y}" r="4.5" fill="#fff" stroke="${LAGOON}" stroke-width="1.8"/>`;
+      if (m.kind !== "stop") {
+        return `<g transform="translate(${m.x} ${m.y})"><circle r="9" fill="#fff" stroke="${NAVY}" stroke-width="1.6"/><g transform="translate(-5.5 -5.5)" class="glyph ${m.kind}">${ico(m.kind === "plane" ? "plane" : "home", 11)}</g></g>`;
+      }
+      const t = numLabel(m.nums), w = Math.max(17, t.length * 5.6 + 7);
+      return `<g transform="translate(${m.x} ${m.y})"><rect x="${-w / 2}" y="-8.5" width="${w}" height="17" rx="8.5" fill="${m.now ? "#E85D4F" : NAVY}" stroke="#fff" stroke-width="1.6"/><text y="3.1" text-anchor="middle" class="num">${t}</text></g>`;
+    };
+
+    // Échelle (2, 5, 10 ou 20 km) et vignette de l'île avec le cadre, si le cadre ne couvre pas déjà l'île
+    const km = [2, 5, 10, 20].find((v) => (v / 111.32) * k >= 40) || 20, len = ((km / 111.32) * k).toFixed(1);
+    const scale = `<g class="scale" transform="translate(10 ${W - 12})"><path d="M0 -4v4h${len}v-4"/><text x="${len / 2}" y="-7" text-anchor="middle">${km} km</text></g>`;
+    let inset = "";
+    if (insetOn) {
+      const Pi = ([la, lo]) => `${((lo - ilo0) * cos * ki).toFixed(1)} ${((ila1 - la) * ki).toFixed(1)}`;
+      const fx0 = Math.max(0, (clo - span / 2 / cos - ilo0) * cos * ki), fx1 = Math.min(iw, (clo + span / 2 / cos - ilo0) * cos * ki);
+      const fy0 = Math.max(0, (ila1 - cla - span / 2) * ki), fy1 = Math.min(ih, (ila1 - cla + span / 2) * ki);
+      inset = `<g class="inset" transform="translate(${W - iw - 12} 8)"><rect x="-5" y="-5" width="${iw + 10}" height="${(ih + 10).toFixed(1)}" rx="7"/>
+        <path class="isle" d="M${GEO.coast.map(Pi).join("L")}Z"/><rect class="frame" x="${fx0.toFixed(1)}" y="${fy0.toFixed(1)}" width="${(fx1 - fx0).toFixed(1)}" height="${(fy1 - fy0).toFixed(1)}" rx="1.5"/></g>`;
+    }
+
+    const legend = marks.map((m) => m.kind === "stop" ? `<li class="${m.now ? "now" : ""}"><b>${numLabel(m.nums)}</b><span>${m.labels.map(esc).join(", ")}</span></li>`
+      : m.kind === "sea" ? `<li class="sea"><i></i><span>${esc(m.labels[0])}</span></li>`
+      : `<li class="home">${m.kind === "plane" ? I.plane : I.home}<span>${esc(m.labels[0])}</span></li>`).join("");
+    return `<section class="daymap" aria-labelledby="mapTitle"><h2 id="mapTitle">Le parcours du jour</h2>
+      <div class="wrap">
+        <div class="map"><svg viewBox="0 0 ${W} ${W}" role="img" aria-label="Carte du parcours du jour ${d.n}">
+          <rect width="${W}" height="${W}" class="sea"/>
+          <path class="land" d="${path(GEO.coast, true)}"/>
+          <path class="route casing" d="${path(route)}"/><path class="route" d="${path(route)}"/>
+          ${seaPaths.map((p) => `<path class="boat" d="${p}"/>`).join("")}
+          ${[...marks].sort((a, b) => (a.kind === "stop") - (b.kind === "stop")).map(marker).join("")}${texts.join("")}
+          ${scale}${inset}
+        </svg></div>
+        <div class="side">
+          <ol class="legend">${legend}</ol>
+          <div class="card-actions"><a class="btn sm" ${ext(mapsUrl)}>${I.route}Ouvrir dans Google Maps</a></div>
+          <small class="credit">Fond de carte © OpenStreetMap · tracé routier indicatif</small>
+        </div>
+      </div></section>`;
+  }
+
   function pageDay(n, home) {
     const d = G.days.find((x) => x.n === n) || G.days[0];
     n = d.n;
@@ -261,8 +382,10 @@
     const stay = n <= 10 ? G.stays[0] : G.stays[1];
     const isToday = todayDay() && todayDay().n === n;
 
-    const wps = [];
-    d.steps.forEach((s) => { if (s.places && s.places[0]) { const q = s.places[0][1]; if (q !== start && q !== end && !wps.includes(q)) wps.push(q); } });
+    // Tous les lieux du jour, dans l'ordre (retour au logement compris), pour l'itinéraire Google Maps : 9 étapes au plus
+    const stops = dayStops(d), land = stops.filter((s) => s.kind !== "sea");
+    const wps = land.slice(1, -1).map((s) => s.q).slice(0, 9);
+    const mapsUrl = routeUrl(start, end, wps);
 
     let here = start;
     const items = d.steps.map((s, i) => {
@@ -284,10 +407,10 @@
       const t = timeOf(s.when);
       const placesHtml = (s.places || []).map((p, k) => placeRow(p, k === 0 ? (origin === p[1] ? null : origin) : s.places[k - 1][1])).join("") + (s.links || []).map(linkRow).join("");
       const gutter = t.word ? `<span class="t-word">${esc(t.label)}</span>` : `<span class="t-h">${esc(t.label)}</span>${t.end ? `<span class="t-end">${esc(t.end)}</span>` : ""}`;
-      return `<div class="tl-item ${s.star ? "star" : ""} ${i === cur ? "now" : ""}" id="etape-${i}">
-        <div class="tl-time">${gutter}<i class="dot"></i></div>
+      return `<div class="tl-item ${s.star ? "star" : ""} ${s.home ? "home" : ""} ${i === cur ? "now" : ""}" id="etape-${i}">
+        <div class="tl-time">${gutter}<i class="dot">${s.home ? I.home : ""}</i></div>
         <article class="card-step">
-          ${i === cur ? '<span class="now-pill">En ce moment</span>' : ""}
+          ${i === cur ? '<span class="now-pill">En ce moment</span>' : ""}${s.fixed ? `<span class="fixed-pill">${I.lock}Réservé · horaire fixe</span>` : ""}
           ${s.where ? `<div class="where">${esc(s.where)}</div>` : ""}
           <h3>${esc(s.title)}${s.star ? `<span class="star-mark" title="Temps fort">${I.starf}</span>` : ""}</h3>
           <div class="text"><p>${s.text}</p></div>
@@ -301,9 +424,13 @@
     // Une ligne utile : heure du premier départ en voiture et total de route du jour
     const firstDrive = d.steps.find((s) => s.t === "drive" && !s.icon);
     const dep = firstDrive ? driveParts(firstDrive.d).dep : "";
-    const facts = `<p class="meta">${I.car}<span>${dep ? `Départ ${dep} · ` : ""}${esc(d.drive)}</span></p>`;
+    // Ce qui est réservé ne bouge pas : rappel en tête de page, avec l'heure
+    const shortTitle = (t) => { const m = /^Embarquement — (.+)$/.exec(t); return cap(m ? m[1] : t.split(" — ")[0].split(", puis")[0]); };
+    const fixed = d.steps.filter((s) => s.fixed);
+    const facts = `<p class="meta">${I.car}<span>${dep ? `Départ ${dep} · ` : ""}${esc(d.drive)}</span></p>` +
+      (fixed.length ? `<p class="meta lock">${I.lock}<span>Réservé, horaire fixe : ${fixed.map((s) => `<b>${esc(timeOf(s.when).label)}</b> ${esc(shortTitle(s.title))}`).join(" · ")}</span></p>` : "");
     const actions = `<div class="actions">
-        <a class="btn primary" ${ext(routeUrl(start, end, wps.slice(0, 9)))}>${I.route}Itinéraire du jour dans Maps</a>
+        <a class="btn primary" ${ext(mapsUrl)}>${I.route}Itinéraire du jour dans Maps</a>
         <a class="btn" ${ext(dirUrl(end))}>${I.home}${end === AIRPORT ? "Vers l'aéroport" : `Retour à ${PLACE_NAME[end]}`}</a>
       </div>`;
     const notes = store.get("note:" + n, "");
@@ -329,6 +456,7 @@
             ${d.intro ? `<p class="intro">${esc(d.intro)}</p>` : ""}
             <h2 class="tl-title">Le programme</h2>
             <div class="timeline">${items}</div>
+            ${dayMap(d, cur, stops, mapsUrl)}
             ${notesBox}
             <nav class="pager">
               ${prev ? `<a href="/jour/${prev.n}"><small>Jour ${prev.n}</small><b>${esc(prev.title)}</b></a>` : ""}
@@ -511,31 +639,55 @@
     <div class="grid c2">${G.tips.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${c.html}</div></div>`).join("")}</div></div>`;
 
   /* ───────── Plages & randonnées ───────── */
-  const fromStays = (f) => `<div class="from"><span class="pill">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
+  // Le logement d'où l'on trie est mis en avant
+  const fromStays = (f, hl) => `<div class="from"><span class="pill ${hl === "villa" ? "hl" : ""}">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill ${hl === "serge" ? "hl" : ""}">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
+  // Tri : par note, par temps de route depuis l'un ou l'autre logement, ou par zone (dans le sens des aiguilles d'une montre depuis le nord)
+  const toMin = (s) => { if (/sur place/i.test(s)) return 0; const h = /(\d+)\s*h\s*(\d*)/.exec(s); if (h) return +h[1] * 60 + (+h[2] || 0); const m = /(\d+)\s*min/.exec(s); return m ? +m[1] : 999; };
+  const noteNum = (n) => parseFloat(String(n).replace(",", ".")) || 0;
+  const ZONES = ["Nord", "Nord-est", "Est", "Sud-est", "Sud", "Sud-ouest", "Gorges", "Ouest", "Nord-ouest"];
+  const SORTS = { note: "Par note", villa: "Près de la villa", serge: "Près de Trou aux Biches", zone: "Par zone" };
+  const byNote = (a, b) => noteNum(b.note) - noteNum(a.note);
+  function sorted(list, by) {
+    const l = [...list];
+    if (by === "villa") l.sort((a, b) => toMin(a.from[0]) - toMin(b.from[0]) || byNote(a, b));
+    else if (by === "serge") l.sort((a, b) => toMin(a.from[1]) - toMin(b.from[1]) || byNote(a, b));
+    else if (by === "zone") l.sort((a, b) => ZONES.indexOf(a.zone) - ZONES.indexOf(b.zone) || byNote(a, b));
+    else l.sort(byNote);
+    return l;
+  }
+  const sortBar = (key, cur, extra = {}) => `<nav class="chips sort" aria-label="Trier">${Object.entries({ ...extra, ...SORTS }).map(([k, v]) => `<button type="button" data-sort="${key}:${k}" aria-pressed="${k === cur}">${v}</button>`).join("")}</nav>`;
+  const grouped = (list, card) => ZONES.filter((z) => list.some((x) => x.zone === z)).map((z) => `<h3 class="group">${z}</h3><div class="grid c3">${list.filter((x) => x.zone === z).map(card).join("")}</div>`).join("");
   // "Sam 7" → le jour du programme correspondant
   const hikeDay = (h) => h.day ? G.days.find((d) => dow(d) === h.day.slice(0, 3) && +d.date.slice(8) === +h.day.split(" ")[1]) : null;
-  const hikeCard = (h) => { const d = hikeDay(h); return `<div class="card lc">
+  const hikeCard = (h, by) => { const d = hikeDay(h); return `<div class="card lc">
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
-    ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from)}
+    ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
     <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}</div></div>`; };
-  const beachCard = (b) => `<div class="card lc">
+  const beachCard = (b, by) => `<div class="card lc">
     ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
     <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
-    ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from)}
+    ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
     <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a></div></div>`;
   function pageBeaches() {
-    return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, de la mieux notée à la moins. Toutes publiques et gratuites ; temps de route depuis chaque logement, note Google relevée le 28 octobre 2026.`)}
-      <div class="grid c3">${G.beaches.map(beachCard).join("")}</div>
+    const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
+    return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}
+      ${sortBar("plages", by)}
+      ${by === "zone" ? grouped(list, card) : `<div class="grid c3">${list.map(card).join("")}</div>`}
       <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>
     </div>`;
   }
   function pageHikes() {
+    const by = store.get("sort:randos", "prog"), all = [...G.hikes, ...G.hikesMore], card = (h) => hikeCard(h, by);
+    const body = by === "prog"
+      ? section("programme", "", "Au programme", "Distances, dénivelés et durées du programme ; note AllTrails convertie sur 20 (note /5 × 4).", `<div class="grid c3">${G.hikes.map(card).join("")}</div>`) +
+        section("autres", "", "Autres randonnées possibles", "Les sommets et sentiers notés 15/20 ou plus.", `<div class="grid c3">${G.hikesMore.map(card).join("")}</div>`)
+      : `<div class="sorted">${by === "zone" ? grouped(sorted(all, by), card) : `<div class="grid c3">${sorted(all, by).map(card).join("")}</div>`}</div>`;
     return `<div class="container">${pageHead("", "Les randonnées", "Celles du programme, puis d'autres sommets et sentiers pour improviser une journée. Temps de route depuis chaque logement.")}
-      <nav class="chips"><a href="/randos#programme">Au programme</a><a href="/randos#autres">Autres idées</a></nav>
-      ${section("programme", "", "Au programme", "Distances, dénivelés et durées du programme ; note AllTrails convertie sur 20 (note /5 × 4).", `<div class="grid c3">${G.hikes.map(hikeCard).join("")}</div>`)}
-      ${section("autres", "", "Autres randonnées possibles", "Les sommets et sentiers notés 15/20 ou plus.", `<div class="grid c3">${G.hikesMore.map(hikeCard).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>`)}
+      ${sortBar("randos", by, { prog: "Au programme" })}
+      ${body}
+      <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>
     </div>`;
   }
 
@@ -666,6 +818,7 @@
     }));
     $$("[data-tobook]", main).forEach((el) => el.addEventListener("change", () => { store.set("tobook:" + el.dataset.tobook, el.checked); render(); }));
     const all = $("#allDays"); if (all) all.onclick = () => openDaysSheet(+main.dataset.day);
+    $$("[data-sort]", main).forEach((b) => (b.onclick = () => { const [k, v] = b.dataset.sort.split(":"); store.set("sort:" + k, v); render(); }));
 
     if (path === "/todo/checklist") {
       const update = () => { const cs = $$("[data-cl]", main), d = cs.filter((c) => c.checked).length; $("#clCount").textContent = `${d} / ${cs.length}`; $("#clBar").style.width = (d / cs.length) * 100 + "%"; };
