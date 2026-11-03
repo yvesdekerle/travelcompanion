@@ -1459,7 +1459,7 @@
     navigator.serviceWorker.addEventListener("message", (e) => { if (e.data === "updated") toast("Nouvelle version du carnet — toucher pour recharger", () => location.reload()); });
   }
 
-  // Clin d'œil : cinq touchers rapides n'importe où font surgir un personnage du groupe, avec une animation au hasard
+  // Clin d'œil : trois touchers rapides n'importe où font surgir un personnage du groupe, avec une animation au hasard
   const CAMEO_ANIMS = 10; let taps = [], lastCast = -1, lastAnim = -1;
   const pick = (n, last) => { let i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === last); return i; };
   function cameo() {
@@ -1474,14 +1474,18 @@
     // L'animation ne démarre qu'une fois l'image décodée (au plus 1,5 s d'attente), sinon le personnage arrive en cours de route
     fig.style.animationPlayState = "paused";
     Promise.race([img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]).then(() => { fig.style.animationPlayState = "running"; });
-    el.addEventListener("pointerdown", (e) => { e.stopPropagation(); bye(); });
-    document.body.appendChild(el);
+    document.body.appendChild(el); // le calque ne capte rien : on peut continuer à toucher, l'animation va jusqu'au bout
     setTimeout(bye, 7000); // au cas où l'animation ne se termine pas (image absente, onglet en arrière-plan)
   }
-  document.addEventListener("pointerdown", (e) => {
-    if (e.target.closest("input, textarea, select, .cameo")) return;
-    const now = Date.now(); taps = taps.filter((t) => now - t < 1600); taps.push(now);
-    if (taps.length >= 5) { taps = []; cameo(); }
+  // Un toucher = appui bref sans glisser (un défilement au doigt ne compte pas) ; trois en moins d'une seconde
+  let tapStart = null;
+  document.addEventListener("pointerdown", (e) => { tapStart = e.target.closest("input, textarea, select") ? null : { x: e.clientX, y: e.clientY, t: Date.now() }; });
+  document.addEventListener("pointerup", (e) => {
+    if (!tapStart) return;
+    const now = Date.now(), moved = Math.hypot(e.clientX - tapStart.x, e.clientY - tapStart.y) > 12 || now - tapStart.t > 350; tapStart = null;
+    if (moved) { taps = []; return; }
+    taps = taps.filter((t) => now - t < 1000); taps.push(now);
+    if (taps.length >= 3) { taps = []; cameo(); }
   });
   // Les images des personnages ne sont pas dans le cache initial : on les demande une fois le carnet prêt, à un moment calme
   const prefetchCast = () => G.cast.forEach(([f]) => fetch(`/img/p/${f}.png`, { priority: "low" }).catch(() => {}));

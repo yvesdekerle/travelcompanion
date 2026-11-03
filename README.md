@@ -43,9 +43,9 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec
 un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
 
-Clin d'œil : cinq touchers rapides n'importe où font surgir un personnage du groupe (dessins dans `site/img/p/`,
-liste `cast` dans data.js) avec une animation tirée au sort parmi dix (CSS `cam-*` dans style.css) ; un toucher le
-fait disparaître. Ces images ne sont pas dans le cache initial du service worker : elles sont demandées en tâche de
+Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
+groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi dix (CSS
+`cam-*` dans style.css) ; le calque ne capte pas les touchers, l'animation va jusqu'au bout. Ces images ne sont pas dans le cache initial du service worker : elles sont demandées en tâche de
 fond une fois le carnet prêt, et gardées en cache à ce moment-là.
 
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.

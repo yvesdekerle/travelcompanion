@@ -637,7 +637,7 @@ window.GUIDE = {
     ]
   },
 
-  /* Les personnages du groupe (site/img/p/*.png) : cinq touchers rapides n'importe où en font surgir un au hasard */
+  /* Les personnages du groupe (site/img/p/*.png) : trois touchers rapides n'importe où en font surgir un au hasard */
   cast: [["ade", "Adé"], ["alex", "Alex"], ["amly", "Amly"], ["audrey", "Audrey"], ["chloe", "Chloé"], ["july", "July"], ["mathieu", "Mathieu"], ["quentin", "Quentin"], ["yves", "Yves"]],
 
   rate: 52.5,

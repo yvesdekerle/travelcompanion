@@ -820,7 +820,7 @@ button.dl { width: 100%; border: 0; background: none; font: inherit; text-align:
 @media (prefers-reduced-motion: reduce) { .enter, .sheet-panel, .sheet-bg { animation: none; } * { transition: none !important; } }
 
 /* ───────── Clin d'œil : un personnage surgit (cinq touchers rapides) ───────── */
-.cameo { position: fixed; inset: 0; z-index: 70; display: grid; align-items: end; justify-items: center; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 18px); overflow: hidden; cursor: pointer; background: radial-gradient(ellipse 70% 60% at 50% 70%, rgba(245, 241, 232, .9), rgba(245, 241, 232, 0) 70%); animation: fade .25s; }
+.cameo { position: fixed; inset: 0; z-index: 70; display: grid; align-items: end; justify-items: center; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 18px); overflow: hidden; pointer-events: none; background: radial-gradient(ellipse 70% 60% at 50% 70%, rgba(245, 241, 232, .9), rgba(245, 241, 232, 0) 70%); animation: fade .25s; }
 @media (min-width: 720px) { .cameo { padding-bottom: 4vh; } }
 .cameo.out { opacity: 0; transition: opacity .25s; }
 .cameo .fig { position: relative; display: grid; justify-items: center; gap: 2px; will-change: transform, opacity; transform-origin: 50% 100%; animation: 3.6s var(--ease) both; }
