@@ -44,7 +44,7 @@
   --label: "Poppins", "Inter", system-ui, sans-serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --max: 1200px;
-  --tab-h: 56px;
+  --tab-h: 62px;
   --tab-safe: max(0px, calc(env(safe-area-inset-bottom, 0px) - 8px));
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
@@ -123,9 +123,9 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 /* Voile en bord droit : la barre continue */
 .tabbar::after { content: ""; position: sticky; right: 0; flex: none; width: 32px; margin-left: -32px; align-self: stretch; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .96) 70%); pointer-events: none; transition: opacity .2s; }
 .tabbar.end::after { opacity: 0; }
-.tab { flex: 1 0 auto; min-width: 72px; padding: 0 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .01em; appearance: none; border: 0; background: none; font-family: inherit; cursor: pointer; white-space: nowrap; }
-.tab .ic { width: 50px; height: 28px; border-radius: 99px; display: grid; place-items: center; transition: background .2s var(--ease); }
-.tab svg { width: 22px; height: 22px; }
+.tab { flex: 1 0 auto; min-width: 72px; padding: 0 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .01em; appearance: none; border: 0; background: none; font-family: inherit; cursor: pointer; white-space: nowrap; }
+.tab .ic { width: 52px; height: 30px; border-radius: 99px; display: grid; place-items: center; transition: background .2s var(--ease); }
+.tab svg { width: 23px; height: 23px; }
 .tab.active { color: var(--brand-ink); }
 .tab.active .ic { background: var(--brand-soft); }
 .tab.active svg { stroke-width: 2.1; }
