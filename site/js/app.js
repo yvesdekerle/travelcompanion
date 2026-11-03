@@ -180,21 +180,53 @@
   const NAV_ORDER = () => (nowMs() < ARRIVAL
     ? ["route", "maps", "conv", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
     : ["route", "maps", "conv", "booked", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
+  const bar = $("#tabbar");
+  const barEdge = () => bar.classList.toggle("end", bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2);
+  bar.addEventListener("scroll", barEdge, { passive: true });
+  // Glissement horizontal animé (sortie en douceur), interrompu dès que le doigt se pose sur la barre
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  function glide(el, to, ms = 320) {
+    const from = el.scrollLeft, dist = to - from, id = (el._glide = (el._glide || 0) + 1);
+    if (!dist) return;
+    if (reducedMotion.matches) { el.scrollLeft = to; return; }
+    const t0 = performance.now();
+    const step = (t) => {
+      if (el._glide !== id) return;
+      const p = Math.min(1, (t - t0) / ms);
+      el.scrollLeft = from + dist * (1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  ["touchstart", "pointerdown", "wheel"].forEach((ev) => bar.addEventListener(ev, () => { bar._glide = (bar._glide || 0) + 1; }, { passive: true }));
+  let barKey = "";
   function renderNav(path) {
     const NAV = NAV_ORDER();
-    $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
+    $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
-    const bar = $("#tabbar");
-    bar.innerHTML = NAV.map((n) => {
-      if (n.sheet) return `<button class="tab" type="button" data-sheet="${n.sheet}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></button>`;
-      const on = n.match ? n.match(path) : path === n.href;
-      return `<a class="tab ${on ? "active" : ""}" href="${n.href}" ${on ? 'aria-current="page"' : ""}><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`;
-    }).join("");
-    $$("[data-sheet]", bar).forEach((b) => (b.onclick = openMapsSheet));
+    // La barre du bas n'est construite qu'une fois (puis quand l'ordre change, à l'atterrissage) :
+    // elle garde sa position de défilement d'une page à l'autre au lieu de sauter.
+    const key = NAV.map((n) => n.t).join(), fresh = key !== barKey;
+    if (fresh) {
+      barKey = key;
+      bar.innerHTML = NAV.map((n) => n.sheet
+        ? `<button class="tab" type="button" data-sheet="${n.sheet}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></button>`
+        : `<a class="tab" href="${n.href}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`).join("");
+      $$("[data-sheet]", bar).forEach((b) => (b.onclick = openMapsSheet));
+    }
+    $$(".tab", bar).forEach((el, i) => {
+      const n = NAV[i], on = !n.sheet && (n.match ? n.match(path) : path === n.href);
+      el.classList.toggle("active", on);
+      if (on) el.setAttribute("aria-current", "page"); else el.removeAttribute("aria-current");
+    });
     const act = $(".tab.active", bar);
-    if (act) bar.scrollTo({ left: act.offsetLeft - (bar.clientWidth - act.offsetWidth) / 2, behavior: "instant" });
-    const edge = () => bar.classList.toggle("end", bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2);
-    bar.onscroll = edge; edge();
+    if (act) {
+      const l = act.offsetLeft - bar.scrollLeft, r = l + act.offsetWidth, hidden = l < 12 || r > bar.clientWidth - 12;
+      // Au chargement : onglet actif centré d'emblée ; ensuite on ne bouge que s'il dépasse, en glissant
+      const to = Math.max(0, Math.min(act.offsetLeft - (bar.clientWidth - act.offsetWidth) / 2, bar.scrollWidth - bar.clientWidth));
+      if (fresh) bar.scrollLeft = to; else if (hidden) glide(bar, to);
+    }
+    barEdge();
   }
 
   /* ───────── Itinéraire : un jour ───────── */

@@ -112,9 +112,12 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 /* ───────── Onglets bas (mobile) ───────── */
 .tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; touch-action: pan-x; overscroll-behavior: contain;
-  height: calc(var(--tab-h) + var(--tab-safe)); padding: 0 4px var(--tab-safe);
+  /* Les onglets se centrent sur toute la hauteur, zone du bas comprise : autant d'air au-dessus qu'en dessous.
+     Marge latérale de 12 px pour que le premier onglet échappe au coin arrondi de l'écran. */
+  height: calc(var(--tab-h) + var(--tab-safe)); padding: 0 12px;
   background: rgba(255, 255, 255, .94); backdrop-filter: saturate(1.8) blur(18px); -webkit-backdrop-filter: saturate(1.8) blur(18px);
   border-top: 1px solid var(--line);
+  -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
 .tabbar::-webkit-scrollbar { display: none; }
 /* Voile en bord droit : la barre continue */
