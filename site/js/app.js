@@ -2,7 +2,7 @@
    Une URL par page :
    /  (aujourd'hui)   /jour/3   /reservations   /logements   /todo   /todo/checklist   /todo/voiture
    /todo/a-reserver   /todo/a-verifier   /infos   /convertisseur   /plages   /randos   /bons-plans
-   /annexes   /notes   /bienvenue   /installer   /plus */
+   /annexes   /notes   /bienvenue   /installer   /plus   /menu   /edition */
 (function () {
   "use strict";
   const G = window.GUIDE;
@@ -60,6 +60,11 @@
     beach: sv('<path d="M3 12.5a9 9 0 0 1 18 0z"/><path d="M12 3.5c-2.6 0-4.6 4-4.6 9M12 3.5c2.6 0 4.6 4 4.6 9M12 12.5V21M9 21h6"/>'),
     lock: sv('<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
     sort: sv('<path d="M4 7h16M7 12h10M10 17h4"/>'),
+    up: sv('<path d="M12 19V5M5 12l7-7 7 7"/>'),
+    down: sv('<path d="M12 5v14M19 12l-7 7-7-7"/>'),
+    undo: sv('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
+    key: sv('<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M15 7l3 3M12 10l3 3"/>'),
+    cloud: sv('<path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9.5 3.5 3.5 0 0 1 17.5 18z"/>'),
     brain: sv('<path d="M12 5.2a3 3 0 0 0-5.7 1.1 3.3 3.3 0 0 0-2.1 5.1 3.3 3.3 0 0 0 .9 5.5A3.2 3.2 0 0 0 12 19.2"/><path d="M12 5.2a3 3 0 0 1 5.7 1.1 3.3 3.3 0 0 1 2.1 5.1 3.3 3.3 0 0 1-.9 5.5A3.2 3.2 0 0 1 12 19.2"/><path d="M12 5.2v14M9.2 9.6c.9.5 1.5 1.3 1.7 2.4M14.8 9.6c-.9.5-1.5 1.3-1.7 2.4M6.4 12.6c.9-.2 1.7 0 2.3.6M17.6 12.6c-.9-.2-1.7 0-2.3.6M8.2 16.4c.8-.1 1.5.1 2 .6M15.8 16.4c-.8-.1-1.5.1-2 .6"/>')
   };
   const ico = (name, size) => (size ? I[name].replace("<svg", `<svg width="${size}" height="${size}"`) : I[name]);
@@ -129,10 +134,12 @@
     });
     return out;
   }
-  function currentStepIndex(day) {
+  const fmtMin = (m) => (m >= 60 ? `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}` : `${m} min`);
+  // L'étape « en ce moment », dans l'ordre effectif du jour (un horaire qui recule dans un ordre modifié ne compte pas)
+  function currentStepIndex(day, eff = effectiveSteps(day)) {
     if (!day || day.date !== nowMU().date) return -1;
-    const now = nowMU().min; let idx = -1;
-    day.steps.forEach((s, i) => { if (s.t !== "drive") { const m = timeOf(s.when).min; if (m !== null && m <= now) idx = i; } });
+    const now = nowMU().min; let idx = -1, top = -1;
+    eff.forEach((x, k) => { if (x.s.t !== "drive") { let m = timeOf(x.s.when).min; if (m === null) return; m = Math.max(m, top); top = m; if (m <= now) idx = k; } });
     return idx;
   }
 
@@ -147,18 +154,34 @@
   /* ───────── Briques de rendu ───────── */
   const img = (name, alt = "", eager = false, sizes = "(min-width: 1024px) 400px, 100vw") =>
     `<img src="/img/${name}-s.webp" srcset="/img/${name}-s.webp 720w, /img/${name}.webp 1600w" sizes="${sizes}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
-  const pill = ([type, text]) => `<span class="pill ${type}">${esc(text)}</span>`;
+  const pill = ([type, text]) => `<span class="pill ${type}"><span>${linkify(text)}</span></span>`;
   const tags = (arr) => (arr && arr.length ? `<div class="tags">${arr.map(pill).join("")}</div>` : "");
   const dow = (d) => d.label.split(" ")[0].slice(0, 3);
   const ext = (url) => `href="${url}" target="_blank" rel="noopener"`;
+  /* Téléphones et e-mails cliquables dans n'importe quel texte :
+     +230 5xxx xxxx (mobile, 8 chiffres) → appel + WhatsApp ; +230 xxx xxxx (fixe) → appel ; e-mail → mailto */
+  const PHONE = /\+230(?:[ \u00a0]?\d){7,8}/g, MAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+  const digits = (s) => String(s).replace(/\D/g, "");
+  const isMobile = (num) => num.length === 11 && num[3] === "5";
+  const waUrl = (num) => "https://wa.me/" + String(num).replace(/^\+/, "");
+  const waIcon = (num, label = "") => `<a class="wa-ic" ${ext(waUrl(num))} aria-label="WhatsApp ${esc(label)}" title="WhatsApp">${I.wa}</a>`;
+  // Sur du HTML (échappé ou de confiance) : on ne touche pas à l'intérieur des balises
+  const linkifyHtml = (html) => String(html).split(/(<[^>]*>)/).map((part, k) => (k % 2 ? part : part
+    .replace(MAIL, (m) => `<a class="tl" href="mailto:${m}">${m}</a>`)
+    .replace(PHONE, (m) => { const num = digits(m); return `<a class="tl" href="tel:+${num}">${m}</a>${isMobile(num) ? waIcon(num, m) : ""}`; }))).join("");
+  const linkify = (s) => linkifyHtml(esc(s));
   const telBtn = (num, label = "Appeler") => `<a class="btn sm" href="tel:${num}">${I.phone}${esc(label)}</a>`;
-  const waBtn = (num) => `<a class="btn sm" ${ext("https://wa.me/" + num)}>${I.wa}WhatsApp</a>`;
+  const waBtn = (num) => `<a class="btn sm" ${ext(waUrl(num))}>${I.wa}WhatsApp</a>`;
+  // Boutons d'une fiche : appel, WhatsApp (mobile), page interne (ex. le menu)
+  const contactBtns = (b) => { const tel = b.tel || (b.wa ? "+" + b.wa : ""); return (tel ? telBtn(tel) : "") + (b.wa || (tel && isMobile(digits(tel))) ? waBtn(b.wa || tel) : "") + (b.page ? `<a class="btn sm" href="${b.page[0]}">${I.food}${esc(b.page[1])}</a>` : ""); };
   const placeRow = ([label, q], origin) => `
     <div class="place"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span>
       <a class="see" ${ext(searchUrl(q))} aria-label="Voir ${esc(label)} sur la carte">${I.map}</a>
       <a class="go" ${ext(dirUrl(q, origin))}>${I.nav}Y aller</a></div>`;
   const linkRow = ([label, url, kind]) => kind === "map"
     ? `<div class="place"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span><a class="go" ${ext(url)}>${I.nav}Y aller</a></div>`
+    : kind === "page"
+    ? `<a class="place page" href="${url}"><span class="pin">${url === "/menu" ? I.food : I.book}</span><span class="name">${esc(label)}</span><span class="chev">${I.chev}</span></a>`
     : `<div class="place trail"><span class="pin">${I.boot}</span><span class="name">${esc(label)}</span><a class="see" ${ext(url)} aria-label="Ouvrir la trace">${I.ext}</a></div>`;
   const pageHead = (num, title, sub, back) => `<header class="page-head enter">${back ? `<a href="${back[0]}" class="back">${I.back}${back[1]}</a>` : ""}<h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</header>`;
   const section = (id, eyebrow, title, lede, body) => `<section class="section" id="${id}"><h2>${title}</h2>${lede ? `<p class="lede">${lede}</p>` : ""}${body}</section>`;
@@ -172,22 +195,25 @@
     booked: { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
     beaches: { href: "/plages", t: "Plages", i: "beach" },
     hikes: { href: "/randos", t: "Randos", i: "boot" },
+    menu: { href: "/menu", t: "Menu", i: "food" },
     stays: { href: "/logements", t: "Logements", i: "bed" },
     todo: { href: "/todo", t: "To-do", i: "todo", match: (p) => p.startsWith("/todo") },
     info: { href: "/infos", t: "Infos", i: "info" },
     annex: { href: "/annexes", t: "Annexes", i: "book" },
-    more: { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
+    more: { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer", "/edition"].includes(p) }
   };
   // Avant l'atterrissage, la to-do est en 4e position ; une fois sur place, elle passe en dernier.
   const NAV_ORDER = () => (nowMs() < ARRIVAL
-    ? ["route", "maps", "conv", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
-    : ["route", "maps", "conv", "booked", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
+    ? ["route", "maps", "conv", "todo", "beaches", "hikes", "menu", "booked", "stays", "info", "annex", "more"]
+    : ["route", "maps", "conv", "booked", "beaches", "hikes", "menu", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   const bar = $("#tabbar");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
   function renderNav(path) {
     const NAV = NAV_ORDER();
-    $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
+    // Libellé long sur grand écran, court en dessous de 1300 px (les douze entrées doivent tenir sur une ligne)
+    const lbl = (n) => `<span class="l">${n.tl || n.t}</span><span class="s">${n.t}</span>`;
+    $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${lbl(n)}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${lbl(n)}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
     // La barre du bas n'est construite qu'une fois (puis quand l'ordre change, à l'atterrissage) :
     // elle garde sa position de défilement d'une page à l'autre au lieu de sauter.
@@ -216,10 +242,12 @@
   }
 
   /* ───────── Itinéraire : un jour ───────── */
+  const hasFixed = (d) => d.steps.some((s) => s.fixed);
+  const fixedStar = (d) => (hasFixed(d) ? `<i class="fx" aria-hidden="true" title="Réservation à horaire fixe">${I.starf}</i>` : "");
   function strip(n) {
     const td = todayDay();
     return `<div class="strip-wrap" id="stripWrap"><nav class="strip" aria-label="Jours du voyage">${G.days.map((d) =>
-      `${d.n === 11 ? '<span class="sep" aria-hidden="true"></span>' : ""}<a href="/jour/${d.n}" class="${d.n === n ? "active" : ""} ${td && td.n === d.n ? "today" : ""} ${isPast(d) && d.n !== n ? "past" : ""}" aria-label="Jour ${d.n}, ${esc(d.label)}" ${d.n === n ? 'aria-current="page"' : ""}>${dow(d)}<b>${+d.date.slice(8)}</b><small>J${d.n}</small></a>`).join("")}</nav></div>`;
+      `${d.n === 11 ? '<span class="sep" aria-hidden="true"></span>' : ""}<a href="/jour/${d.n}" class="${d.n === n ? "active" : ""} ${td && td.n === d.n ? "today" : ""} ${isPast(d) && d.n !== n ? "past" : ""}" aria-label="Jour ${d.n}, ${esc(d.label)}${hasFixed(d) ? ", réservation à horaire fixe" : ""}" ${d.n === n ? 'aria-current="page"' : ""}>${fixedStar(d)}${dow(d)}<b>${+d.date.slice(8)}</b><small>J${d.n}</small></a>`).join("")}</nav></div>`;
   }
 
   function countdown() {
@@ -253,15 +281,210 @@
   setInterval(tickCountdown, 1000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) tickCountdown(); });
 
+
+  /* ───────── Programme modifiable : ordre des étapes, partagé avec le groupe via le dépôt GitHub ─────────
+     plan.days[n] = { order: [["jour:index", "titre"], …] | null, at: ISO, by: prénom }
+     order null = ordre du guide (trace d'une remise à zéro, pour la fusion jour par jour : le plus récent gagne).
+     Les trajets d'un jour modifié sont recalculés ; les horaires affichés restent ceux du guide. */
+  const PLAN_EMPTY = () => ({ v: 1, days: {} });
+  let plan = store.get("plan", null);
+  if (!plan || typeof plan !== "object" || !plan.days) plan = PLAN_EMPTY();
+  let editing = false;
+  const refId = (x) => `${x.n}:${x.i}`;
+  const ownActs = (d) => d.steps.map((s, i) => ({ n: d.n, i, s })).filter((x) => x.s.t !== "drive");
+  function resolveRef(id, title) {
+    const [n, i] = String(id).split(":").map(Number), d = G.days[n - 1], s = d && d.steps[i];
+    return s && s.t !== "drive" && s.title === title ? { n, i, s } : null;
+  }
+  const placedElsewhere = (x, n) => Object.entries(plan.days).some(([k, p]) => +k !== n && p && p.order && p.order.some(([id]) => id === refId(x)));
+  const isModified = (d) => !!(plan.days[d.n] && plan.days[d.n].order) || ownActs(d).some((x) => placedElsewhere(x, d.n));
+  // Les activités du jour (hors trajets) dans l'ordre choisi ; à défaut, celui du guide
+  function dayActs(d) {
+    const own = ownActs(d), p = plan.days[d.n];
+    if (!p || !p.order) return own.filter((x) => !placedElsewhere(x, d.n));
+    const out = [];
+    p.order.forEach(([id, title]) => { const r = resolveRef(id, title); if (r && !out.some((o) => refId(o) === id)) out.push(r); });
+    // Une étape du guide absente du plan (contenu mis à jour depuis) reprend sa place, après sa voisine d'origine
+    own.forEach((x, k) => {
+      if (out.some((o) => refId(o) === refId(x)) || placedElsewhere(x, d.n)) return;
+      let at = 0;
+      for (let j = k - 1; j >= 0; j--) { const pos = out.findIndex((o) => refId(o) === refId(own[j])); if (pos >= 0) { at = pos + 1; break; } }
+      out.splice(at, 0, x);
+    });
+    return out;
+  }
+  // Trajets du guide, par liaison « d'où | où » ; ceux sans lieu connu (avion, étape sans adresse) restent collés à l'étape qui suit
+  function origLegs(d) {
+    const legs = {}, pre = {}; let here = dayStart(d.n);
+    d.steps.forEach((s, i) => {
+      if (s.t === "drive") {
+        let nx = null;
+        for (let j = i + 1; j < d.steps.length; j++) if (d.steps[j].t !== "drive") { nx = { s: d.steps[j], i: j }; break; }
+        const to = nx && nx.s.places && nx.s.places[0] ? nx.s.places[0][1] : null;
+        if (to && !s.icon) legs[here + "|" + to] = s; else if (nx) pre[`${d.n}:${nx.i}`] = s;
+      } else if (s.places && s.places.length) here = s.places[s.places.length - 1][1];
+    });
+    return { legs, pre };
+  }
+  // Liaison absente du guide : distance à vol d'oiseau × 1,3, à 38 km/h de moyenne
+  function estimate(from, to) {
+    const a = window.GEO && window.GEO.places[from], b = window.GEO && window.GEO.places[to];
+    if (!a || !b) return "Trajet à estimer";
+    const dLa = (b[0] - a[0]) * 111.32, dLo = (b[1] - a[1]) * 111.32 * Math.cos((-20.2 * Math.PI) / 180);
+    const km = Math.hypot(dLa, dLo) * 1.3, min = Math.max(5, Math.round(((km / 38) * 60) / 5) * 5);
+    return `${fmtMin(min)} · ${km < 10 ? km.toFixed(1).replace(".", ",") : Math.round(km)} km · estimation`;
+  }
+  // Toutes les lignes du jour, trajets compris, dans l'ordre effectif : [{ s, n, i, est? }]
+  function effectiveSteps(d) {
+    if (!isModified(d)) return d.steps.map((s, i) => ({ s, n: d.n, i }));
+    const acts = dayActs(d), { legs, pre } = origLegs(d), out = []; let here = dayStart(d.n);
+    acts.forEach((x) => {
+      const to = x.s.places && x.s.places[0] ? x.s.places[0][1] : null;
+      if (to && to !== here) { const o = legs[here + "|" + to]; out.push(o ? { s: o, n: d.n, i: -1 } : { s: { t: "drive", d: estimate(here, to) }, n: d.n, i: -1, est: true }); }
+      else if (!to && x.n === d.n && pre[refId(x)]) out.push({ s: pre[refId(x)], n: d.n, i: -1 });
+      out.push(x);
+      if (x.s.places && x.s.places.length) here = x.s.places[x.s.places.length - 1][1];
+    });
+    return out;
+  }
+  const fmtAt = (iso) => { const t = new Date(iso || ""); return Number.isNaN(+t) ? "" : `le ${t.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} à ${String(t.getHours()).padStart(2, "0")}h${String(t.getMinutes()).padStart(2, "0")}`; };
+  const newest = (p) => Object.entries(p.days || {}).sort((a, b) => ((b[1].at || "") > (a[1].at || "") ? 1 : -1))[0];
+  const stamp = () => ({ at: new Date().toISOString(), by: store.get("edit:name", "") });
+  function savePlan() { store.set("plan", plan); store.set("plan:dirty", true); scheduleSync(); }
+  function setOrder(n, acts) {
+    const own = ownActs(G.days[n - 1]);
+    const same = acts.length === own.length && acts.every((x, k) => refId(x) === refId(own[k]));
+    plan.days[n] = { order: same ? null : acts.map((x) => [refId(x), x.s.title]), ...stamp() };
+  }
+  function movePlan(d, id, dir) {
+    const acts = dayActs(d), k = acts.findIndex((x) => refId(x) === id);
+    if (k < 0 || acts[k].s.fixed) return;
+    if (dir === "up" || dir === "down") {
+      const j = dir === "up" ? k - 1 : k + 1;
+      if (j < 0 || j >= acts.length) return;
+      [acts[k], acts[j]] = [acts[j], acts[k]];
+      setOrder(d.n, acts);
+    } else {
+      const m = d.n + (dir === "next" ? 1 : -1), td = G.days[m - 1];
+      if (!td) return;
+      const [x] = acts.splice(k, 1);
+      setOrder(d.n, acts);
+      // Si l'étape revient dans son jour d'origine, dayActs l'a déjà remise à sa place ; sinon en tête du lendemain ou en fin de la veille
+      const ta = dayActs(td);
+      if (!ta.some((o) => refId(o) === id)) { if (dir === "next") ta.unshift(x); else ta.push(x); }
+      setOrder(m, ta);
+      toast(`Déplacé au jour ${m} — voir`, () => go("/jour/" + m));
+    }
+    savePlan();
+  }
+  function resetDay(n) {
+    const st = stamp();
+    plan.days[n] = { order: null, ...st };
+    Object.entries(plan.days).forEach(([k, p]) => {
+      if (+k === n || !p.order) return;
+      const o = p.order.filter(([id]) => !id.startsWith(n + ":"));
+      if (o.length !== p.order.length) plan.days[k] = { order: o.length ? o : null, ...st };
+    });
+    savePlan();
+  }
+  // Barre d'édition d'une étape : monter, descendre, envoyer à la veille ou au lendemain
+  function editBar(d, x, acts) {
+    if (x.s.fixed) return `<div class="edit-bar locked">${I.lock}<span>Réservé : cette étape ne bouge pas</span></div>`;
+    const k = acts.indexOf(x), id = refId(x);
+    const b = (dir, inner, label, ok, cls = "") => `<button type="button" class="eb ${cls}" data-mv="${dir}" data-ref="${id}" aria-label="${label}" title="${label}" ${ok ? "" : "disabled"}>${inner}</button>`;
+    return `<div class="edit-bar">${b("up", I.up, "Monter", k > 0)}${b("down", I.down, "Descendre", k < acts.length - 1)}<span class="sp"></span>${b("prev", `${I.back}<span>J${d.n - 1}</span>`, `Envoyer au jour ${d.n - 1}`, d.n > 1, "day")}${b("next", `<span>J${d.n + 1}</span>${I.chev}`, `Envoyer au jour ${d.n + 1}`, d.n < G.days.length, "day")}</div>`;
+  }
+
+  /* Partage : le fichier site/plan.json du dépôt, écrit par l'API GitHub avec un jeton gardé sur l'appareil ;
+     lu par tout le monde à l'ouverture (réseau direct, hors cache). Fusion jour par jour, le plus récent gagne. */
+  const GH = { repo: "yvesdekerle/travelcompanion", path: "site/plan.json", branch: "main" };
+  const ghUrl = `https://api.github.com/repos/${GH.repo}/contents/${GH.path}`;
+  const ghHeaders = (tok, json) => ({ Authorization: `Bearer ${tok}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(json ? { "Content-Type": "application/json" } : {}) });
+  const b64 = (s) => { let b = ""; new TextEncoder().encode(s).forEach((c) => (b += String.fromCharCode(c))); return btoa(b); };
+  const unb64 = (s) => new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+  function mergePlan(a, b) {
+    const out = PLAN_EMPTY();
+    new Set([...Object.keys(a.days || {}), ...Object.keys(b.days || {})]).forEach((k) => {
+      const x = a.days && a.days[k], y = b.days && b.days[k];
+      out.days[k] = !x ? y : !y ? x : (y.at || "") > (x.at || "") ? y : x;
+    });
+    return out;
+  }
+  function shareState(long) {
+    const tok = store.get("gh:token", ""), dirty = store.get("plan:dirty", false), shared = store.get("plan:shared", "");
+    if (!tok) return dirty
+      ? (long ? "Des changements n'existent que sur cet appareil : ajoute un jeton pour les publier." : `Sur cet appareil seulement · <a href="/edition">publier pour le groupe</a>.`)
+      : (long ? "Rien à publier pour l'instant." : "Partagé avec le groupe.");
+    if (dirty) return navigator.onLine ? "Publication en cours…" : "Sera publié dès qu'il y aura du réseau.";
+    return long ? `Tout est publié${shared ? `, dernier envoi ${fmtAt(shared)}` : ""}.` : "Partagé avec le groupe.";
+  }
+  function refreshShare() {
+    $$("[data-share-state]").forEach((el) => (el.innerHTML = shareState(el.dataset.shareState === "long")));
+    const sn = $("#syncNow"); if (sn) sn.disabled = !(store.get("gh:token", "") && store.get("plan:dirty", false));
+  }
+  let syncT = 0, syncing = false;
+  function scheduleSync() { clearTimeout(syncT); syncT = setTimeout(syncPlan, 1500); }
+  async function syncPlan() {
+    const tok = store.get("gh:token", "");
+    if (!tok || !store.get("plan:dirty", false) || !navigator.onLine || syncing) return;
+    syncing = true; refreshShare();
+    try {
+      const r = await fetch(`${ghUrl}?ref=${GH.branch}`, { headers: ghHeaders(tok), cache: "no-store" });
+      let sha;
+      if (r.ok) { const j = await r.json(); sha = j.sha; try { plan = mergePlan(JSON.parse(unb64(j.content)), plan); } catch {} }
+      else if (r.status !== 404) throw new Error(r.status);
+      const nw = newest(plan);
+      const message = nw ? `Programme partagé : jour ${nw[0]} ${nw[1].order ? "réordonné" : "rétabli"}${nw[1].by ? ` par ${nw[1].by}` : ""}` : "Programme partagé";
+      const body = { message, content: b64(JSON.stringify(plan, null, 1) + "\n"), branch: GH.branch };
+      if (sha) body.sha = sha;
+      const put = await fetch(ghUrl, { method: "PUT", headers: ghHeaders(tok, true), body: JSON.stringify(body) });
+      if (!put.ok) throw new Error(put.status);
+      store.set("plan", plan); store.set("plan:dirty", false); store.set("plan:shared", new Date().toISOString());
+      toast("✓ Programme publié : en ligne pour tout le monde dans une minute");
+    } catch (e) {
+      const code = String(e && e.message);
+      toast(code === "401" ? "Jeton GitHub refusé : à vérifier dans Édition partagée" : code === "403" || code === "404" ? "Le jeton n'a pas accès en écriture au dépôt" : "Publication impossible pour l'instant, nouvel essai plus tard");
+    } finally { syncing = false; refreshShare(); }
+  }
+  async function testToken() {
+    const tok = store.get("gh:token", "");
+    if (!tok) return toast("Colle d'abord un jeton");
+    if (!navigator.onLine) return toast("Pas de réseau pour l'instant");
+    try {
+      const r = await fetch(`${ghUrl}?ref=${GH.branch}`, { headers: ghHeaders(tok), cache: "no-store" });
+      toast(r.ok ? "✓ Jeton accepté, le dépôt est accessible (l'écriture se vérifie au premier envoi)" : r.status === 401 ? "Jeton refusé par GitHub" : `GitHub répond ${r.status} : vérifier l'accès au dépôt`);
+    } catch { toast("Impossible de joindre GitHub"); }
+  }
+  // Au démarrage, au retour au premier plan et au retour du réseau : le programme publié, sans passer par le cache
+  let lastLoad = 0;
+  async function loadSharedPlan() {
+    if (!navigator.onLine || Date.now() - lastLoad < 30000) return;
+    lastLoad = Date.now();
+    try {
+      const r = await fetch("/plan.json?t=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) return;
+      const remote = await r.json();
+      if (!remote || !remote.days) return;
+      const merged = mergePlan(plan, remote);
+      const changed = Object.keys(merged.days).filter((k) => JSON.stringify(merged.days[k]) !== JSON.stringify(plan.days[k]));
+      if (!changed.length) return;
+      plan = merged; store.set("plan", plan);
+      const by = [...new Set(changed.map((k) => remote.days[k] && remote.days[k].by).filter(Boolean))];
+      toast(`Programme mis à jour${by.length ? ` par ${by.join(" et ")}` : ""} : jour${changed.length > 1 ? "s" : ""} ${changed.sort((a, b) => a - b).join(", ")}`);
+      if (main.dataset.day && !document.activeElement.matches("input, textarea")) render();
+    } catch {}
+  }
+
   /* ───────── Carte du jour (SVG dessiné hors ligne à partir de geo.js) ───────── */
   const GEO = window.GEO;
   const NAVY = "#1A2B3D", LAGOON = "#1E7C99";
   // Les arrêts du jour dans l'ordre : départ, lieux de chaque étape (et spots en mer), arrivée — même logique que scripts/build_geo.mjs
-  function dayStops(d) {
+  function dayStops(d, eff = effectiveSteps(d)) {
     const kindOf = (q) => (q === AIRPORT ? "plane" : q === VILLA || q === SERGE ? "home" : "stop");
     const start = dayStart(d.n), end = dayEnd(d.n), out = [{ q: start, kind: kindOf(start), i: -1 }];
     const last = () => out[out.length - 1];
-    d.steps.forEach((s, i) => {
+    eff.forEach((x, i) => {
+      const s = x.s; if (s.t === "drive") return;
       (s.places || []).forEach(([label, q]) => { if (last().q !== q) out.push({ q, label, kind: kindOf(q), i, where: (s.where || "").split(" · ")[0] }); });
       const port = [...out].reverse().find((o) => o.kind !== "sea").q;
       (s.sea || []).forEach((q) => out.push({ q, label: q, kind: "sea", i, from: port }));
@@ -272,11 +495,12 @@
   // Nom court pour l'étiquette sur la carte
   const shortName = (l) => l.replace(/^Départ du sentier( du| de la| de|,)?\s*/i, "").split(",")[0].replace(/\s+Public Beach$/i, "").replace(/\s*\(.*$/, "").trim();
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-  function dayMap(d, cur, stops, mapsUrl) {
-    const route = GEO && GEO.routes[d.n];
-    if (!route) return "";
+  function dayMap(d, cur, stops, mapsUrl, mod) {
+    const route = !mod && GEO && GEO.routes[d.n];
+    if (!GEO || (!route && !mod)) return "";
     const pts = stops.filter((s) => GEO.places[s.q]);
-    const all = [...pts.map((s) => GEO.places[s.q]), ...route];
+    if (pts.length < 2) return "";
+    const all = [...pts.map((s) => GEO.places[s.q]), ...(route || [])];
     const cos = Math.cos((-20.2 * Math.PI) / 180), W = 320;
     const las = all.map((p) => p[0]), los = all.map((p) => p[1]);
     const la0 = Math.min(...las), la1 = Math.max(...las), lo0 = Math.min(...los), lo1 = Math.max(...los);
@@ -362,7 +586,7 @@
         <div class="map"><svg viewBox="0 0 ${W} ${W}" role="img" aria-label="Carte du parcours du jour ${d.n}">
           <rect width="${W}" height="${W}" class="sea"/>
           <path class="land" d="${path(GEO.coast, true)}"/>
-          <path class="route casing" d="${path(route)}"/><path class="route" d="${path(route)}"/>
+          ${route ? `<path class="route casing" d="${path(route)}"/><path class="route" d="${path(route)}"/>` : `<path class="route est" d="${path(pts.filter((s) => s.kind !== "sea").map((s) => GEO.places[s.q]))}"/>`}
           ${seaPaths.map((p) => `<path class="boat" d="${p}"/>`).join("")}
           ${[...marks].sort((a, b) => (a.kind === "stop") - (b.kind === "stop")).map(marker).join("")}${texts.join("")}
           ${scale}${inset}
@@ -370,7 +594,7 @@
         <div class="side">
           <ol class="legend">${legend}</ol>
           <div class="card-actions"><a class="btn sm" ${ext(mapsUrl)}>${I.route}Ouvrir dans Google Maps</a></div>
-          <small class="credit">Fond de carte © OpenStreetMap · tracé routier indicatif</small>
+          <small class="credit">Fond de carte © OpenStreetMap · ${route ? "tracé routier indicatif" : "ordre modifié : liaisons à vol d'oiseau"}</small>
         </div>
       </div></section>`;
   }
@@ -378,61 +602,73 @@
   function pageDay(n, home) {
     const d = G.days.find((x) => x.n === n) || G.days[0];
     n = d.n;
-    const cur = currentStepIndex(d), start = dayStart(n), end = dayEnd(n);
-    const stay = n <= 10 ? G.stays[0] : G.stays[1];
+    const eff = effectiveSteps(d), mod = isModified(d), acts = eff.filter((x) => x.s.t !== "drive");
+    const cur = currentStepIndex(d, eff), start = dayStart(n), end = dayEnd(n);
     const isToday = todayDay() && todayDay().n === n;
 
     // Tous les lieux du jour, dans l'ordre (retour au logement compris), pour l'itinéraire Google Maps : 9 étapes au plus
-    const stops = dayStops(d), land = stops.filter((s) => s.kind !== "sea");
+    const stops = dayStops(d, eff), land = stops.filter((s) => s.kind !== "sea");
     const wps = land.slice(1, -1).map((s) => s.q).slice(0, 9);
     const mapsUrl = routeUrl(start, end, wps);
+    // Ordre modifié : un horaire du guide qui n'est plus dans l'ordre est affiché en retrait
+    const mins = acts.map((x) => timeOf(x.s.when).min);
+    const doubt = (a) => mod && mins[a] !== null && mins.some((m, j) => m !== null && ((j < a && m > mins[a]) || (j > a && m < mins[a])));
 
     let here = start;
-    const items = d.steps.map((s, i) => {
+    const items = eff.map((x, k) => {
+      const s = x.s;
       if (s.t === "drive") {
         let to = null;
-        for (let j = i + 1; j < d.steps.length; j++) { const nx = d.steps[j]; if (nx.t !== "drive" && nx.places && nx.places[0]) { to = nx.places[0][1]; break; } }
+        for (let j = k + 1; j < eff.length; j++) { const nx = eff[j].s; if (nx.t !== "drive" && nx.places && nx.places[0]) { to = nx.places[0][1]; break; } }
         if (!to) to = end;
         const leg = to !== here ? `<a class="leg" ${ext(routeUrl(here, to))}>${I.nav}Trajet</a>` : "";
         const dp = driveParts(s.d);
         const main = dp.dur
-          ? `${dp.dep ? `<span class="dep">départ ${esc(dp.dep)}</span>` : ""}<b>${esc(dp.dur)}</b>${dp.dist ? `<span>${esc(dp.dist)}</span>` : ""}`
+          ? `${dp.dep && !mod ? `<span class="dep">départ ${esc(dp.dep)}</span>` : ""}<b>${esc(dp.dur)}</b>${dp.dist ? `<span>${esc(dp.dist)}</span>` : ""}`
           : `<span class="plain">${esc(s.d)}</span>`;
         const sub = dp.dur && dp.rest.length ? `<div class="drive-sub">${esc(dp.rest.join(" · "))}</div>` : "";
-        return `<div class="tl-item tl-drive"><div class="tl-time"><span class="car">${s.icon === "plane" ? I.plane : I.car}</span></div>
+        return `<div class="tl-item tl-drive ${x.est ? "est" : ""}"><div class="tl-time"><span class="car">${s.icon === "plane" ? I.plane : I.car}</span></div>
           <div class="drive"><div class="drive-body"><div class="drive-main">${main}</div>${sub}</div>${leg}</div></div>`;
       }
       const origin = here;
       if (s.places && s.places.length) here = s.places[s.places.length - 1][1];
-      const t = timeOf(s.when);
-      const placesHtml = (s.places || []).map((p, k) => placeRow(p, k === 0 ? (origin === p[1] ? null : origin) : s.places[k - 1][1])).join("") + (s.links || []).map(linkRow).join("");
-      const gutter = t.word ? `<span class="t-word">${esc(t.label)}</span>` : `<span class="t-h">${esc(t.label)}</span>${t.end ? `<span class="t-end">${esc(t.end)}</span>` : ""}`;
-      return `<div class="tl-item ${s.star ? "star" : ""} ${s.home ? "home" : ""} ${i === cur ? "now" : ""}" id="etape-${i}">
+      const a = acts.indexOf(x), t = timeOf(s.when), dz = doubt(a), dtitle = dz ? ' title="Horaire du guide : l’ordre a changé"' : "";
+      const placesHtml = (s.places || []).map((p, j) => placeRow(p, j === 0 ? (origin === p[1] ? null : origin) : s.places[j - 1][1])).join("") + (s.links || []).map(linkRow).join("");
+      const gutter = t.word ? `<span class="t-word ${dz ? "doubt" : ""}"${dtitle}>${esc(t.label)}</span>` : `<span class="t-h ${dz ? "doubt" : ""}"${dtitle}>${esc(t.label)}</span>${t.end ? `<span class="t-end ${dz ? "doubt" : ""}">${esc(t.end)}</span>` : ""}`;
+      return `<div class="tl-item ${s.star ? "star" : ""} ${s.home ? "home" : ""} ${k === cur ? "now" : ""}" id="etape-${k}">
         <div class="tl-time">${gutter}<i class="dot">${s.home ? I.home : ""}</i></div>
         <article class="card-step">
-          ${i === cur ? '<span class="now-pill">En ce moment</span>' : ""}${s.fixed ? `<span class="fixed-pill">${I.lock}Réservé · horaire fixe</span>` : ""}
+          ${editing ? editBar(d, x, acts) : ""}
+          ${k === cur ? '<span class="now-pill">En ce moment</span>' : ""}${s.fixed ? `<span class="fixed-pill">${I.lock}Réservé · horaire fixe</span>` : ""}${x.n !== n ? `<span class="from-pill">${I.route}Venu du jour ${x.n}</span>` : ""}
           ${s.where ? `<div class="where">${esc(s.where)}</div>` : ""}
           <h3>${esc(s.title)}${s.star ? `<span class="star-mark" title="Temps fort">${I.starf}</span>` : ""}</h3>
-          <div class="text"><p>${s.text}</p></div>
-          ${s.rdv ? `<div class="rdv"><b>Rendez-vous</b>${esc(s.rdv)}</div>` : ""}
+          <div class="text"><p>${linkifyHtml(s.text)}</p></div>
+          ${s.rdv ? `<div class="rdv"><b>Rendez-vous</b><span>${linkify(s.rdv)}</span></div>` : ""}
           ${tags(s.tags)}
-          ${s.note ? `<div class="callout ${s.note[2] || ""}"><span class="k">${esc(s.note[0])}</span><span>${esc(s.note[1])}</span></div>` : ""}
+          ${s.note ? `<div class="callout ${s.note[2] || ""}"><span class="k">${esc(s.note[0])}</span><span>${linkify(s.note[1])}</span></div>` : ""}
           ${placesHtml ? `<div class="places">${placesHtml}</div>` : ""}
         </article></div>`;
     }).join("");
 
-    // Une ligne utile : heure du premier départ en voiture et total de route du jour
-    const firstDrive = d.steps.find((s) => s.t === "drive" && !s.icon);
-    const dep = firstDrive ? driveParts(firstDrive.d).dep : "";
+    // Une ligne utile : heure du premier départ en voiture et total de route du jour (recalculé si l'ordre a changé)
+    const firstDrive = eff.find((x) => x.s.t === "drive" && !x.s.icon);
+    const dep = firstDrive && !mod ? driveParts(firstDrive.s.d).dep : "";
+    const tot = eff.filter((x) => x.s.t === "drive" && !x.s.icon).reduce((o, x) => { const dp = driveParts(x.s.d); o.min += dp.dur ? toMin(dp.dur) : 0; o.km += parseFloat((dp.dist || "0").replace(",", ".")) || 0; return o; }, { min: 0, km: 0 });
+    const driveTxt = mod ? `≈ ${fmtMin(tot.min)} de route · ${Math.round(tot.km)} km · ordre modifié` : d.drive;
     // Ce qui est réservé ne bouge pas : rappel en tête de page, avec l'heure
     const shortTitle = (t) => { const m = /^Embarquement — (.+)$/.exec(t); return cap(m ? m[1] : t.split(" — ")[0].split(", puis")[0]); };
-    const fixed = d.steps.filter((s) => s.fixed);
-    const facts = `<p class="meta">${I.car}<span>${dep ? `Départ ${dep} · ` : ""}${esc(d.drive)}</span></p>` +
+    const fixed = acts.filter((x) => x.s.fixed).map((x) => x.s);
+    const facts = `<p class="meta">${I.car}<span>${dep ? `Départ ${dep} · ` : ""}${esc(driveTxt)}</span></p>` +
       (fixed.length ? `<p class="meta lock">${I.lock}<span>Réservé, horaire fixe : ${fixed.map((s) => `<b>${esc(timeOf(s.when).label)}</b> ${esc(shortTitle(s.title))}`).join(" · ")}</span></p>` : "");
     const actions = `<div class="actions">
         <a class="btn primary" ${ext(mapsUrl)}>${I.route}Itinéraire du jour dans Maps</a>
         <a class="btn" ${ext(dirUrl(end))}>${I.home}${end === AIRPORT ? "Vers l'aéroport" : `Retour à ${PLACE_NAME[end]}`}</a>
       </div>`;
+    // Le programme : bouton d'édition, rappel quand l'ordre a été modifié (par qui, quand, partagé ou non)
+    const p = plan.days[n] || {}, who = [p.by ? `par ${esc(p.by)}` : "", fmtAt(p.at)].filter(Boolean).join(", ");
+    const planBox = mod ? `<div class="callout plan"><span class="k">${I.pen}Ordre modifié</span><span>${who ? cap(who) + ". " : ""}<span data-share-state>${shareState()}</span> <button type="button" class="link" id="resetDay">Rétablir l'ordre du guide</button></span></div>` : "";
+    const tlHead = `<div class="tl-head"><h2 class="tl-title">Le programme</h2><button type="button" class="btn sm ${editing ? "primary" : ""}" id="editPlan">${editing ? I.check : I.pen}${editing ? "Terminer" : "Modifier l'ordre"}</button></div>
+      ${editing ? `<p class="hint">Les flèches montent ou descendent une étape, ou l'envoient à la veille ou au lendemain. Les étapes réservées ne bougent pas ; les trajets sont recalculés, les horaires restent ceux du guide.</p>` : ""}${planBox}`;
     const notes = store.get("note:" + n, "");
     const notesBox = `<details class="notes" ${notes ? "open" : ""}><summary>${I.pen}Notes du jour<span class="count"><span class="saved" id="saved">Enregistré</span></span></summary><textarea id="dayNote" placeholder="Souvenirs, adresses, noms à retenir…">${esc(notes)}</textarea></details>`;
     const prev = G.days.find((x) => x.n === n - 1), next = G.days.find((x) => x.n === n + 1);
@@ -454,9 +690,9 @@
             ${home ? banner() : ""}
             ${d.alert ? `<div class="callout party"><span>${d.alert}</span></div>` : ""}
             ${d.intro ? `<p class="intro">${esc(d.intro)}</p>` : ""}
-            <h2 class="tl-title">Le programme</h2>
-            <div class="timeline">${items}</div>
-            ${dayMap(d, cur, stops, mapsUrl)}
+            ${tlHead}
+            <div class="timeline ${editing ? "editing" : ""}">${items}</div>
+            ${dayMap(d, cur, stops, mapsUrl, mod)}
             ${notesBox}
             <nav class="pager">
               ${prev ? `<a href="/jour/${prev.n}"><small>Jour ${prev.n}</small><b>${esc(prev.title)}</b></a>` : ""}
@@ -470,7 +706,7 @@
   function closeSheet() { const sh = $("#sheet"); if (sh.hidden) return; sh.hidden = true; const b = $("#allDays"); if (b) b.focus({ preventScroll: true }); }
   function openDaysSheet(current) {
     const td = todayDay();
-    const row = (d) => `<a class="dl ${d.n === current ? "active" : ""}" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${esc(d.drive.replace("≈ ", ""))}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</a>`;
+    const row = (d) => `<a class="dl ${d.n === current ? "active" : ""}" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}${fixedStar(d)}<small>${esc(d.drive.replace("≈ ", ""))}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</a>`;
     $("#sheetBody").innerHTML = `<h4>À neuf, Rivière Noire</h4>${G.days.filter((d) => d.phase === "neuf").map(row).join("")}<h4>À deux, Trou aux Biches</h4>${G.days.filter((d) => d.phase === "deux").map(row).join("")}`;
     const sh = $("#sheet"); sh.hidden = false;
     const act = $(".dl.active", sh); if (act) { act.scrollIntoView({ block: "center" }); act.focus({ preventScroll: true }); }
@@ -488,17 +724,16 @@
 
   /* ───────── Réservations (déjà réservé) ───────── */
   function pageBooked() {
-    const btns = (b) => (b.tel ? telBtn(b.tel) : "") + (b.wa ? waBtn(b.wa) : "");
     const left = G.toBook.length - todoCounts.reserver()[0];
     return `<div class="container">${pageHead("", "Réservations", "Bateaux, plongée, pêche, hélico : tout ce qui est réservé, payé ou à payer sur place, avec les contacts, les points de rendez-vous et ce qu'il faut emporter.")}
       <div class="card-actions"><a class="btn sm" href="/todo/a-reserver">${I.todo}Encore à réserver · ${left}</a><a class="btn sm" href="/annexes#cash">${I.cash}Cash à prévoir</a></div>
       <div class="grid c2" style="margin-top:18px">${G.booked.map((b) => `
         <article class="card">
           <div class="top"><span class="eyebrow">${esc(b.when)}</span>${pill(b.status)}</div>
-          <h3>${esc(b.title)}</h3><p class="text it">${esc(b.desc)}</p>
-          <dl class="kv">${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
-          ${b.note ? `<div class="callout warn"><span class="k">Attention</span><span>${esc(b.note)}</span></div>` : ""}
-          <div class="card-actions">${btns(b)}<a class="btn sm" href="/jour/${b.day}">${I.route}Jour ${b.day}</a></div>
+          <h3>${esc(b.title)}</h3><p class="text it">${linkify(b.desc)}</p>
+          <dl class="kv">${b.rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${linkify(v)}</dd>`).join("")}</dl>
+          ${b.note ? `<div class="callout warn"><span class="k">Attention</span><span>${linkify(b.note)}</span></div>` : ""}
+          <div class="card-actions">${contactBtns(b)}<a class="btn sm" href="/jour/${b.day}">${I.route}Jour ${b.day}</a></div>
         </article>`).join("")}</div>
     </div>`;
   }
@@ -519,7 +754,7 @@
             <div class="fields">${s.fields.map((f, i) => `<div class="field"><label for="f-${s.id}-${i}">${esc(f)}</label><input id="f-${s.id}-${i}" data-store="stay:${s.id}:${i}" value="${esc(store.get(`stay:${s.id}:${i}`, ""))}" placeholder="à noter sur place" autocomplete="off"></div>`).join("")}</div>
             <dl class="kv">
               <dt>Adresse</dt><dd>${esc(s.address)}</dd>
-              ${s.host ? `<dt>Hôte</dt><dd>${esc(s.host)}</dd>` : ""}
+              ${s.host ? `<dt>Hôte</dt><dd>${linkify(s.host)}</dd>` : ""}
               <dt>Arrivée</dt><dd>${esc(s.checkin)}</dd>
               <dt>Départ</dt><dd>${esc(s.checkout)}</dd>
               <dt>Autour</dt><dd>${s.around.map(esc).join("<br>")}</dd>
@@ -578,14 +813,13 @@
   }
 
   function pageToBook() {
-    const btns = (b) => (b.tel ? telBtn(b.tel) : "") + (b.wa ? waBtn(b.wa) : "");
     return `<div class="container">${pageHead("", "À réserver", "Ce qui reste à caler — contacts et prix relevés le 28 octobre 2026, à confirmer en réservant. Coche quand c'est fait.", ["/todo", "To-do"])}
       <div class="grid c2">${G.toBook.map((b, i) => { const done = store.get("tobook:" + i, false); return `
         <article class="card ${done ? "done" : ""}">
           <div class="top"><span class="eyebrow">${esc(b.when)}</span><label class="check-pill"><input class="chk" type="checkbox" data-tobook="${i}" ${done ? "checked" : ""}>${done ? "Réservé" : "À réserver"}</label></div>
           <h3>${esc(b.title)}</h3>
-          <dl class="kv"><dt>Détails</dt><dd>${esc(b.details)}</dd>${b.contact ? `<dt>Contact</dt><dd>${esc(b.contact)}</dd>` : ""}${b.place ? `<dt>Lieu</dt><dd>${esc(b.place)}</dd>` : ""}</dl>
-          <div class="card-actions">${btns(b)}${b.place ? `<a class="btn sm" ${ext(searchUrl(b.place))}>${I.map}Carte</a>` : ""}<a class="btn sm" href="/jour/${b.day}">${I.route}Jour ${b.day}</a></div>
+          <dl class="kv"><dt>Détails</dt><dd>${linkify(b.details)}</dd>${b.contact ? `<dt>Contact</dt><dd>${linkify(b.contact)}</dd>` : ""}${b.place ? `<dt>Lieu</dt><dd>${esc(b.place)}</dd>` : ""}</dl>
+          <div class="card-actions">${contactBtns(b)}${b.place ? `<a class="btn sm" ${ext(searchUrl(b.place))}>${I.map}Carte</a>` : ""}<a class="btn sm" href="/jour/${b.day}">${I.route}Jour ${b.day}</a></div>
         </article>`; }).join("")}</div></div>`;
   }
 
@@ -600,7 +834,7 @@
       <nav class="chips"><a href="/infos#argent">Argent & vie locale</a><a href="/infos#meteo">Météo</a><a href="/infos#route">Conduire</a><a href="/infos#temps">Temps de route</a><a href="/convertisseur">Convertisseur</a></nav>
       ${section("argent", "Section 04", "Fuseau, monnaie & change", "", `<div class="grid c3">
         <div class="card"><div class="eyebrow">Fuseau horaire</div><h3>UTC+4, trois heures d'avance</h3><p class="text">${esc(inf.timezone)}</p></div>
-        ${inf.cards.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${c.html}</div></div>`).join("")}</div>`)}
+        ${inf.cards.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${linkifyHtml(c.html)}</div></div>`).join("")}</div>`)}
       ${section("meteo", "Section 04", "Météo de novembre", "", `<div class="table stack"><table><thead><tr><th>Région</th><th>Temp. jour</th><th>Pluie</th><th>Particularité</th></tr></thead><tbody>
         ${inf.weather.map((r) => `<tr><td><b>${esc(r[0])}</b></td><td data-l="Jour">${esc(r[1])}</td><td data-l="Pluie">${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join("")}</tbody></table></div>`)}
       ${section("route", "Section 04", "Sur la route", "", `<div class="table stack"><table><thead><tr><th>Règle</th><th>Valeur</th><th>Note</th></tr></thead><tbody>
@@ -636,7 +870,7 @@
 
   /* ───────── Bons plans ───────── */
   const pageTips = () => `<div class="container">${pageHead("", "Bons plans", "Street food, marchés, snorkeling, couchers de soleil, apps : pour mieux dépenser, mieux manger, mieux dormir.")}
-    <div class="grid c2">${G.tips.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${c.html}</div></div>`).join("")}</div></div>`;
+    <div class="grid c2">${G.tips.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${linkifyHtml(c.html)}</div></div>`).join("")}</div></div>`;
 
   /* ───────── Plages & randonnées ───────── */
   // Le logement d'où l'on trie est mis en avant
@@ -692,7 +926,7 @@
   }
 
   /* ───────── Annexes ───────── */
-  const tels = (list, sos = 0) => list.map((e, i) => `<a class="tel ${i < sos ? "sos" : ""}" href="tel:${e[2]}"><span class="t">${esc(e[0])}${e[3] ? `<small>${esc(e[3])}</small>` : ""}</span><span class="n">${esc(e[1])}</span></a>`).join("");
+  const tels = (list, sos = 0) => list.map((e, i) => `<div class="tel ${i < sos ? "sos" : ""}"><span class="t">${esc(e[0])}${e[3] ? `<small>${linkify(e[3])}</small>` : ""}</span><a class="n" href="tel:${e[2]}" aria-label="Appeler ${esc(e[0])}">${I.phone}${esc(e[1])}</a>${isMobile(digits(e[2])) ? `<a class="wa" ${ext(waUrl(e[2]))} aria-label="WhatsApp ${esc(e[0])}" title="WhatsApp">${I.wa}</a>` : ""}</div>`).join("");
   function pageAnnex() {
     const total = G.cash.reduce((a, r) => a + r[3], 0);
     return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, lexique créole, plats à goûter et cash à prévoir.")}
@@ -778,6 +1012,7 @@
           <div class="menu-group"><span class="eyebrow">Outils</span><div class="menu-list">
             ${item("/convertisseur", "conv", "Convertisseur", "Roupies ⇄ euros, sans réseau")}
             ${item("/installer", "install", "Installer", "Sur l'écran d'accueil, et hors ligne")}
+            ${item("/edition", "pen", "Édition partagée", "Changer l'ordre des étapes, publier pour le groupe")}
             ${item("/annexes#urgences", "sos", "Urgences", "Police 999, SAMU 114, pompiers 115", "sos")}
           </div></div>
           <div class="menu-group"><span class="eyebrow">Le guide</span><div class="menu-list">
@@ -794,7 +1029,68 @@
           ${item("/annexes#cash", "cash", "Cash à prévoir", G.cashTotals.group + " pour le groupe")}
           ${item("/annexes#lexique", "lex", "Lexique créole", "Bonzour, mersi boukou…")}
           ${item("/annexes#plats", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
+          ${item("/menu", "food", "Menu Morisyen", "La carte de Sheila, commande sur WhatsApp")}
         </div></div>
+      </div></div>`;
+  }
+
+  /* ───────── Menu Morisyen (Catering Sheila) ───────── */
+  function pageMenu() {
+    const m = G.menu, eur = (rs) => (rs / G.rate).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
+    const dish = (it) => `<div class="dish"><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
+      <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p></div>`;
+    return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
+      <div class="menu-page">
+        <div class="card order"><div><h3>Commander</h3><p class="text">${linkify(m.order)}</p></div>
+          <div class="card-actions"><a class="btn primary" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a></div></div>
+        ${m.sections.map((sec, k) => `<section class="section" id="menu-${k + 1}"><h2>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map(dish).join("")}</div></section>`).join("")}
+        <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
+      </div></div>`;
+  }
+
+  /* ───────── Édition partagée : prénom, jeton GitHub, jours modifiés ───────── */
+  function pageEdit() {
+    const name = store.get("edit:name", ""), tok = store.get("gh:token", ""), dirty = store.get("plan:dirty", false);
+    const days = Object.entries(plan.days).filter(([, p]) => p && p.order).sort((a, b) => a[0] - b[0]).map(([k, p]) => { const d = G.days[k - 1]; return d
+      ? `<a class="dl" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${[p.by ? esc(p.by) : "", fmtAt(p.at)].filter(Boolean).join(", ")}</small></span><span class="out">${I.chev}</span></a>` : ""; }).join("");
+    return `<div class="container">${pageHead("", "Édition partagée", "Chacun peut changer l'ordre des étapes d'une journée depuis son téléphone. Avec un jeton GitHub, les changements sont publiés pour tout le groupe.", ["/plus", "Plus"])}
+      <div class="grid c2 top-align">
+        <div>
+          <div class="card">
+            <h3>Comment ça marche</h3>
+            <ol class="steps-ol">
+              <li>Sur une journée, touche <b>Modifier l'ordre</b> : des flèches apparaissent sur chaque étape pour la monter, la descendre, ou l'envoyer à la veille ou au lendemain. Les étapes réservées ne bougent pas.</li>
+              <li>Les trajets sont recalculés (durée estimée quand la liaison n'est pas dans le guide), la carte relie les lieux dans le nouvel ordre. Les horaires affichés restent ceux du guide.</li>
+              <li>Avec un jeton ci-contre, chaque changement est enregistré dans le dépôt du carnet (fichier <b>site/plan.json</b>) et apparaît chez tout le monde à l'ouverture suivante, une minute plus tard environ.</li>
+            </ol>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <div class="top"><h3>Jours modifiés</h3>${days ? `<button class="btn sm" id="resetAll" type="button">${I.undo}Tout rétablir</button>` : ""}</div>
+            ${days ? `<div class="dlist">${days}</div>` : `<p class="text">Aucun : le programme est celui du guide.</p>`}
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Publier pour le groupe</h3>
+            <p class="text">Le prénom signe les changements. Le jeton ne quitte pas ce téléphone : il sert seulement à écrire <b>site/plan.json</b> dans le dépôt GitHub.</p>
+            <div class="fields one">
+              <div class="field"><label for="edName">Prénom</label><input id="edName" value="${esc(name)}" autocomplete="given-name" placeholder="Qui modifie"></div>
+              <div class="field"><label for="edTok">Jeton GitHub</label><input id="edTok" type="password" value="${esc(tok)}" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></div>
+            </div>
+            <p class="status" data-share-state="long">${shareState(true)}</p>
+            <div class="card-actions"><button class="btn sm" id="testTok" type="button">${I.key}Tester le jeton</button><button class="btn sm primary" id="syncNow" type="button" ${dirty && tok ? "" : "disabled"}>${I.cloud}Publier maintenant</button></div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h3>Créer le jeton</h3>
+            <ol class="steps-ol">
+              <li>Sur github.com, avec le compte propriétaire du dépôt : <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</b>.</li>
+              <li><b>Repository access</b> : Only select repositories → <b>travelcompanion</b>.</li>
+              <li><b>Permissions → Repository permissions → Contents : Read and write</b>. Rien d'autre.</li>
+              <li>Expiration : la fin du voyage suffit. Copie le jeton (il ne sera plus affiché) et colle-le ci-dessus.</li>
+            </ol>
+            <div class="callout warn"><span class="k">Prudence</span><span>Ce jeton permet d'écrire dans le dépôt : ne l'envoie pas par message. Pour qu'un autre téléphone publie aussi, saisis-le directement dessus. Sans jeton, on voit les changements des autres sans rien configurer.</span></div>
+          </div>
+        </div>
       </div></div>`;
   }
 
@@ -819,6 +1115,17 @@
     $$("[data-tobook]", main).forEach((el) => el.addEventListener("change", () => { store.set("tobook:" + el.dataset.tobook, el.checked); render(); }));
     const all = $("#allDays"); if (all) all.onclick = () => openDaysSheet(+main.dataset.day);
     $$("[data-sort]", main).forEach((b) => (b.onclick = () => { const [k, v] = b.dataset.sort.split(":"); store.set("sort:" + k, v); render(); }));
+
+    // Mode édition du programme
+    const confirmBtn = (el, label, fn) => () => { if (!el.dataset.armed) { el.dataset.armed = "1"; el.textContent = "Confirmer ?"; setTimeout(() => { delete el.dataset.armed; el.innerHTML = label; }, 3000); return; } delete el.dataset.armed; fn(); };
+    const ep = $("#editPlan"); if (ep) ep.onclick = () => { editing = !editing; render(); };
+    $$("[data-mv]", main).forEach((b) => (b.onclick = () => { movePlan(G.days[+main.dataset.day - 1], b.dataset.ref, b.dataset.mv); render(); }));
+    const rd = $("#resetDay"); if (rd) rd.onclick = () => { resetDay(+main.dataset.day); render(); };
+    const ra = $("#resetAll"); if (ra) ra.onclick = confirmBtn(ra, `${I.undo}Tout rétablir`, () => { Object.entries(plan.days).filter(([, p]) => p && p.order).forEach(([k]) => resetDay(+k)); render(); });
+    const en = $("#edName"); if (en) en.addEventListener("input", () => store.set("edit:name", en.value.trim()));
+    const et = $("#edTok"); if (et) et.addEventListener("input", () => { store.set("gh:token", et.value.trim()); refreshShare(); if (et.value.trim()) scheduleSync(); });
+    const tt = $("#testTok"); if (tt) tt.onclick = testToken;
+    const sn = $("#syncNow"); if (sn) sn.onclick = () => syncPlan();
 
     if (path === "/todo/checklist") {
       const update = () => { const cs = $$("[data-cl]", main), d = cs.filter((c) => c.checked).length; $("#clCount").textContent = `${d} / ${cs.length}`; $("#clBar").style.width = (d / cs.length) * 100 + "%"; };
@@ -895,7 +1202,8 @@
     "/infos": [pageInfo, "Infos pratiques"], "/convertisseur": [pageConverter, "Convertisseur"], "/bons-plans": [pageTips, "Bons plans"],
     "/plages": [pageBeaches, "Plages"], "/randos": [pageHikes, "Randonnées"],
     "/annexes": [pageAnnex, "Annexes"], "/notes": [pageNotes, "Notes"], "/bienvenue": [pageWelcome, "Bienvenue"],
-    "/installer": [pageInstall, "Installer"], "/plus": [pagePlus, "Plus"]
+    "/installer": [pageInstall, "Installer"], "/plus": [pagePlus, "Plus"],
+    "/menu": [pageMenu, "Menu Morisyen"], "/edition": [pageEdit, "Édition partagée"]
   };
   const ALIAS = { "/checklist": "/todo/checklist", "/aujourdhui": "/", "/itineraire": "/", "/plage": "/plages", "/rando": "/randos", "/randonnees": "/randos" };
   // Anciens liens vers les sections d'annexes devenues des pages
@@ -1021,5 +1329,10 @@
 
   render();
   netState();
+  // Programme partagé : on le lit au démarrage, au retour au premier plan et au retour du réseau ; on publie ce qui attend
+  loadSharedPlan();
+  if (store.get("plan:dirty", false)) scheduleSync();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) { loadSharedPlan(); syncPlan(); } });
+  window.addEventListener("online", () => { loadSharedPlan(); syncPlan(); });
   setInterval(() => { if (todayDay() && main.dataset.day && !document.activeElement.matches("input, textarea")) render(); }, 5 * 60 * 1000);
 })();

@@ -5,7 +5,7 @@ import hashlib, os, pathlib
 root = pathlib.Path(__file__).resolve().parent.parent / "site"
 files, h = [], hashlib.sha256()
 for p in sorted(root.rglob("*")):
-    if p.is_file() and p.name not in ("sw.js", ".DS_Store", "robots.txt"):
+    if p.is_file() and p.name not in ("sw.js", ".DS_Store", "robots.txt", "plan.json"):
         rel = p.relative_to(root).as_posix(); files.append("/" + rel)
         h.update(rel.encode()); h.update(p.read_bytes())
 tpl = (root.parent / "scripts" / "sw.template.js").read_text()

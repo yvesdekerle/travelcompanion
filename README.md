@@ -10,7 +10,8 @@ site/                 ← le site statique (c'est ce dossier qui est déployé)
   css/style.css       ← identité du guide (crème, marine, lagon ; Allura, Lora, Inter)
   js/data.js          ← tout le contenu du guide (jours, logements, résas, infos, annexes)
   js/geo.js           ← contour de l'île, coordonnées des lieux et tracés routiers (généré, ne pas éditer)
-  js/app.js           ← rendu, routeur, liens Google Maps, carte du jour, to-do, notes, installation
+  js/app.js           ← rendu, routeur, liens Google Maps, carte du jour, to-do, notes, installation, édition partagée
+  plan.json           ← ordre des étapes modifié par le groupe (écrit par l'application via l'API GitHub, voir plus bas)
   sw.js               ← service worker (généré, ne pas éditer)
   manifest.webmanifest, robots.txt, img/, fonts/, icons/
 scripts/
@@ -34,7 +35,13 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
 | `/plages` | Les 17 plages notées, triables par note, par temps de route depuis chaque logement ou par zone |
 | `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, mêmes tris |
+| `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros), commande sur WhatsApp |
+| `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
+
+Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
+Tous les numéros de téléphone du carnet sont appelables d'un toucher ; les mobiles mauriciens (+230 5…) ont en plus
+un bouton WhatsApp, les adresses e-mail ouvrent la messagerie.
 
 Sur mobile : glisser à gauche ou à droite pour changer de jour. Sur clavier : flèches ← →.
 
@@ -47,6 +54,26 @@ Après une randonnée, le programme repasse par le logement pour la douche quand
 Pieter Both) ; quand la rando et la suite de la journée sont loin du logement (Gris-Gris, 7 cascades) ou qu'il n'y a
 plus de logement (Ferney, jour du départ), on enchaîne sans revenir. Le bouton « Itinéraire du jour dans Maps » enchaîne tous les lieux du jour, retour au
 logement compris, et la carte « Le parcours du jour » (SVG hors ligne) reprend le même parcours.
+
+## Changer l'ordre des étapes depuis le téléphone (édition partagée)
+
+Sur une journée, « Modifier l'ordre » fait apparaître des flèches sur chaque étape : monter, descendre, envoyer à la
+veille ou au lendemain. Les étapes réservées ne bougent pas. Les trajets sont recalculés (les liaisons connues du guide
+gardent leur durée, les autres sont estimées à vol d'oiseau × 1,3 à 38 km/h), la carte relie les lieux dans le nouvel
+ordre en pointillé, les horaires affichés restent ceux du guide (en italique quand ils ne sont plus dans l'ordre).
+
+Les changements sont d'abord enregistrés sur l'appareil. Pour les publier à tout le groupe, la page `/edition`
+(Plus → Édition partagée) demande un prénom et un **jeton GitHub fine-grained** limité à ce dépôt, avec la seule
+permission *Contents : Read and write* (github.com → Settings → Developer settings → Personal access tokens →
+Fine-grained tokens). Le jeton reste dans le `localStorage` du téléphone, jamais dans le code. À chaque changement,
+l'application écrit `site/plan.json` dans le dépôt via l'API GitHub (un commit « Programme partagé : jour 4
+réordonné par Yves »), Vercel redéploie, et les autres téléphones lisent `plan.json` (toujours depuis le réseau, jamais
+depuis le cache) à l'ouverture, au retour au premier plan ou au retour du réseau. La fusion se fait jour par jour : pour
+chaque jour, la version la plus récente gagne. Sans jeton, on voit les changements des autres sans rien configurer.
+
+`plan.json` référence les étapes par `jour:index` et par titre : si une étape d'un jour est insérée, supprimée ou
+renommée dans `data.js`, l'ordre partagé de ce jour retombe sur celui du guide pour cette étape. Avant de pousser une
+modification de contenu, faire un `git pull` : les commits de l'application arrivent sur `main` entre-temps.
 
 ## Modifier le contenu
 

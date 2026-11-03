@@ -46,6 +46,7 @@ const FIX = {
   "Pont Naturel, Mauritius": [-20.5010, 57.6072],
   "Gris Gris Beach Souillac, Mauritius": [-20.5253, 57.5277],
   "Notre Dame Auxiliatrice Cap Malheureux, Mauritius": [-19.9843, 57.6140],
+  "JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius": [-20.36419, 57.37672],
   "Chamarel Seven Coloured Earth Geopark, Mauritius": [-20.4426, 57.3737],
   "Eureka La Maison Creole Moka, Mauritius": [-20.2228, 57.4986],
   "Biscuiterie Rault, Mahebourg, Mauritius": [-20.4038, 57.6977],

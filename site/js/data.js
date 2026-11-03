@@ -51,6 +51,7 @@ window.GUIDE = {
         { when: "Soir · 18h15", where: "La Preneuse · à 5 min de la villa", title: "Coucher de soleil à La Preneuse",
           text: "La plage publique de La Preneuse, juste au sud de la villa, face à l'ouest : la tour Martello d'un côté, le Morne au loin de l'autre, et le soleil qui tombe dans la mer vers 18h15. Ce soir et demain soir, dîner livré à la villa par Catering Sheila (réservé) ; ensuite, un restaurant quand l'envie vient. Coucher tôt : demain, rando à 6h30.",
           places: [["La Preneuse Public Beach, Rivière Noire", "La Preneuse Public Beach, Mauritius"]],
+          links: [["Menu Morisyen de Sheila · commander sur WhatsApp", "/menu", "page"]],
           tags: [["ok", "Dîner livré Catering Sheila · réservé"]] }
       ]
     },
@@ -103,7 +104,7 @@ window.GUIDE = {
         { when: "Matin · 07h00 — 09h30", where: "La Balise Marina · Black River", title: "Sortie dauphins avec JPH", star: true, fixed: true,
           text: "Les dauphins long-becs se reposent dans la baie de Tamarin tôt le matin, souvent avec quelques grands dauphins. Sortie en bateau, mise à l'eau avec masque et tuba au passage des groupes — on observe, on ne poursuit pas. Déjà payé.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · fin de matinée libre au logement ensuite",
-          places: [["La Balise Marina", "La Balise Marina, Black River, Mauritius"]], sea: ["Baie de Tamarin"],
+          places: [["La Balise Marina · embarcadère JPH", "JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius"]], links: [["JPH Charters · point d'embarquement", "https://maps.app.goo.gl/3CsgPtyF3qirMVF7A", "map"]], sea: ["Baie de Tamarin"],
           tags: [["ok", "Payé JPH · réservé"], ["info", "Contact +230 5729 0901 · resa@jph.mu"]],
           note: ["À prévoir", "Maillot sous les vêtements, masque et tuba, lycra, serviette."] },
         { t: "drive", d: "29 min · 16 km · route de Chamarel, virages et points de vue" },
@@ -128,12 +129,12 @@ window.GUIDE = {
       img: "j04", caption: "Crystal Rock · face au Morne",
       intro: "Journée entière sur l'eau avec JPH, catamaran rien que pour nous : on longe la côte ouest jusqu'au Morne, on nage, on mange à bord, on rentre avec le soleil.",
       steps: [
-        { t: "drive", d: "4 min · 1,4 km · Rivière Noire → La Balise Marina · horaire de départ à confirmer · retour 4 min · 1,4 km" },
-        { when: "Matin", where: "La Balise Marina · Black River", title: "Embarquement — catamaran JPH", star: true, fixed: true,
-          text: "Catamaran privatisé pour la journée, déjà payé. Cap au sud le long de la côte ouest, jusqu'au lagon du Morne.",
-          rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River",
-          places: [["La Balise Marina", "La Balise Marina, Black River, Mauritius"]],
-          tags: [["ok", "Payé JPH · catamaran privatisé"], ["info", "Contact +230 5729 0901 · resa@jph.mu"], ["todo", "Horaire de départ à confirmer"]] },
+        { t: "drive", d: "départ 08h45 · 4 min · 1,4 km · Rivière Noire → La Balise Marina · retour 4 min · 1,4 km" },
+        { when: "Matin · 09h00", where: "La Balise Marina · Black River", title: "Embarquement — catamaran JPH", star: true, fixed: true,
+          text: "Catamaran privatisé de 9h au coucher du soleil, déjà payé. Cap au sud le long de la côte ouest, jusqu'au lagon du Morne.",
+          rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · 9h",
+          places: [["La Balise Marina · embarcadère JPH", "JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius"]], links: [["JPH Charters · point d'embarquement", "https://maps.app.goo.gl/3CsgPtyF3qirMVF7A", "map"]],
+          tags: [["ok", "Payé JPH · catamaran privatisé · 9h"], ["info", "Contact +230 5729 0901 · resa@jph.mu"]] },
         { when: "Mi-journée", where: "Crystal Rock · Île aux Bénitiers", title: "Snorkeling et BBQ à bord",
           text: "Crystal Rock, rocher de corail posé seul au milieu du lagon face au Morne — poissons-perroquets, demoiselles, parfois une tortue. Puis mouillage à l'Île aux Bénitiers, deux kilomètres de sable et de filaos ; baignade, BBQ à bord (poisson grillé, salades, punch).",
           sea: ["Crystal Rock", "Île aux Bénitiers"],
@@ -215,7 +216,7 @@ window.GUIDE = {
         { when: "Matin · 07h00 — 12h00", where: "La Balise Marina · Black River", title: "Pêche au gros avec JPH — Alex, Yves et Quentin", star: true, fixed: true,
           text: "Cinq heures au large de la côte ouest : marlin bleu, thon, dorade coryphène, wahoo — novembre ouvre la bonne saison. Acompte de 208 € déjà payé ; reste 64 € par personne (≈ 3 370 Rs), en cash sur place.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River",
-          places: [["La Balise Marina", "La Balise Marina, Black River, Mauritius"]],
+          places: [["La Balise Marina · embarcadère JPH", "JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius"]], links: [["JPH Charters · point d'embarquement", "https://maps.app.goo.gl/3CsgPtyF3qirMVF7A", "map"]],
           tags: [["ok", "Réservé 3 pêcheurs"], ["cash", "Cash ≈ 3 370 Rs / pers. · solde"], ["info", "Contact +230 5729 0901"]],
           note: ["Pour les autres", "Matinée massage et détente : spa d'hôtel ou masseur à domicile, à réserver."] },
         { t: "drive", d: "12h30 · 43 min · 33 km · tous ensemble vers Port-Louis · +10 min en journée" },
@@ -541,9 +542,9 @@ window.GUIDE = {
       desc: "Les dauphins long-becs de la baie de Tamarin, à l'aube, avec mise à l'eau.",
       rows: [["RDV", "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River"], ["Contact", "JPH · +230 5729 0901 / +230 5727 6188 · resa@jph.mu · bureau +230 483 50 60"], ["Prix", "Déjà payé"], ["À prévoir", "maillot sous les vêtements, masque et tuba, lycra, serviette, mal de mer"]],
       tel: "+23057290901" },
-    { day: 4, when: "Lun. 9 · journée", status: ["ok", "Payé"], title: "Catamaran privatisé · JPH",
+    { day: 4, when: "Lun. 9 · 9h — coucher de soleil", status: ["ok", "Payé"], title: "Catamaran privatisé · JPH",
       desc: "Côte ouest : Crystal Rock, Île aux Bénitiers, BBQ à bord, coucher de soleil en mer.",
-      rows: [["RDV", "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · horaires à confirmer"], ["Contact", "JPH · +230 5729 0901 / +230 5727 6188 · resa@jph.mu · bureau +230 483 50 60"], ["Prix", "Déjà payé"], ["À prévoir", "lycra, masque et tuba, chapeau, crème minérale, enceinte"]],
+      rows: [["RDV", "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · 9h"], ["Contact", "JPH · +230 5729 0901 / +230 5727 6188 · resa@jph.mu · bureau +230 483 50 60"], ["Prix", "Déjà payé"], ["À prévoir", "lycra, masque et tuba, chapeau, crème minérale, enceinte"]],
       tel: "+23057290901" },
     { day: 5, when: "Mar. 10 · 11h", status: ["cash", "À payer sur place · cash"], title: "Vanill'Art · Chamouny",
       desc: "Visite d'une heure de la plantation familiale de vanille bio, réservée pour 9 personnes.",
@@ -568,8 +569,9 @@ window.GUIDE = {
       rows: [["RDV", "Pointe Jérôme, Mahébourg (Pointe d'Esny Road) · bateau « NEMO »"], ["Contact", "À l'arrivée, Kenza : +230 5753 9671 · réservation, Jérôme : +230 5771 7917"], ["Prix", "14 000 Rs pour le bateau, à payer sur place, en cash uniquement"], ["À prévoir", "sac étanche, lycra, masque et tuba, eau, pique-nique, crème minérale"]],
       tel: "+23057539671" },
     { day: 1, when: "Ven. 6 et sam. 7 · soir", status: ["ok", "Payé"], title: "Dîners livrés · Catering Sheila Mauritius",
-      desc: "Dîner livré au logement les deux premiers soirs, pour tout le groupe.",
-      rows: [["Quand", "Vendredi 6 et samedi 7 novembre, le soir"], ["Statut", "Réservé"]] }
+      desc: "Dîner livré au logement les deux premiers soirs, pour tout le groupe. Pour recommander un autre soir : le Menu Morisyen est dans l'application, commande sur WhatsApp 24 h à l'avance.",
+      rows: [["Quand", "Vendredi 6 et samedi 7 novembre, le soir"], ["Contact", "Sheila · WhatsApp +230 5986 3130"], ["Statut", "Réservé"]],
+      tel: "+23059863130", page: ["/menu", "Voir le menu"] }
   ],
 
   toBook: [
@@ -602,6 +604,38 @@ window.GUIDE = {
   ],
 
   /* ───────────── INFOS PRATIQUES ───────────── */
+  /* ───────── MENU MORISYEN (Catering Sheila) ───────── */
+  menu: {
+    title: "Menu Morisyen",
+    by: "Catering Sheila Mauritius",
+    intro: "La carte de Sheila, qui livre les dîners de la villa les deux premiers soirs. Chaque plat est pour une personne ; les salades se commandent pour 2, 4 ou 6.",
+    order: "Pour passer commande, contacter Sheila sur WhatsApp au +230 5986 3130. Toutes les commandes doivent être passées au moins 24 h à l'avance, pour un minimum de 2 personnes.",
+    tel: "+23059863130", wa: "23059863130",
+    sections: [
+      { title: "Plats à base de viande", items: [
+        { name: "Rougail saucisse", opt: "Porc ou poulet", rs: 500, text: "Saucisses fumées et boucané (lard fumé) dans leur sauce tomate, lentilles noires, le tout accompagné de riz blanc ou de pain, ainsi que d'une salade de concombre et d'un sauté de brèdes." },
+        { name: "Chop suey de poulet", rs: 600, text: "Sauté de poulet, champignons, carottes, brèdes, mini épis de maïs et poivrons dans une sauce aux champignons, huîtres et soja." },
+        { name: "Curry classique", opt: "Poisson ou porc", rs: 500, text: "L'option choisie avec des aubergines, accompagnée de lentilles corail, de riz blanc ou de pain, ainsi que d'un chatini de tomate ou d'une salade de concombre." },
+        { name: "Curry lait de coco", opt: "Poulet ou crevettes", rs: 500, text: "L'option choisie au lait de coco, accompagnée d'haricots blancs, de riz blanc ou de pain, ainsi que d'un chatini de tomate ou d'une salade de concombre." },
+        { name: "Vindaye", opt: "Poisson ou poulpe", rs: 500, text: "L'option choisie au curcuma et oignons, accompagnée de haricots rouges, d'un étouffé de christophine, de riz blanc ou de pain, ainsi que d'une salade de concombre." },
+        { name: "Pilau", opt: "Porc ou poulet", rs: 500, text: "Riz mijoté dans du curcuma et épices, accompagné de saucisses et de boucané (lard fumé) et d'un chatini tomate." },
+        { name: "Moofan", rs: 500, text: "Riz mijoté, accompagné de poulet, de saucisses chinoises (porc ou poulet), d'œufs rôtis et de petites crevettes séchées, avec un chatini de tomate." }
+      ] },
+      { title: "Plats végétariens", items: [
+        { name: "Chop suey de légumes", rs: 600, text: "Sauté de champignons, carottes, brèdes, mini épis de maïs, poivrons et tofu dans une sauce aux champignons, huîtres et soja." },
+        { name: "Currys au choix", rs: 600, text: "Curry de pommes de terre et de petits pois, ou curry d'aubergines et tofu, accompagné de riz ou de pain." },
+        { name: "Chouchou et compagnie", rs: 600, text: "Christophines mijotées accompagnées de haricots rouges, de riz blanc ou de pain, ainsi que d'une salade de concombre." },
+        { name: "Gratin aux légumes", opt: "Légumes selon la saison", rs: 600, text: "Gratin de légumes, accompagné d'une salade verte ou d'une salade mixte, selon la demande." },
+        { name: "Mijoté de légumes", opt: "Selon la saison", rs: 600, text: "Un mijoté de carottes, fruit à pain et christophines, accompagné de pain et d'une salade verte." }
+      ] },
+      { title: "Salades", note: "Pour 2, 4 ou 6 personnes · prix par personne", items: [
+        { name: "Salade exotique", opt: "Marlin fumé, crevettes ou végétarienne", rs: 500, per: true, text: "Avocat, poivron, tomates, concombre et ananas sur un lit de laitue, accompagnés de pain." },
+        { name: "Salade russe", opt: "Version végétarienne sur demande", rs: 300, per: true, text: "Légumes cuits (betteraves, carottes, pommes de terre), œufs durs et mayonnaise maison, accompagnés de saucisses au miel (porc ou poulet)." },
+        { name: "Salade de pâtisson et d'œufs durs", opt: "Version végétarienne sur demande", rs: 300, per: true, text: "Pâtisson et œufs durs accompagnés de salade verte, de concombre et d'une mayonnaise maison." }
+      ] }
+    ]
+  },
+
   rate: 52.5,
   info: {
     timezone: "L'île est à UTC+4 ; en novembre Paris est en heure d'hiver (UTC+1) : trois heures d'avance sur la France. Quand il est 9h à Paris, il est midi à Maurice. Le jour se lève vers 5h30 et le soleil se couche vers 18h15 — les journées commencent tôt et les soirées sont déjà nocturnes à 19h.",
@@ -741,7 +775,8 @@ window.GUIDE = {
     ["Baba Cool · Sophie", "+230 5723 4134", "+23057234134"],
     ["Nemo Speed Boat · Kenza", "+230 5753 9671", "+23057539671", "Jérôme +230 5771 7917"],
     ["Exploration Sous-Marine · plongée", "+230 5728 9127", "+23057289127"],
-    ["Trekking Mauritius · Yanature", "+230 5251 4050", "+23052514050", "WhatsApp"]
+    ["Trekking Mauritius · Yanature", "+230 5251 4050", "+23052514050", "WhatsApp"],
+    ["Catering Sheila · dîners livrés", "+230 5986 3130", "+23059863130", "WhatsApp · commandes 24 h à l'avance"]
   ],
 
   lexicon: [
@@ -780,7 +815,6 @@ window.GUIDE = {
   ],
 
   toCheck: [
-    "Horaire du catamaran JPH du lundi 9 à confirmer.",
     "La date de départ de Chloé n'est pas indiquée dans le planning.",
     "Trou aux Biches : convenir avec l'hôte du dépôt des bagages lundi 16 vers 9h et du départ samedi 21 vers 7h30 (hors fenêtres officielles).",
     "Plongée le 11 : 5 jours avant les vols du 16, la règle des 24 h sans avion est respectée.",

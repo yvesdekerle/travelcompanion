@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "c20864e4a2";
+const VERSION = "6d6ff8f7f7";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -76,8 +76,10 @@ self.addEventListener("activate", (e) => {
 
 // Cache d'abord (le carnet marche sans réseau), réseau en secours
 self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
+  const req = e.request, url = new URL(req.url);
+  if (req.method !== "GET" || url.origin !== location.origin) return;
+  // Le programme partagé (plan.json) vient toujours du réseau, jamais du cache
+  if (url.pathname === "/plan.json") return;
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     // Toutes les pages (/jour/3, /logements…) sont servies par index.html

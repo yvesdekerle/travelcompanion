@@ -93,9 +93,11 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .brand-mark { display: none; }
 .brand b { font: 400 34px/1 var(--script); color: var(--brand-ink); display: block; transform: translateY(2px); }
 .brand small { display: block; font: 500 12px/1 var(--sans); color: var(--muted); white-space: nowrap; }
-.topnav { display: none; gap: 2px; margin-left: 20px; }
+.topnav { display: none; gap: 2px; margin-left: 20px; min-width: 0; overflow: hidden; white-space: nowrap; }
 .topnav button { appearance: none; border: 0; background: none; font: inherit; cursor: pointer; }
-.topnav a, .topnav button { text-decoration: none; color: var(--ink-2); font-size: 14.5px; font-weight: 500; padding: 8px 12px; border-radius: 99px; }
+.topnav a, .topnav button { text-decoration: none; color: var(--ink-2); font-size: 14.5px; font-weight: 500; padding: 8px 10px; border-radius: 99px; flex: none; }
+.topnav .s { display: none; }
+@media (max-width: 1299px) { .topnav { gap: 0; } .topnav a, .topnav button { font-size: 14px; padding: 8px 8px; } .topnav .l { display: none; } .topnav .s { display: inline; } }
 .topnav a:hover, .topnav button:hover { background: var(--surface-2); color: var(--ink); }
 .topnav a.active { color: var(--brand-ink); background: var(--brand-soft); font-weight: 600; }
 @media (min-width: 1024px) { .topnav { display: flex; } }
@@ -228,6 +230,7 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .btn svg { width: 18px; height: 18px; flex: none; }
 .btn.primary { background: var(--navy); border-color: var(--navy); color: #fff; }
 .btn.primary:hover { background: #24384D; }
+.btn:disabled { opacity: .45; cursor: default; }
 .btn.sm { min-height: 38px; padding: 0 13px; font-size: 13.5px; border-radius: 10px; }
 .btn.sm svg { width: 15px; height: 15px; }
 .hint { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
@@ -641,6 +644,83 @@ input[type="checkbox"].chk:checked::after { content: ""; width: 6px; height: 11p
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 .toast.act { pointer-events: auto; cursor: pointer; background: var(--brand-ink); white-space: normal; text-align: center; border-radius: var(--r); }
 @media (min-width: 1024px) { .toast { bottom: 28px; } }
+
+/* ───────── Téléphones et WhatsApp cliquables dans le texte ───────── */
+a.tl { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: var(--brand); text-decoration-thickness: 1.5px; text-underline-offset: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+a.tl:hover { color: var(--brand-ink); }
+.wa-ic { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-left: 4px; border-radius: 50%; background: var(--ok-soft); color: var(--ok-ink); vertical-align: -5px; }
+.wa-ic svg { width: 13px; height: 13px; }
+.wa-ic:hover { background: var(--ok); color: var(--navy); }
+.pill .wa-ic, .tel .t small .wa-ic { width: 17px; height: 17px; margin-left: 3px; vertical-align: -4px; }
+.pill .wa-ic svg, .tel .t small .wa-ic svg { width: 11px; height: 11px; }
+.pill a.tl { text-decoration-color: currentColor; }
+.rdv > span { min-width: 0; }
+/* Fiches contact : numéro appelable, WhatsApp pour les mobiles */
+.tel { padding: 10px 10px 10px 14px; flex-wrap: wrap; justify-content: flex-end; }
+.tel .t { flex: 1 1 170px; }
+.tel a.n { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 9px; background: var(--brand-soft); color: var(--brand-ink); text-decoration: none; }
+.tel a.n svg { width: 14px; height: 14px; }
+.tel a.n:hover { background: #D5EBF3; }
+.tel .wa { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; background: var(--ok-soft); color: var(--ok-ink); flex: none; }
+.tel .wa svg { width: 18px; height: 18px; }
+.tel .wa:hover { background: var(--ok); color: var(--navy); }
+.tel.sos a.n { background: var(--coral); color: #fff; padding: 0 14px; border-radius: 99px; font-size: 17px; }
+.tel.sos a.n svg { display: none; }
+.tel.sos a.n:hover { background: var(--coral-ink); }
+/* Lien vers une page du carnet dans la liste des lieux (ex. le menu) */
+.place.page { text-decoration: none; color: inherit; }
+.place.page .pin { color: var(--brand-ink); }
+.place.page .chev { display: grid; color: var(--line-2); margin-right: 6px; }
+.place.page .chev svg { width: 18px; height: 18px; }
+.place.page:hover .name { color: var(--brand-ink); }
+
+/* ───────── Étoile des jours avec une réservation à horaire fixe ───────── */
+.strip a .fx { position: absolute; top: 3px; left: 4px; display: grid; color: var(--sun); }
+.strip a .fx svg { width: 10px; height: 10px; }
+.dl .fx { display: inline-grid; margin-left: 6px; vertical-align: -1px; color: var(--sun); }
+.dl .fx svg { width: 12px; height: 12px; }
+
+/* ───────── Menu Morisyen ───────── */
+.menu-page { max-width: 760px; }
+.menu-page .order { display: grid; gap: 14px; }
+@media (min-width: 720px) { .menu-page .order { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } .menu-page .order .card-actions { margin-top: 0; flex-direction: column; align-items: stretch; } }
+.menu-page .section { padding-top: 28px; }
+.dishes { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.dish { padding: 14px 16px; border-top: 1px solid var(--line); }
+.dish:first-child { border-top: 0; }
+.dish-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+.dish h4 { font-size: 18px; line-height: 1.25; }
+.dish .opt { font: italic 400 14px/1.4 var(--serif); color: var(--ink-2); margin-top: 1px; }
+.dish .price { text-align: right; white-space: nowrap; flex: none; }
+.dish .price b { display: block; font: 600 17px/1.2 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
+.dish .price small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.dish p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); max-width: 70ch; }
+
+/* ───────── Mode édition du programme ───────── */
+.tl-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 26px 0 4px; }
+.tl-head .tl-title { margin: 0; }
+.tl-head + .hint { margin: 4px 0 8px; }
+.callout.plan { margin: 10px 0 2px; background: var(--sun-soft); }
+.callout.plan .k { color: var(--sun-ink); display: inline-flex; align-items: center; gap: 6px; }
+.callout.plan .k svg { width: 14px; height: 14px; }
+.callout .link, .status .link { background: none; border: 0; padding: 0; font: inherit; font-weight: 600; color: var(--brand-ink); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.edit-bar { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--line-2); }
+.edit-bar .sp { flex: 1; }
+.edit-bar .eb { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 34px; min-width: 36px; padding: 0 8px; border-radius: 9px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); font: 600 12.5px var(--sans); }
+.edit-bar .eb svg { width: 16px; height: 16px; }
+.edit-bar .eb:disabled { opacity: .3; cursor: default; }
+.edit-bar .eb:not(:disabled):hover { background: var(--brand-soft); color: var(--brand-ink); border-color: transparent; }
+.edit-bar.locked { color: var(--ok-ink); font: 600 12.5px/1.4 var(--sans); gap: 6px; }
+.edit-bar.locked svg { width: 14px; height: 14px; flex: none; }
+.from-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--sun-soft); color: var(--sun-ink); font: 700 11px/1 var(--sans); padding: 4px 9px 4px 7px; border-radius: 99px; margin: 0 6px 10px 0; }
+.from-pill svg { width: 12px; height: 12px; }
+.tl-time .doubt { color: var(--muted); font-style: italic; font-weight: 500; }
+.tl-drive.est .drive { border-color: var(--sun); background: rgba(251, 240, 207, .55); }
+.daymap .route.est { stroke-dasharray: 5 4; stroke-width: 1.8; }
+.fields.one { grid-template-columns: 1fr; }
+.status { font-size: 14px; color: var(--ink-2); margin: 12px 0 0; }
+.dlist { display: grid; gap: 4px; margin-top: 8px; }
+.dlist .dl { border: 1px solid var(--line); }
 
 .enter { animation: enter .3s var(--ease); }
 @keyframes enter { from { opacity: 0; transform: translateY(6px); } }

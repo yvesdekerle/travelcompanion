@@ -366,6 +366,12 @@
     -20.4612,
     57.6958
    ]
+  },
+  "JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius": {
+   "fix": [
+    -20.36419,
+    57.37672
+   ]
   }
  },
  "routes": {
@@ -2496,7 +2502,7 @@
    "min": 158
   },
   "3": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|La Balise Marina, Black River, Mauritius|Le Chamarel Restaurant, Mauritius|Chamarel Seven Coloured Earth Geopark, Mauritius|Rhumerie de Chamarel, Mauritius|La Prairie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Le Chamarel Restaurant, Mauritius|Chamarel Seven Coloured Earth Geopark, Mauritius|Rhumerie de Chamarel, Mauritius|La Prairie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
    "pts": [
     [
      -20.3664,
@@ -2515,32 +2521,16 @@
      57.376
     ],
     [
-     -20.364,
-     57.3791
-    ],
-    [
-     -20.3656,
-     57.3778
-    ],
-    [
-     -20.3652,
+     -20.3632,
      57.3771
     ],
     [
-     -20.3656,
-     57.3778
+     -20.3639,
+     57.377
     ],
     [
-     -20.3647,
-     57.3781
-    ],
-    [
-     -20.3645,
-     57.379
-    ],
-    [
-     -20.364,
-     57.3791
+     -20.3632,
+     57.3771
     ],
     [
      -20.3644,
@@ -3368,10 +3358,10 @@
     ]
    ],
    "km": 57,
-   "min": 84
+   "min": 82
   },
   "4": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|La Balise Marina, Black River, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
    "pts": [
     [
      -20.3664,
@@ -3390,32 +3380,16 @@
      57.376
     ],
     [
-     -20.364,
-     57.3791
-    ],
-    [
-     -20.3656,
-     57.3778
-    ],
-    [
-     -20.3652,
+     -20.3632,
      57.3771
     ],
     [
-     -20.3656,
-     57.3778
+     -20.3639,
+     57.377
     ],
     [
-     -20.3647,
-     57.3781
-    ],
-    [
-     -20.3645,
-     57.379
-    ],
-    [
-     -20.364,
-     57.3791
+     -20.3632,
+     57.3771
     ],
     [
      -20.3629,
@@ -3434,8 +3408,8 @@
      57.3719
     ]
    ],
-   "km": 3,
-   "min": 7
+   "km": 2,
+   "min": 5
   },
   "5": {
    "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Vanill Art Chamouny, Mauritius|Cascade 500 Pieds Chamouny, Mauritius|Pointe Jerome Embarkation Point, Mahebourg, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
@@ -5644,7 +5618,7 @@
    "min": 141
   },
   "7": {
-   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|La Balise Marina, Black River, Mauritius|Central Market Port Louis, Mauritius|Aapravasi Ghat, Mauritius|Fort Adelaide Port Louis, Mauritius|Caudan Waterfront, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
+   "key": "La Jetée Road, Grande Rivière Noire, Mauritius|JPH Charters Point of embarkation, La Balise Marina, Black River, Mauritius|Central Market Port Louis, Mauritius|Aapravasi Ghat, Mauritius|Fort Adelaide Port Louis, Mauritius|Caudan Waterfront, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
    "pts": [
     [
      -20.3664,
@@ -5663,32 +5637,16 @@
      57.376
     ],
     [
-     -20.364,
-     57.3791
-    ],
-    [
-     -20.3656,
-     57.3778
-    ],
-    [
-     -20.3652,
+     -20.3632,
      57.3771
     ],
     [
-     -20.3656,
-     57.3778
+     -20.3639,
+     57.377
     ],
     [
-     -20.3647,
-     57.3781
-    ],
-    [
-     -20.3645,
-     57.379
-    ],
-    [
-     -20.364,
-     57.3791
+     -20.3632,
+     57.3771
     ],
     [
      -20.3644,
@@ -6215,8 +6173,8 @@
      57.3719
     ]
    ],
-   "km": 75,
-   "min": 96
+   "km": 74,
+   "min": 94
   },
   "8": {
    "key": "La Jetée Road, Grande Rivière Noire, Mauritius|Pereybere Public Beach, Mauritius|Notre Dame Auxiliatrice Cap Malheureux, Mauritius|Grand Baie Public Beach, Mauritius|La Jetée Road, Grande Rivière Noire, Mauritius",
