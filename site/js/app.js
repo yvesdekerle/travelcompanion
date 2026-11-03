@@ -166,7 +166,7 @@
   const NAV_ITEMS = {
     route: { href: "/", t: "Itinéraire", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
     maps: { t: "Cartes", i: "map", sheet: "maps" },
-    conv: { href: "/convertisseur", t: "Convertisseur", i: "conv" },
+    conv: { href: "/convertisseur", t: "Convertir", tl: "Convertisseur", i: "conv" },
     booked: { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
     beaches: { href: "/plages", t: "Plages", i: "beach" },
     hikes: { href: "/randos", t: "Randos", i: "boot" },
@@ -183,22 +183,7 @@
   const bar = $("#tabbar");
   const barEdge = () => bar.classList.toggle("end", bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 2);
   bar.addEventListener("scroll", barEdge, { passive: true });
-  // Glissement horizontal animé (sortie en douceur), interrompu dès que le doigt se pose sur la barre
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  function glide(el, to, ms = 320) {
-    const from = el.scrollLeft, dist = to - from, id = (el._glide = (el._glide || 0) + 1);
-    if (!dist) return;
-    if (reducedMotion.matches) { el.scrollLeft = to; return; }
-    const t0 = performance.now();
-    const step = (t) => {
-      if (el._glide !== id) return;
-      const p = Math.min(1, (t - t0) / ms);
-      el.scrollLeft = from + dist * (1 - Math.pow(1 - p, 3));
-      if (p < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-  ["touchstart", "pointerdown", "wheel"].forEach((ev) => bar.addEventListener(ev, () => { bar._glide = (bar._glide || 0) + 1; }, { passive: true }));
   let barKey = "";
   function renderNav(path) {
     const NAV = NAV_ORDER();
@@ -209,9 +194,10 @@
     const key = NAV.map((n) => n.t).join(), fresh = key !== barKey;
     if (fresh) {
       barKey = key;
+      const inner = (n) => `<span class="in"><span class="ic">${I[n.i]}</span><span>${n.t}</span></span>`;
       bar.innerHTML = NAV.map((n) => n.sheet
-        ? `<button class="tab" type="button" data-sheet="${n.sheet}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></button>`
-        : `<a class="tab" href="${n.href}"><span class="ic">${I[n.i]}</span><span>${n.t}</span></a>`).join("");
+        ? `<button class="tab" type="button" data-sheet="${n.sheet}">${inner(n)}</button>`
+        : `<a class="tab" href="${n.href}">${inner(n)}</a>`).join("");
       $$("[data-sheet]", bar).forEach((b) => (b.onclick = openMapsSheet));
     }
     $$(".tab", bar).forEach((el, i) => {
@@ -222,9 +208,10 @@
     const act = $(".tab.active", bar);
     if (act) {
       const l = act.offsetLeft - bar.scrollLeft, r = l + act.offsetWidth, hidden = l < 12 || r > bar.clientWidth - 12;
-      // Au chargement : onglet actif centré d'emblée ; ensuite on ne bouge que s'il dépasse, en glissant
-      const to = Math.max(0, Math.min(act.offsetLeft - (bar.clientWidth - act.offsetWidth) / 2, bar.scrollWidth - bar.clientWidth));
-      if (fresh) bar.scrollLeft = to; else if (hidden) glide(bar, to);
+      // Au chargement : l'onglet actif en 3e position d'emblée ; ensuite on ne bouge que s'il dépasse, en glissant.
+      // La cible tombe sur un point d'aimantage (début d'onglet), donc aucun recalage après le glissement.
+      const to = Math.max(0, Math.min(act.offsetLeft - 12 - 2 * act.offsetWidth, bar.scrollWidth - bar.clientWidth));
+      if (fresh) bar.scrollLeft = to; else if (hidden) bar.scrollTo({ left: to, behavior: reducedMotion.matches ? "instant" : "smooth" });
     }
     barEdge();
   }
