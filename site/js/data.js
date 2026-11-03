@@ -130,11 +130,10 @@ window.GUIDE = {
       steps: [
         { t: "drive", d: "4 min · 1,4 km · Rivière Noire → La Balise Marina · horaire de départ à confirmer · retour 4 min · 1,4 km" },
         { when: "Matin", where: "La Balise Marina · Black River", title: "Embarquement — catamaran JPH", star: true, fixed: true,
-          text: "Catamaran privatisé pour la journée, déjà payé. Cap au sud le long de la côte ouest : dauphins au passage de la baie de Tamarin, puis le lagon du Morne.",
+          text: "Catamaran privatisé pour la journée, déjà payé. Cap au sud le long de la côte ouest, jusqu'au lagon du Morne.",
           rdv: "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River",
           places: [["La Balise Marina", "La Balise Marina, Black River, Mauritius"]],
-          tags: [["ok", "Payé JPH · catamaran privatisé"], ["info", "Contact +230 5729 0901 · resa@jph.mu"]],
-          note: ["À régler avec JPH", "La sortie d'hier incluait déjà les dauphins : demander à remplacer cette partie par plus de snorkeling, ou un départ plus tardif. Horaires à confirmer.", "warn"] },
+          tags: [["ok", "Payé JPH · catamaran privatisé"], ["info", "Contact +230 5729 0901 · resa@jph.mu"], ["todo", "Horaire de départ à confirmer"]] },
         { when: "Mi-journée", where: "Crystal Rock · Île aux Bénitiers", title: "Snorkeling et BBQ à bord",
           text: "Crystal Rock, rocher de corail posé seul au milieu du lagon face au Morne — poissons-perroquets, demoiselles, parfois une tortue. Puis mouillage à l'Île aux Bénitiers, deux kilomètres de sable et de filaos ; baignade, BBQ à bord (poisson grillé, salades, punch).",
           sea: ["Crystal Rock", "Île aux Bénitiers"],
@@ -543,9 +542,8 @@ window.GUIDE = {
       rows: [["RDV", "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River"], ["Contact", "JPH · +230 5729 0901 / +230 5727 6188 · resa@jph.mu · bureau +230 483 50 60"], ["Prix", "Déjà payé"], ["À prévoir", "maillot sous les vêtements, masque et tuba, lycra, serviette, mal de mer"]],
       tel: "+23057290901" },
     { day: 4, when: "Lun. 9 · journée", status: ["ok", "Payé"], title: "Catamaran privatisé · JPH",
-      desc: "Côte ouest : dauphins, Crystal Rock, Île aux Bénitiers, BBQ à bord, coucher de soleil en mer.",
+      desc: "Côte ouest : Crystal Rock, Île aux Bénitiers, BBQ à bord, coucher de soleil en mer.",
       rows: [["RDV", "L'Estuaire, Shop 32 & 33, La Balise Marina, Black River · horaires à confirmer"], ["Contact", "JPH · +230 5729 0901 / +230 5727 6188 · resa@jph.mu · bureau +230 483 50 60"], ["Prix", "Déjà payé"], ["À prévoir", "lycra, masque et tuba, chapeau, crème minérale, enceinte"]],
-      note: "Doublon dauphins : demander à JPH de remplacer la partie dauphins par plus de snorkeling, ou un départ plus tardif.",
       tel: "+23057290901" },
     { day: 5, when: "Mar. 10 · 11h", status: ["cash", "À payer sur place · cash"], title: "Vanill'Art · Chamouny",
       desc: "Visite d'une heure de la plantation familiale de vanille bio, réservée pour 9 personnes.",
@@ -783,7 +781,6 @@ window.GUIDE = {
 
   toCheck: [
     "Horaire du catamaran JPH du lundi 9 à confirmer.",
-    "Doublon dauphins : la sortie du dimanche 8 et le catamaran JPH du lundi 9 incluent tous les deux les dauphins — demander à JPH de remplacer cette partie par plus de snorkeling ou un départ plus tardif.",
     "La date de départ de Chloé n'est pas indiquée dans le planning.",
     "Trou aux Biches : convenir avec l'hôte du dépôt des bagages lundi 16 vers 9h et du départ samedi 21 vers 7h30 (hors fenêtres officielles).",
     "Plongée le 11 : 5 jours avant les vols du 16, la règle des 24 h sans avion est respectée.",
