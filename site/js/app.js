@@ -294,6 +294,8 @@
   let plan = store.get("plan", null);
   if (!plan || typeof plan !== "object" || !plan.days) plan = PLAN_EMPTY();
   let editing = false;
+  // Sans jeton, on consulte seulement : pas de crayon, pas d'ajout, pas de remise à zéro
+  const canEdit = () => !!store.get("gh:token", "");
   const allHikes = [...G.hikes, ...G.hikesMore];
   const entryOf = (n) => plan.days[n] || {};
   const removedIds = (n) => (entryOf(n).removed || []).map(([id]) => id);
@@ -674,6 +676,7 @@
   function pageDay(n, home) {
     const d = G.days.find((x) => x.n === n) || G.days[0];
     n = d.n;
+    if (!canEdit()) editing = false;
     const eff = effectiveSteps(d), mod = isModified(d), acts = eff.filter((x) => x.s.t !== "drive");
     const cur = currentStepIndex(d, eff), start = dayStart(n), end = dayEnd(n);
     const isToday = todayDay() && todayDay().n === n;
@@ -738,8 +741,9 @@
       </div>`;
     // Le programme : bouton d'édition, rappel quand l'ordre a été modifié (par qui, quand, partagé ou non)
     const p = plan.days[n] || {}, who = [p.by ? `par ${esc(p.by)}` : "", fmtAt(p.at)].filter(Boolean).join(", ");
-    const planBox = mod ? `<div class="callout plan"><span class="k">${I.pen}Ordre modifié</span><span>${who ? cap(who) + ". " : ""}<span data-share-state>${shareState()}</span> <button type="button" class="link" id="resetDay">Rétablir l'ordre du guide</button></span></div>` : "";
-    const tlHead = `<div class="tl-head"><h2 class="tl-title">Le programme</h2><button type="button" class="btn sm ${editing ? "primary" : ""}" id="editPlan">${editing ? I.check : I.pen}${editing ? "Terminer" : "Modifier l'ordre"}</button></div>
+    const planBox = mod ? `<div class="callout plan"><span class="k">${I.pen}Ordre modifié</span><span>${who ? cap(who) + ". " : ""}<span data-share-state>${shareState()}</span>${canEdit() ? ` <button type="button" class="link" id="resetDay">Rétablir l'ordre du guide</button>` : ""}</span></div>` : "";
+    const editBtn = canEdit() ? `<button type="button" class="icon-btn edit ${editing ? "on" : ""}" id="editPlan" aria-label="${editing ? "Terminer les modifications" : "Modifier le programme"}" title="${editing ? "Terminer" : "Modifier le programme"}">${editing ? I.check : I.pen}</button>` : "";
+    const tlHead = `<div class="tl-head"><h2 class="tl-title">Le programme</h2>${editBtn}</div>
       ${editing ? `<p class="hint">Sur chaque étape : les flèches changent l'ordre, l'heure et le jour se choisissent directement, la croix la retire. Depuis Plages et Randos, « Ajouter à un jour » place une activité dans le programme. Les étapes réservées ne bougent pas ; les trajets sont recalculés.</p>` : ""}${planBox}`;
     const removed = editing ? (entryOf(n).removed || []).map(([id, title]) => resolveRef(id, title)).filter(Boolean) : [];
     const removedBox = removed.length ? `<div class="removed"><h3>Retirées du programme</h3>${removed.map((r) => `<div class="rm-row"><span><b>${esc(timeOf(r.s.when).label)}</b> ${esc(r.s.title)}</span><button type="button" class="btn sm" data-restore="${r.id}">${I.undo}Remettre</button></div>`).join("")}</div>` : "";
@@ -972,13 +976,13 @@
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
-    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button></div></div>`; };
+    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
   const beachCard = (b, by) => `<div class="card lc">
     ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
     <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
     ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
-    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button></div></div>`;
+    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a>${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
   function pageBeaches() {
     const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
     return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}
@@ -1128,19 +1132,19 @@
     const name = store.get("edit:name", ""), tok = store.get("gh:token", ""), dirty = store.get("plan:dirty", false);
     const days = Object.entries(plan.days).filter(([, p]) => p && (p.order || (p.removed && p.removed.length))).sort((a, b) => a[0] - b[0]).map(([k, p]) => { const d = G.days[k - 1]; return d
       ? `<a class="dl" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${[p.by ? esc(p.by) : "", fmtAt(p.at)].filter(Boolean).join(", ")}</small></span><span class="out">${I.chev}</span></a>` : ""; }).join("");
-    return `<div class="container">${pageHead("", "Édition partagée", "Chacun peut changer l'ordre des étapes d'une journée depuis son téléphone. Avec un jeton GitHub, les changements sont publiés pour tout le groupe.", ["/plus", "Plus"])}
+    return `<div class="container">${pageHead("", "Édition partagée", "Avec un jeton GitHub, on peut changer le programme depuis son téléphone : ordre, heures, jours, plages et randos ajoutées. Les changements sont publiés pour tout le groupe ; sans jeton, on les voit sans rien configurer.", ["/plus", "Plus"])}
       <div class="grid c2 top-align">
         <div>
           <div class="card">
             <h3>Comment ça marche</h3>
             <ol class="steps-ol">
-              <li>Sur une journée, touche <b>Modifier l'ordre</b> : chaque étape reçoit des flèches pour l'ordre, une heure, un jour et une croix pour la retirer. Depuis <b>Plages</b> et <b>Randos</b>, « Ajouter à un jour » place une activité dans le programme, à l'heure voulue. Les étapes réservées ne bougent pas.</li>
+              <li>Avec un jeton enregistré ci-contre, un crayon apparaît sur chaque journée, à côté du programme. Touche-le : chaque étape reçoit des flèches pour l'ordre, une heure, un jour et une croix pour la retirer. Depuis <b>Plages</b> et <b>Randos</b>, « Ajouter à un jour » place une activité dans le programme, à l'heure voulue. Les étapes réservées ne bougent pas.</li>
               <li>Les trajets sont recalculés (durée estimée quand la liaison n'est pas dans le guide), la carte relie les lieux dans le nouvel ordre. Les horaires affichés restent ceux du guide.</li>
               <li>Avec un jeton ci-contre, chaque changement est enregistré dans le dépôt du carnet (fichier <b>site/plan.json</b>) et apparaît chez tout le monde à l'ouverture suivante, une minute plus tard environ.</li>
             </ol>
           </div>
           <div class="card" style="margin-top:12px">
-            <div class="top"><h3>Jours modifiés</h3>${days ? `<button class="btn sm" id="resetAll" type="button">${I.undo}Tout rétablir</button>` : ""}</div>
+            <div class="top"><h3>Jours modifiés</h3>${days && tok ? `<button class="btn sm" id="resetAll" type="button">${I.undo}Tout rétablir</button>` : ""}</div>
             ${days ? `<div class="dlist">${days}</div>` : `<p class="text">Aucun : le programme est celui du guide.</p>`}
           </div>
         </div>

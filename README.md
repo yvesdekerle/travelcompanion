@@ -57,10 +57,11 @@ logement compris, et la carte « Le parcours du jour » (SVG hors ligne) reprend
 
 ## Changer l'ordre des étapes depuis le téléphone (édition partagée)
 
-Sur une journée, « Modifier l'ordre » fait apparaître sur chaque étape : des flèches (monter, descendre), une heure,
+Avec un jeton enregistré (voir plus bas), un crayon apparaît sur chaque journée à côté du programme. Il fait
+apparaître sur chaque étape : des flèches (monter, descendre), une heure,
 un sélecteur de jour et une croix pour la retirer (les étapes retirées restent listées sous le programme, avec
 « Remettre »). Choisir une heure replace l'étape à sa place horaire. Depuis `/plages` et `/randos`, « Ajouter à un
-jour » ouvre une feuille avec l'heure et la liste des jours : la plage ou la rando devient une étape du programme, avec
+jour » (avec un jeton aussi) ouvre une feuille avec l'heure et la liste des jours : la plage ou la rando devient une étape du programme, avec
 son lieu, sa fiche et sa note. Les étapes réservées ne bougent pas. Les trajets sont recalculés (les liaisons connues
 du guide gardent leur durée, les autres sont estimées à vol d'oiseau × 1,3 à 38 km/h ; les plages et les départs de
 rando ont leurs coordonnées dans `geo.js`), la carte relie les lieux dans le nouvel ordre en pointillé, les horaires

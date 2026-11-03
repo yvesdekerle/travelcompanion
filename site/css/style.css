@@ -699,6 +699,8 @@ a.tl:hover { color: var(--brand-ink); }
 /* ───────── Mode édition du programme ───────── */
 .tl-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 26px 0 4px; }
 .tl-head .tl-title { margin: 0; }
+.tl-head .icon-btn.edit { color: var(--brand-ink); border-color: var(--line-2); }
+.tl-head .icon-btn.on { background: var(--navy); border-color: var(--navy); color: #fff; }
 .tl-head + .hint { margin: 4px 0 8px; }
 .callout.plan { margin: 10px 0 2px; background: var(--sun-soft); }
 .callout.plan .k { color: var(--sun-ink); display: inline-flex; align-items: center; gap: 6px; }
