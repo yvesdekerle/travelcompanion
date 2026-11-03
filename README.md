@@ -44,8 +44,10 @@ La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une
 un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
-groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi dix (CSS
-`cam-*` dans style.css) ; le calque ne capte pas les touchers, l'animation va jusqu'au bout. Ces images ne sont pas dans le cache initial du service worker : elles sont demandées en tâche de
+groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi seize (CSS
+`cam-*` dans style.css) : quinze pour un personnage seul, la seizième fait arriver tout le groupe de tous les bords
+pour une photo en quinconce (cinq derrière, quatre devant, toutes les têtes visibles). Le calque ne capte pas les
+touchers, l'animation va jusqu'au bout. Ces images ne sont pas dans le cache initial du service worker : elles sont demandées en tâche de
 fond une fois le carnet prêt, et gardées en cache à ce moment-là.
 
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.

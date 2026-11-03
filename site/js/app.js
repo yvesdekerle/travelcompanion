@@ -1460,22 +1460,38 @@
   }
 
   // Clin d'œil : trois touchers rapides n'importe où font surgir un personnage du groupe, avec une animation au hasard
-  const CAMEO_ANIMS = 10; let taps = [], lastCast = -1, lastAnim = -1;
+  // 15 animations pour un personnage seul, la 16e rassemble tout le groupe
+  const CAMEO_ANIMS = 16, GROUP = 15; let taps = [], lastCast = -1, lastAnim = -1;
   const pick = (n, last) => { let i; do { i = Math.floor(Math.random() * n); } while (n > 1 && i === last); return i; };
+  const shuffle = (arr) => { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
   function cameo() {
     if ($(".cameo")) return;
-    const c = pick(G.cast.length, lastCast), a = pick(CAMEO_ANIMS, lastAnim); lastCast = c; lastAnim = a;
-    const [file, name] = G.cast[c], el = document.createElement("div");
-    el.className = `cameo a${a + 1}`; el.setAttribute("role", "img"); el.setAttribute("aria-label", name);
-    el.innerHTML = `<div class="fig"><img src="/img/p/${file}.png" alt=""><span class="who">${esc(name)}</span></div>`;
+    const a = pick(CAMEO_ANIMS, lastAnim); lastAnim = a;
+    const el = document.createElement("div"); el.setAttribute("role", "img");
+    if (a === GROUP) {
+      // Photo de groupe : cinq derrière (un peu plus petits, surélevés), quatre devant en quinconce, les têtes ne se
+      // recouvrent jamais ; chacun arrive d'un bord ou d'un coin différent, à quelques dixièmes de seconde d'écart
+      const s = Math.min(120, Math.max(58, innerWidth * 0.17)), H = Math.min(330, Math.max(180, innerHeight * 0.34));
+      const slots = [[-2, 1], [-1, 1], [0, 1], [1, 1], [2, 1], [-1.5, 0], [-0.5, 0], [0.5, 0], [1.5, 0]]; // [colonne, rangée]
+      const from = shuffle([["-120vw", "0px"], ["120vw", "0px"], ["0px", "-120vh"], ["0px", "120vh"], ["-90vw", "-90vh"], ["90vw", "-90vh"], ["-90vw", "90vh"], ["90vw", "90vh"], ["0px", "-120vh"]]);
+      const who = shuffle(G.cast.map((_, i) => i)), delays = shuffle(slots.map((_, i) => i));
+      el.className = "cameo group"; el.setAttribute("aria-label", "Tout le groupe");
+      el.innerHTML = `<div class="stage" style="--gh:${H}px">${slots.map(([c, r], i) => { const [file, name] = G.cast[who[i]];
+        return `<div class="fig" style="--x:${Math.round(c * s)}px;--y:${r ? Math.round(-0.3 * H) : 0}px;--fx:${from[i][0]};--fy:${from[i][1]};--d:${(delays[i] * 0.09).toFixed(2)}s;--k:${r ? 0.94 : 1};z-index:${r ? 10 - Math.abs(c) : 20 - Math.abs(c) * 2}"><img src="/img/p/${file}.png" alt="${esc(name)}"></div>`; }).join("")}</div>`;
+    } else {
+      const c = pick(G.cast.length, lastCast); lastCast = c;
+      const [file, name] = G.cast[c];
+      el.className = `cameo a${a + 1}`; el.setAttribute("aria-label", name);
+      el.innerHTML = `<div class="fig"><img src="/img/p/${file}.png" alt=""><span class="who">${esc(name)}</span></div>`;
+    }
     const bye = () => { if (!el.isConnected) return; el.classList.add("out"); setTimeout(() => el.remove(), 260); };
-    const fig = $(".fig", el), img = $("img", el);
-    fig.addEventListener("animationend", (e) => { if (e.target === fig) bye(); }); // pas celle du prénom, qui remonte aussi
-    // L'animation ne démarre qu'une fois l'image décodée (au plus 1,5 s d'attente), sinon le personnage arrive en cours de route
-    fig.style.animationPlayState = "paused";
-    Promise.race([img.decode().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]).then(() => { fig.style.animationPlayState = "running"; });
+    const figs = $$(".fig", el); let left = figs.length;
+    el.addEventListener("animationend", (e) => { if (e.target.classList.contains("fig") && --left <= 0) bye(); }); // pas celle du prénom, qui remonte aussi
+    // L'animation ne démarre qu'une fois les images décodées (au plus 1,5 s d'attente), sinon le personnage arrive en cours de route
+    figs.forEach((f) => { f.style.animationPlayState = "paused"; });
+    Promise.race([Promise.all($$("img", el).map((img) => img.decode().catch(() => {}))), new Promise((r) => setTimeout(r, 1500))]).then(() => { figs.forEach((f) => { f.style.animationPlayState = "running"; }); });
     document.body.appendChild(el); // le calque ne capte rien : on peut continuer à toucher, l'animation va jusqu'au bout
-    setTimeout(bye, 7000); // au cas où l'animation ne se termine pas (image absente, onglet en arrière-plan)
+    setTimeout(bye, a === GROUP ? 9500 : 7000); // au cas où l'animation ne se termine pas (image absente, onglet en arrière-plan)
   }
   // Un toucher = appui bref sans glisser (un défilement au doigt ne compte pas) ; trois en moins d'une seconde
   let tapStart = null;
