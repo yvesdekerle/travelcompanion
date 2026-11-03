@@ -2,14 +2,67 @@
  "v": 1,
  "days": {
   "1": {
-   "order": null,
+   "order": [
+    [
+     "1:2",
+     "Retirer les trois voitures — Pingouin Car Rental",
+     ""
+    ],
+    [
+     "1:4",
+     "Récupérer le logement, cocktail et piscine",
+     ""
+    ],
+    [
+     "1:6",
+     "Première plage — Flic-en-Flac",
+     ""
+    ],
+    [
+     "1:7",
+     "Coucher de soleil à La Preneuse",
+     ""
+    ]
+   ],
    "removed": [],
-   "at": "2026-11-03T20:19:30.086Z",
+   "at": "2026-11-03T23:25:17.340Z",
    "by": ""
   },
   "2": {
-   "order": null,
-   "at": "2026-11-03T19:41:33.444Z",
+   "order": [
+    [
+     "2:1",
+     "Piton de la Petite Rivière Noire — le point culminant",
+     ""
+    ],
+    [
+     "1:1",
+     "Arrivée à l'aube",
+     ""
+    ],
+    [
+     "2:3",
+     "Retour à la villa : douche et deuxième petit-déjeuner",
+     ""
+    ],
+    [
+     "2:5",
+     "Le lac sacré hindou",
+     ""
+    ],
+    [
+     "2:7",
+     "Usine de thé, dégustation et déjeuner panoramique",
+     ""
+    ],
+    [
+     "2:9",
+     "Plage de Tamarin, puis coucher de soleil",
+     ""
+    ]
+   ],
+   "removed": [],
+   "at": "2026-11-03T23:25:17.340Z",
    "by": ""
   },
   "4": {
