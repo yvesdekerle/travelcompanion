@@ -61,6 +61,9 @@
     lock: sv('<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
     sort: sv('<path d="M4 7h16M7 12h10M10 17h4"/>'),
     up: sv('<path d="M12 19V5M5 12l7-7 7 7"/>'),
+    x: sv('<path d="M6 6l12 12M18 6 6 18"/>'),
+    plus: sv('<path d="M12 5v14M5 12h14"/>'),
+    clock: sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
     down: sv('<path d="M12 5v14M19 12l-7 7-7-7"/>'),
     undo: sv('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
     key: sv('<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M15 7l3 3M12 10l3 3"/>'),
@@ -282,36 +285,62 @@
   document.addEventListener("visibilitychange", () => { if (!document.hidden) tickCountdown(); });
 
 
-  /* ───────── Programme modifiable : ordre des étapes, partagé avec le groupe via le dépôt GitHub ─────────
-     plan.days[n] = { order: [["jour:index", "titre"], …] | null, at: ISO, by: prénom }
-     order null = ordre du guide (trace d'une remise à zéro, pour la fusion jour par jour : le plus récent gagne).
-     Les trajets d'un jour modifié sont recalculés ; les horaires affichés restent ceux du guide. */
+  /* ───────── Programme modifiable, partagé avec le groupe via le dépôt GitHub ─────────
+     plan.days[n] = { order: [[id, titre, heure], …] | null, removed: [[id, titre], …], at: ISO, by: prénom }
+     id = "jour:index" pour une étape du guide, "hike:k" ou "beach:k" pour une rando ou une plage ajoutée ;
+     heure = "HHhMM" quand elle a été choisie (vide : celle du guide). order null = ordre du guide (trace d'une
+     remise à zéro, pour la fusion jour par jour : le plus récent gagne). Les trajets d'un jour modifié sont recalculés. */
   const PLAN_EMPTY = () => ({ v: 1, days: {} });
   let plan = store.get("plan", null);
   if (!plan || typeof plan !== "object" || !plan.days) plan = PLAN_EMPTY();
   let editing = false;
-  const refId = (x) => `${x.n}:${x.i}`;
-  const ownActs = (d) => d.steps.map((s, i) => ({ n: d.n, i, s })).filter((x) => x.s.t !== "drive");
+  const allHikes = [...G.hikes, ...G.hikesMore];
+  const entryOf = (n) => plan.days[n] || {};
+  const removedIds = (n) => (entryOf(n).removed || []).map(([id]) => id);
+  const ownActs = (d) => d.steps.map((s, i) => ({ n: d.n, i, s, id: `${d.n}:${i}` })).filter((x) => x.s.t !== "drive");
   function resolveRef(id, title) {
     const [n, i] = String(id).split(":").map(Number), d = G.days[n - 1], s = d && d.steps[i];
-    return s && s.t !== "drive" && s.title === title ? { n, i, s } : null;
+    return s && s.t !== "drive" && s.title === title ? { n, i, s, id: `${n}:${i}` } : null;
   }
-  const placedElsewhere = (x, n) => Object.entries(plan.days).some(([k, p]) => +k !== n && p && p.order && p.order.some(([id]) => id === refId(x)));
-  const isModified = (d) => !!(plan.days[d.n] && plan.days[d.n].order) || ownActs(d).some((x) => placedElsewhere(x, d.n));
+  // Une plage ou une rando ajoutée au programme : une étape synthétique, avec son lieu, sa fiche et sa note
+  function customAct(id, title, when, n) {
+    const [kind, k] = String(id).split(":"), it = (kind === "hike" ? allHikes : kind === "beach" ? G.beaches : [])[+k];
+    if (!it || it.name !== title) return null;
+    const text = esc(it.see) + (it.warn ? ` <b>${esc(it.warn)}</b>` : "");
+    const s = kind === "hike"
+      ? { when: when || "", where: `Randonnée · ${it.zone}`, title: it.name, text, places: [[it.name, it.q || it.name + ", Mauritius"]], links: it.url ? [[`${it.src || "Fiche"} · trace`, it.url, "trail"]] : [], tags: [["info", [it.diff, it.prog].filter(Boolean).join(" · ")], ...(it.note && it.note !== "—" ? [["info", `Note ${it.note}/20`]] : [])] }
+      : { when: when || "", where: `Plage · ${it.zone}`, title: it.name, text, places: [[it.name, it.q]], tags: [["info", `Note ${it.note}/20 · Google ${it.g}`]] };
+    return { n, i: -1, id, s, custom: kind, when: when || "" };
+  }
+  function resolveEntry([id, title, when], n) {
+    if (/^(hike|beach):/.test(id)) return customAct(id, title, when, n);
+    const r = resolveRef(id, title);
+    if (r && when) { r.when = when; r.s = { ...r.s, when }; }
+    return r;
+  }
+  const placedElsewhere = (x, n) => Object.entries(plan.days).some(([k, p]) => +k !== n && p && p.order && p.order.some(([id]) => id === x.id));
+  const isModified = (d) => { const p = entryOf(d.n); return !!(p.order || (p.removed && p.removed.length)) || ownActs(d).some((x) => placedElsewhere(x, d.n)); };
   // Les activités du jour (hors trajets) dans l'ordre choisi ; à défaut, celui du guide
   function dayActs(d) {
-    const own = ownActs(d), p = plan.days[d.n];
-    if (!p || !p.order) return own.filter((x) => !placedElsewhere(x, d.n));
+    const own = ownActs(d), p = entryOf(d.n), rm = removedIds(d.n);
+    const keep = (x) => !placedElsewhere(x, d.n) && !rm.includes(x.id);
+    if (!p.order) return own.filter(keep);
     const out = [];
-    p.order.forEach(([id, title]) => { const r = resolveRef(id, title); if (r && !out.some((o) => refId(o) === id)) out.push(r); });
+    p.order.forEach((e) => { const r = resolveEntry(e, d.n); if (r && !out.some((o) => o.id === r.id)) out.push(r); });
     // Une étape du guide absente du plan (contenu mis à jour depuis) reprend sa place, après sa voisine d'origine
     own.forEach((x, k) => {
-      if (out.some((o) => refId(o) === refId(x)) || placedElsewhere(x, d.n)) return;
+      if (out.some((o) => o.id === x.id) || !keep(x)) return;
       let at = 0;
-      for (let j = k - 1; j >= 0; j--) { const pos = out.findIndex((o) => refId(o) === refId(own[j])); if (pos >= 0) { at = pos + 1; break; } }
+      for (let j = k - 1; j >= 0; j--) { const pos = out.findIndex((o) => o.id === own[j].id); if (pos >= 0) { at = pos + 1; break; } }
       out.splice(at, 0, x);
     });
     return out;
+  }
+  // Insère une étape à sa place horaire (avant la première étape plus tardive), sinon à la fin
+  function insertByTime(acts, x) {
+    const m = timeOf(x.s.when).min;
+    const at = m === null ? -1 : acts.findIndex((o) => { const mm = timeOf(o.s.when).min; return mm !== null && mm > m; });
+    acts.splice(at < 0 ? acts.length : at, 0, x);
   }
   // Trajets du guide, par liaison « d'où | où » ; ceux sans lieu connu (avion, étape sans adresse) restent collés à l'étape qui suit
   function origLegs(d) {
@@ -334,14 +363,14 @@
     const km = Math.hypot(dLa, dLo) * 1.3, min = Math.max(5, Math.round(((km / 38) * 60) / 5) * 5);
     return `${fmtMin(min)} · ${km < 10 ? km.toFixed(1).replace(".", ",") : Math.round(km)} km · estimation`;
   }
-  // Toutes les lignes du jour, trajets compris, dans l'ordre effectif : [{ s, n, i, est? }]
+  // Toutes les lignes du jour, trajets compris, dans l'ordre effectif : [{ s, n, i, id, est?, custom?, when? }]
   function effectiveSteps(d) {
-    if (!isModified(d)) return d.steps.map((s, i) => ({ s, n: d.n, i }));
+    if (!isModified(d)) return d.steps.map((s, i) => ({ s, n: d.n, i, id: `${d.n}:${i}` }));
     const acts = dayActs(d), { legs, pre } = origLegs(d), out = []; let here = dayStart(d.n);
     acts.forEach((x) => {
       const to = x.s.places && x.s.places[0] ? x.s.places[0][1] : null;
       if (to && to !== here) { const o = legs[here + "|" + to]; out.push(o ? { s: o, n: d.n, i: -1 } : { s: { t: "drive", d: estimate(here, to) }, n: d.n, i: -1, est: true }); }
-      else if (!to && x.n === d.n && pre[refId(x)]) out.push({ s: pre[refId(x)], n: d.n, i: -1 });
+      else if (!to && x.n === d.n && pre[x.id]) out.push({ s: pre[x.id], n: d.n, i: -1 });
       out.push(x);
       if (x.s.places && x.s.places.length) here = x.s.places[x.s.places.length - 1][1];
     });
@@ -352,47 +381,88 @@
   const stamp = () => ({ at: new Date().toISOString(), by: store.get("edit:name", "") });
   function savePlan() { store.set("plan", plan); store.set("plan:dirty", true); scheduleSync(); }
   function setOrder(n, acts) {
-    const own = ownActs(G.days[n - 1]);
-    const same = acts.length === own.length && acts.every((x, k) => refId(x) === refId(own[k]));
-    plan.days[n] = { order: same ? null : acts.map((x) => [refId(x), x.s.title]), ...stamp() };
+    const own = ownActs(G.days[n - 1]), e = entryOf(n);
+    const same = acts.length === own.length && acts.every((x, k) => !x.custom && !x.when && x.id === own[k].id);
+    plan.days[n] = { order: same ? null : acts.map((x) => [x.id, x.s.title, x.when || ""]), removed: e.removed || [], ...stamp() };
   }
-  function movePlan(d, id, dir) {
-    const acts = dayActs(d), k = acts.findIndex((x) => refId(x) === id);
-    if (k < 0 || acts[k].s.fixed) return;
-    if (dir === "up" || dir === "down") {
-      const j = dir === "up" ? k - 1 : k + 1;
-      if (j < 0 || j >= acts.length) return;
-      [acts[k], acts[j]] = [acts[j], acts[k]];
-      setOrder(d.n, acts);
-    } else {
-      const m = d.n + (dir === "next" ? 1 : -1), td = G.days[m - 1];
-      if (!td) return;
-      const [x] = acts.splice(k, 1);
-      setOrder(d.n, acts);
-      // Si l'étape revient dans son jour d'origine, dayActs l'a déjà remise à sa place ; sinon en tête du lendemain ou en fin de la veille
-      const ta = dayActs(td);
-      if (!ta.some((o) => refId(o) === id)) { if (dir === "next") ta.unshift(x); else ta.push(x); }
-      setOrder(m, ta);
-      toast(`Déplacé au jour ${m} — voir`, () => go("/jour/" + m));
-    }
-    savePlan();
+  const actOf = (d, id) => { const acts = dayActs(d), k = acts.findIndex((x) => x.id === id); return k < 0 || acts[k].s.fixed ? null : { acts, k, x: acts[k] }; };
+  function moveStep(d, id, dir) {
+    const f = actOf(d, id); if (!f) return;
+    const j = dir === "up" ? f.k - 1 : f.k + 1;
+    if (j < 0 || j >= f.acts.length) return;
+    [f.acts[f.k], f.acts[j]] = [f.acts[j], f.acts[f.k]];
+    setOrder(d.n, f.acts); savePlan();
+  }
+  function moveToDay(d, id, m) {
+    const f = actOf(d, id), td = G.days[m - 1]; if (!f || !td || m === d.n) return;
+    const [x] = f.acts.splice(f.k, 1);
+    setOrder(d.n, f.acts);
+    // Si l'étape revient dans son jour d'origine sans heure choisie, dayActs l'a déjà remise à sa place
+    let ta = dayActs(td);
+    if (ta.some((o) => o.id === id)) { if (x.when) { ta = ta.filter((o) => o.id !== id); insertByTime(ta, x); } }
+    else insertByTime(ta, x);
+    setOrder(m, ta); savePlan();
+    toast(`Déplacé au jour ${m} — voir`, () => go("/jour/" + m));
+  }
+  function setTime(d, id, when) {
+    const f = actOf(d, id); if (!f) return;
+    const x = f.x, base = x.custom ? x.s : G.days[x.n - 1].steps[x.i];
+    x.when = when; x.s = { ...base, when: when || base.when };
+    f.acts.splice(f.k, 1);
+    if (when) insertByTime(f.acts, x); else f.acts.splice(f.k, 0, x);
+    setOrder(d.n, f.acts); savePlan();
+  }
+  function removeStep(d, id) {
+    const f = actOf(d, id); if (!f) return;
+    const [x] = f.acts.splice(f.k, 1);
+    if (!x.custom) { const e = entryOf(x.n); plan.days[x.n] = { order: e.order || null, removed: [...(e.removed || []).filter(([i]) => i !== id), [id, x.s.title]], ...stamp() }; }
+    setOrder(d.n, f.acts); savePlan();
+  }
+  function restoreStep(n, id) {
+    const e = entryOf(n); if (!e.removed) return;
+    plan.days[n] = { ...e, removed: e.removed.filter(([i]) => i !== id), ...stamp() };
+    setOrder(n, dayActs(G.days[n - 1])); savePlan();
+  }
+  function addToDay(id, n, when) {
+    const d = G.days[n - 1], acts = dayActs(d);
+    if (acts.some((o) => o.id === id)) return toast(`Déjà dans le jour ${n}`);
+    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : G.beaches)[+k];
+    const x = it && customAct(id, it.name, when, n); if (!x) return;
+    insertByTime(acts, x); setOrder(n, acts); savePlan();
+    toast(`Ajouté au jour ${n} — voir`, () => go("/jour/" + n));
   }
   function resetDay(n) {
     const st = stamp();
-    plan.days[n] = { order: null, ...st };
+    plan.days[n] = { order: null, removed: [], ...st };
     Object.entries(plan.days).forEach(([k, p]) => {
       if (+k === n || !p.order) return;
       const o = p.order.filter(([id]) => !id.startsWith(n + ":"));
-      if (o.length !== p.order.length) plan.days[k] = { order: o.length ? o : null, ...st };
+      if (o.length !== p.order.length) plan.days[k] = { ...p, order: o.length ? o : null, ...st };
     });
     savePlan();
   }
-  // Barre d'édition d'une étape : monter, descendre, envoyer à la veille ou au lendemain
+  const hhmm = (when) => { const t = timeOf(when); return t.min === null || t.word ? "" : `${String(Math.floor(t.min / 60)).padStart(2, "0")}:${String(t.min % 60).padStart(2, "0")}`; };
+  // Barre d'édition d'une étape : monter, descendre, heure, jour, retirer
   function editBar(d, x, acts) {
     if (x.s.fixed) return `<div class="edit-bar locked">${I.lock}<span>Réservé : cette étape ne bouge pas</span></div>`;
-    const k = acts.indexOf(x), id = refId(x);
+    const k = acts.indexOf(x), id = x.id;
     const b = (dir, inner, label, ok, cls = "") => `<button type="button" class="eb ${cls}" data-mv="${dir}" data-ref="${id}" aria-label="${label}" title="${label}" ${ok ? "" : "disabled"}>${inner}</button>`;
-    return `<div class="edit-bar">${b("up", I.up, "Monter", k > 0)}${b("down", I.down, "Descendre", k < acts.length - 1)}<span class="sp"></span>${b("prev", `${I.back}<span>J${d.n - 1}</span>`, `Envoyer au jour ${d.n - 1}`, d.n > 1, "day")}${b("next", `<span>J${d.n + 1}</span>${I.chev}`, `Envoyer au jour ${d.n + 1}`, d.n < G.days.length, "day")}</div>`;
+    const days = G.days.map((o) => `<option value="${o.n}" ${o.n === d.n ? "selected" : ""}>J${o.n} · ${dow(o)} ${+o.date.slice(8)}</option>`).join("");
+    return `<div class="edit-bar">${b("up", I.up, "Monter", k > 0)}${b("down", I.down, "Descendre", k < acts.length - 1)}
+      <label class="eb-time" title="Heure">${I.clock}<input type="time" data-time="${id}" value="${hhmm(x.s.when)}" aria-label="Heure"></label>
+      <select class="eb-day" data-to-day="${id}" aria-label="Jour">${days}</select>
+      <span class="sp"></span>${b("remove", I.x, "Retirer du programme", true, "rm")}</div>`;
+  }
+  // Ajouter une plage ou une rando à un jour : feuille avec l'heure et la liste des jours
+  function openAddSheet(id) {
+    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : G.beaches)[+k]; if (!it) return;
+    const td = todayDay();
+    $("#sheetBody").innerHTML = `<h4>Ajouter au programme</h4>
+      <div class="add-head"><b>${esc(it.name)}</b><label>${I.clock}<input type="time" id="addTime" value="${kind === "hike" ? "07:00" : "14:00"}" aria-label="Heure"></label></div>
+      <h4>Quel jour ?</h4>${G.days.map((d) => `<button type="button" class="dl" data-add-day="${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${esc(d.sub)}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</button>`).join("")}`;
+    const sh = $("#sheet"); sh.hidden = false;
+    $$("[data-add-day]", sh).forEach((b) => (b.onclick = () => { const t = $("#addTime").value; addToDay(id, +b.dataset.addDay, t ? t.replace(":", "h") : ""); closeSheet(); }));
+    sh.onclick = (e) => { if (e.target.closest("[data-close]")) closeSheet(); };
   }
 
   /* Partage : le fichier site/plan.json du dépôt, écrit par l'API GitHub avec un jeton gardé sur l'appareil ;
@@ -455,6 +525,8 @@
       toast(r.ok ? "✓ Jeton accepté, le dépôt est accessible (l'écriture se vérifie au premier envoi)" : r.status === 401 ? "Jeton refusé par GitHub" : `GitHub répond ${r.status} : vérifier l'accès au dépôt`);
     } catch { toast("Impossible de joindre GitHub"); }
   }
+  // Un autre onglet du même téléphone a modifié le programme : on le reprend
+  window.addEventListener("storage", (e) => { if (e.key === KEY + "plan") { plan = store.get("plan", null) || PLAN_EMPTY(); if (!plan.days) plan = PLAN_EMPTY(); if (main.dataset.day && !document.activeElement.matches("input, textarea, select")) render(); } });
   // Au démarrage, au retour au premier plan et au retour du réseau : le programme publié, sans passer par le cache
   let lastLoad = 0;
   async function loadSharedPlan() {
@@ -639,7 +711,7 @@
         <div class="tl-time">${gutter}<i class="dot">${s.home ? I.home : ""}</i></div>
         <article class="card-step">
           ${editing ? editBar(d, x, acts) : ""}
-          ${k === cur ? '<span class="now-pill">En ce moment</span>' : ""}${s.fixed ? `<span class="fixed-pill">${I.lock}Réservé · horaire fixe</span>` : ""}${x.n !== n ? `<span class="from-pill">${I.route}Venu du jour ${x.n}</span>` : ""}
+          ${k === cur ? '<span class="now-pill">En ce moment</span>' : ""}${s.fixed ? `<span class="fixed-pill">${I.lock}Réservé · horaire fixe</span>` : ""}${x.custom ? `<span class="from-pill">${I.plus}Ajouté au programme</span>` : x.n !== n ? `<span class="from-pill">${I.route}Venu du jour ${x.n}</span>` : ""}
           ${s.where ? `<div class="where">${esc(s.where)}</div>` : ""}
           <h3>${esc(s.title)}${s.star ? `<span class="star-mark" title="Temps fort">${I.starf}</span>` : ""}</h3>
           <div class="text"><p>${linkifyHtml(s.text)}</p></div>
@@ -668,7 +740,9 @@
     const p = plan.days[n] || {}, who = [p.by ? `par ${esc(p.by)}` : "", fmtAt(p.at)].filter(Boolean).join(", ");
     const planBox = mod ? `<div class="callout plan"><span class="k">${I.pen}Ordre modifié</span><span>${who ? cap(who) + ". " : ""}<span data-share-state>${shareState()}</span> <button type="button" class="link" id="resetDay">Rétablir l'ordre du guide</button></span></div>` : "";
     const tlHead = `<div class="tl-head"><h2 class="tl-title">Le programme</h2><button type="button" class="btn sm ${editing ? "primary" : ""}" id="editPlan">${editing ? I.check : I.pen}${editing ? "Terminer" : "Modifier l'ordre"}</button></div>
-      ${editing ? `<p class="hint">Les flèches montent ou descendent une étape, ou l'envoient à la veille ou au lendemain. Les étapes réservées ne bougent pas ; les trajets sont recalculés, les horaires restent ceux du guide.</p>` : ""}${planBox}`;
+      ${editing ? `<p class="hint">Sur chaque étape : les flèches changent l'ordre, l'heure et le jour se choisissent directement, la croix la retire. Depuis Plages et Randos, « Ajouter à un jour » place une activité dans le programme. Les étapes réservées ne bougent pas ; les trajets sont recalculés.</p>` : ""}${planBox}`;
+    const removed = editing ? (entryOf(n).removed || []).map(([id, title]) => resolveRef(id, title)).filter(Boolean) : [];
+    const removedBox = removed.length ? `<div class="removed"><h3>Retirées du programme</h3>${removed.map((r) => `<div class="rm-row"><span><b>${esc(timeOf(r.s.when).label)}</b> ${esc(r.s.title)}</span><button type="button" class="btn sm" data-restore="${r.id}">${I.undo}Remettre</button></div>`).join("")}</div>` : "";
     const notes = store.get("note:" + n, "");
     const notesBox = `<details class="notes" ${notes ? "open" : ""}><summary>${I.pen}Notes du jour<span class="count"><span class="saved" id="saved">Enregistré</span></span></summary><textarea id="dayNote" placeholder="Souvenirs, adresses, noms à retenir…">${esc(notes)}</textarea></details>`;
     const prev = G.days.find((x) => x.n === n - 1), next = G.days.find((x) => x.n === n + 1);
@@ -692,6 +766,7 @@
             ${d.intro ? `<p class="intro">${esc(d.intro)}</p>` : ""}
             ${tlHead}
             <div class="timeline ${editing ? "editing" : ""}">${items}</div>
+            ${removedBox}
             ${dayMap(d, cur, stops, mapsUrl, mod)}
             ${notesBox}
             <nav class="pager">
@@ -897,13 +972,13 @@
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
-    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}</div></div>`; };
+    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button></div></div>`; };
   const beachCard = (b, by) => `<div class="card lc">
     ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
     <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
     ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
-    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a></div></div>`;
+    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button></div></div>`;
   function pageBeaches() {
     const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
     return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}
@@ -1051,7 +1126,7 @@
   /* ───────── Édition partagée : prénom, jeton GitHub, jours modifiés ───────── */
   function pageEdit() {
     const name = store.get("edit:name", ""), tok = store.get("gh:token", ""), dirty = store.get("plan:dirty", false);
-    const days = Object.entries(plan.days).filter(([, p]) => p && p.order).sort((a, b) => a[0] - b[0]).map(([k, p]) => { const d = G.days[k - 1]; return d
+    const days = Object.entries(plan.days).filter(([, p]) => p && (p.order || (p.removed && p.removed.length))).sort((a, b) => a[0] - b[0]).map(([k, p]) => { const d = G.days[k - 1]; return d
       ? `<a class="dl" href="/jour/${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${[p.by ? esc(p.by) : "", fmtAt(p.at)].filter(Boolean).join(", ")}</small></span><span class="out">${I.chev}</span></a>` : ""; }).join("");
     return `<div class="container">${pageHead("", "Édition partagée", "Chacun peut changer l'ordre des étapes d'une journée depuis son téléphone. Avec un jeton GitHub, les changements sont publiés pour tout le groupe.", ["/plus", "Plus"])}
       <div class="grid c2 top-align">
@@ -1059,7 +1134,7 @@
           <div class="card">
             <h3>Comment ça marche</h3>
             <ol class="steps-ol">
-              <li>Sur une journée, touche <b>Modifier l'ordre</b> : des flèches apparaissent sur chaque étape pour la monter, la descendre, ou l'envoyer à la veille ou au lendemain. Les étapes réservées ne bougent pas.</li>
+              <li>Sur une journée, touche <b>Modifier l'ordre</b> : chaque étape reçoit des flèches pour l'ordre, une heure, un jour et une croix pour la retirer. Depuis <b>Plages</b> et <b>Randos</b>, « Ajouter à un jour » place une activité dans le programme, à l'heure voulue. Les étapes réservées ne bougent pas.</li>
               <li>Les trajets sont recalculés (durée estimée quand la liaison n'est pas dans le guide), la carte relie les lieux dans le nouvel ordre. Les horaires affichés restent ceux du guide.</li>
               <li>Avec un jeton ci-contre, chaque changement est enregistré dans le dépôt du carnet (fichier <b>site/plan.json</b>) et apparaît chez tout le monde à l'ouverture suivante, une minute plus tard environ.</li>
             </ol>
@@ -1119,7 +1194,12 @@
     // Mode édition du programme
     const confirmBtn = (el, label, fn) => () => { if (!el.dataset.armed) { el.dataset.armed = "1"; el.textContent = "Confirmer ?"; setTimeout(() => { delete el.dataset.armed; el.innerHTML = label; }, 3000); return; } delete el.dataset.armed; fn(); };
     const ep = $("#editPlan"); if (ep) ep.onclick = () => { editing = !editing; render(); };
-    $$("[data-mv]", main).forEach((b) => (b.onclick = () => { movePlan(G.days[+main.dataset.day - 1], b.dataset.ref, b.dataset.mv); render(); }));
+    const curDay = () => G.days[+main.dataset.day - 1];
+    $$("[data-mv]", main).forEach((b) => (b.onclick = () => { const d = curDay(); if (b.dataset.mv === "remove") removeStep(d, b.dataset.ref); else moveStep(d, b.dataset.ref, b.dataset.mv); render(); }));
+    $$("[data-to-day]", main).forEach((s) => (s.onchange = () => { moveToDay(curDay(), s.dataset.toDay, +s.value); render(); }));
+    $$("[data-time]", main).forEach((t) => (t.onchange = () => { setTime(curDay(), t.dataset.time, t.value ? t.value.replace(":", "h") : ""); render(); }));
+    $$("[data-restore]", main).forEach((b) => (b.onclick = () => { restoreStep(curDay().n, b.dataset.restore); render(); }));
+    $$("[data-add]", main).forEach((b) => (b.onclick = () => openAddSheet(b.dataset.add)));
     const rd = $("#resetDay"); if (rd) rd.onclick = () => { resetDay(+main.dataset.day); render(); };
     const ra = $("#resetAll"); if (ra) ra.onclick = confirmBtn(ra, `${I.undo}Tout rétablir`, () => { Object.entries(plan.days).filter(([, p]) => p && p.order).forEach(([k]) => resetDay(+k)); render(); });
     const en = $("#edName"); if (en) en.addEventListener("input", () => store.set("edit:name", en.value.trim()));

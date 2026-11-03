@@ -710,6 +710,25 @@ a.tl:hover { color: var(--brand-ink); }
 .edit-bar .eb svg { width: 16px; height: 16px; }
 .edit-bar .eb:disabled { opacity: .3; cursor: default; }
 .edit-bar .eb:not(:disabled):hover { background: var(--brand-soft); color: var(--brand-ink); border-color: transparent; }
+.edit-bar { flex-wrap: wrap; }
+.eb-time, .eb-day { display: inline-flex; align-items: center; gap: 4px; height: 34px; border: 1px solid var(--line-2); border-radius: 9px; background: var(--surface); color: var(--ink); font: 600 12.5px var(--sans); padding: 0 6px; }
+.eb-time svg { width: 14px; height: 14px; color: var(--muted); flex: none; }
+.eb-time input { border: 0; background: none; font: inherit; color: inherit; width: 78px; padding: 0; min-height: 0; height: 30px; -webkit-appearance: none; }
+.eb-time input::-webkit-calendar-picker-indicator, .add-head input::-webkit-calendar-picker-indicator { display: none; }
+.eb-day { appearance: none; -webkit-appearance: none; padding: 0 22px 0 8px; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8594' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center / 13px; cursor: pointer; }
+.edit-bar .eb.rm { color: var(--coral-ink); }
+.edit-bar .eb.rm:not(:disabled):hover { background: var(--coral-soft); color: var(--coral-ink); }
+.removed { margin: 4px 0 14px; padding: 12px 14px; border: 1px dashed var(--line-2); border-radius: var(--r); }
+.removed h3 { font: 600 13px/1.4 var(--sans); color: var(--muted); margin-bottom: 4px; }
+.rm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+.rm-row:first-of-type { border-top: 0; }
+.rm-row b { color: var(--ink); font-weight: 600; }
+.add-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 8px 10px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.add-head b { font: 600 16px/1.3 var(--serif); min-width: 0; }
+.add-head label { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 8px; border: 1px solid var(--line-2); border-radius: 10px; font: 600 13px var(--sans); color: var(--ink); flex: none; }
+.add-head label svg { width: 15px; height: 15px; color: var(--muted); }
+.add-head input { border: 0; background: none; font: inherit; color: inherit; width: 80px; padding: 0; }
+button.dl { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
 .edit-bar.locked { color: var(--ok-ink); font: 600 12.5px/1.4 var(--sans); gap: 6px; }
 .edit-bar.locked svg { width: 14px; height: 14px; flex: none; }
 .from-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--sun-soft); color: var(--sun-ink); font: 700 11px/1 var(--sans); padding: 4px 9px 4px 7px; border-radius: 99px; margin: 0 6px 10px 0; }

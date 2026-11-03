@@ -372,6 +372,97 @@
     -20.36419,
     57.37672
    ]
+  },
+  "Le Morne Public Beach": {
+   "miss": true
+  },
+  "La Prairie Public Beach": {
+   "miss": true
+  },
+  "Belle Mare Beach": {
+   "ll": [
+    -20.19112,
+    57.77521
+   ],
+   "name": "Belle Mare Public Beach, Belle Mare Palmar Trou d'Eau Douce Road"
+  },
+  "La Cambuse Public Beach": {
+   "miss": true
+  },
+  "Pointe d'Esny Beach": {
+   "ll": [
+    -20.42996,
+    57.72772
+   ],
+   "name": "Pointe d’Esny Beach, Pointe d’Esny"
+  },
+  "Riambel Plage Publique": {
+   "miss": true
+  },
+  "Blue Bay Public Beach": {
+   "ll": [
+    -20.44304,
+    57.71635
+   ],
+   "name": "Blue Bay Public Beach, Residence Lagon Bleu"
+  },
+  "Trou aux Biches Public Beach": {
+   "ll": [
+    -20.03498,
+    57.54447
+   ],
+   "name": "Trou aux Biches Public Beach, Morcellement Mascareignes"
+  },
+  "Mon Choisy Public Beach": {
+   "ll": [
+    -20.01942,
+    57.55736
+   ],
+   "name": "Mont Choisy Public Beach, Domaine Palmy"
+  },
+  "Palmar Public Beach": {
+   "ll": [
+    -20.19112,
+    57.77521
+   ],
+   "name": "Belle Mare Public Beach, Belle Mare Palmar Trou d'Eau Douce Road"
+  },
+  "St Felix Public Beach": {
+   "ll": [
+    -20.50971,
+    57.46458
+   ],
+   "name": "St Felix Public Beach, Rivière des Galets"
+  },
+  "Pereybere Public Beach": {
+   "ll": [
+    -19.99407,
+    57.59079
+   ],
+   "name": "Pereybere Public Beach, Pereybere"
+  },
+  "Plage de Flic en Flac": {
+   "ll": [
+    -20.28983,
+    57.36415
+   ],
+   "name": "Résidence La Plage, Coastal Road"
+  },
+  "Baie du Jacotet": {
+   "ll": [
+    -20.5013,
+    57.44601
+   ],
+   "name": "Baie du Jacotet, Beau Champ"
+  },
+  "Poudre d'Or Public Beach": {
+   "miss": true
+  },
+  "Bel Ombre Public Beach": {
+   "miss": true
+  },
+  "Pomponette Public Beach": {
+   "miss": true
   }
  },
  "routes": {

@@ -57,10 +57,14 @@ logement compris, et la carte « Le parcours du jour » (SVG hors ligne) reprend
 
 ## Changer l'ordre des étapes depuis le téléphone (édition partagée)
 
-Sur une journée, « Modifier l'ordre » fait apparaître des flèches sur chaque étape : monter, descendre, envoyer à la
-veille ou au lendemain. Les étapes réservées ne bougent pas. Les trajets sont recalculés (les liaisons connues du guide
-gardent leur durée, les autres sont estimées à vol d'oiseau × 1,3 à 38 km/h), la carte relie les lieux dans le nouvel
-ordre en pointillé, les horaires affichés restent ceux du guide (en italique quand ils ne sont plus dans l'ordre).
+Sur une journée, « Modifier l'ordre » fait apparaître sur chaque étape : des flèches (monter, descendre), une heure,
+un sélecteur de jour et une croix pour la retirer (les étapes retirées restent listées sous le programme, avec
+« Remettre »). Choisir une heure replace l'étape à sa place horaire. Depuis `/plages` et `/randos`, « Ajouter à un
+jour » ouvre une feuille avec l'heure et la liste des jours : la plage ou la rando devient une étape du programme, avec
+son lieu, sa fiche et sa note. Les étapes réservées ne bougent pas. Les trajets sont recalculés (les liaisons connues
+du guide gardent leur durée, les autres sont estimées à vol d'oiseau × 1,3 à 38 km/h ; les plages et les départs de
+rando ont leurs coordonnées dans `geo.js`), la carte relie les lieux dans le nouvel ordre en pointillé, les horaires
+non choisis restent ceux du guide (en italique quand ils ne sont plus dans l'ordre).
 
 Les changements sont d'abord enregistrés sur l'appareil. Pour les publier à tout le groupe, la page `/edition`
 (Plus → Édition partagée) demande un prénom et un **jeton GitHub fine-grained** limité à ce dépôt, avec la seule
@@ -71,8 +75,9 @@ réordonné par Yves »), Vercel redéploie, et les autres téléphones lisent `
 depuis le cache) à l'ouverture, au retour au premier plan ou au retour du réseau. La fusion se fait jour par jour : pour
 chaque jour, la version la plus récente gagne. Sans jeton, on voit les changements des autres sans rien configurer.
 
-`plan.json` référence les étapes par `jour:index` et par titre : si une étape d'un jour est insérée, supprimée ou
-renommée dans `data.js`, l'ordre partagé de ce jour retombe sur celui du guide pour cette étape. Avant de pousser une
+`plan.json` référence les étapes par `jour:index` (ou `hike:k` / `beach:k` pour une rando ou une plage ajoutée), par
+titre et par heure choisie : si une étape d'un jour est insérée, supprimée ou renommée dans `data.js`, l'ordre partagé
+de ce jour retombe sur celui du guide pour cette étape. Avant de pousser une
 modification de contenu, faire un `git pull` : les commits de l'application arrivent sur `main` entre-temps.
 
 ## Modifier le contenu

@@ -60,7 +60,23 @@ const FIX = {
   "Île Plate": [-19.8800, 57.6630],
   "Îlot Gabriel": [-19.8880, 57.6700],
   "Île aux Cerfs": [-20.2720, 57.8030],
-  "Cascade de GRSE": [-20.2865, 57.7735]
+  "Cascade de GRSE": [-20.2865, 57.7735],
+  // Départs des randonnées hors programme (relevés approximatifs, à quelques centaines de mètres près)
+  "Lion Mountain trailhead, Vieux Grand Port, Mauritius": [-20.3745, 57.7215],
+  "Tourelle du Tamarin trailhead, Tamarin, Mauritius": [-20.3305, 57.391],
+  "Trois Mamelles trailhead, Cascavelle, Mauritius": [-20.312, 57.433],
+  "Macchabée trail, Le Pétrin, Mauritius": [-20.405, 57.467],
+  "Parakeet Trail, Le Pétrin, Mauritius": [-20.405, 57.467],
+  "Nicolière Reservoir, Mauritius": [-20.162, 57.609],
+  // Plages que Nominatim ne trouve pas (ou confond) : relevés sur la carte
+  "Le Morne Public Beach": [-20.4505, 57.3245],
+  "La Prairie Public Beach": [-20.4815, 57.3535],
+  "La Cambuse Public Beach": [-20.4515, 57.6875],
+  "Riambel Plage Publique": [-20.5165, 57.5265],
+  "Poudre d'Or Public Beach": [-20.064, 57.6865],
+  "Bel Ombre Public Beach": [-20.504, 57.4275],
+  "Pomponette Public Beach": [-20.5135, 57.5095],
+  "Palmar Public Beach": [-20.2225, 57.7785]
 };
 const MU = { latMin: -20.56, latMax: -19.85, lonMin: 57.25, lonMax: 57.85 };
 const inMU = ([la, lo]) => la > MU.latMin && la < MU.latMax && lo > MU.lonMin && lo < MU.lonMax;
@@ -77,10 +93,13 @@ function dayStops(d) {
 }
 const queries = new Set([VILLA, SERGE, AIRPORT]);
 G.days.forEach((d) => d.steps.forEach((s) => { (s.places || []).forEach(([, q]) => queries.add(q)); (s.sea || []).forEach((q) => queries.add(q)); }));
+// Plages et randonnées, ajoutables au programme depuis l'application : un lieu introuvable n'est pas bloquant
+const extra = new Set([...G.beaches.map((b) => b.q), ...[...G.hikes, ...G.hikesMore].map((h) => h.q).filter(Boolean)]);
+const allQueries = new Set([...queries, ...extra]);
 
 /* 1. Coordonnées */
 let hits = 0;
-for (const q of queries) {
+for (const q of allQueries) {
   if (FIX[q]) { cache.places[q] = { fix: FIX[q] }; continue; }
   if (cache.places[q] && cache.places[q].ll) continue;
   const res = await getJSON("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=mu&q=" + encodeURIComponent(q));
@@ -92,10 +111,10 @@ for (const q of queries) {
 }
 const places = {};
 const missing = [];
-for (const q of queries) {
+for (const q of allQueries) {
   const c = cache.places[q];
   const ll = c.fix || c.ll;
-  if (ll && inMU(ll)) places[q] = ll; else missing.push(q);
+  if (ll && inMU(ll)) places[q] = ll; else if (queries.has(q)) missing.push(q); else console.warn(`  Plage ou rando sans coordonnées (à ajouter dans FIX si besoin) : ${q}`);
 }
 if (missing.length) { console.error("Sans coordonnées (à ajouter dans FIX) :\n  " + missing.join("\n  ")); process.exit(1); }
 
