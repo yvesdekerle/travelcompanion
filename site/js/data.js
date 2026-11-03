@@ -87,6 +87,7 @@ window.GUIDE = {
         { when: "Après-midi · 15h15", where: "Tamarin", title: "Plage de Tamarin, puis coucher de soleil",
           text: "Baie de sable doré face à la Tourelle, vagues à l'embouchure pour les surfeurs, lagon calme à gauche. Coucher de soleil à Tamarin ou à Flic-en-Flac. Quentin et July atterrissent à 17h10 et rejoignent la villa avec leur propre voiture : le soir, le groupe est au complet. Dîner livré à la villa par Catering Sheila. Demain, dauphins à 7h — réveil 6h.",
           places: [["Tamarin Public Beach", "Tamarin Public Beach, Mauritius"]],
+          links: [["Menu Morisyen de Sheila · commander sur WhatsApp", "/menu", "page"]],
           tags: [["info", "Arrivée 17h10 · Quentin et July"], ["ok", "Dîner livré Catering Sheila · réservé"]] }
       ]
     },

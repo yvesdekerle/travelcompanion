@@ -221,10 +221,11 @@
     annex: { href: "/annexes", t: "Annexes", i: "book" },
     more: { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer", "/edition"].includes(p) }
   };
-  // Avant l'atterrissage, la to-do est en 4e position ; une fois sur place, elle passe en dernier.
+  // Avant l'atterrissage, la to-do est en 5e position ; une fois sur place, elle passe en dernier.
+  // Le menu de Sheila reste dans la partie visible de la barre du bas (4e avant l'arrivée, 5e ensuite).
   const NAV_ORDER = () => (nowMs() < ARRIVAL
-    ? ["route", "maps", "conv", "todo", "beaches", "hikes", "menu", "booked", "stays", "info", "annex", "more"]
-    : ["route", "maps", "conv", "booked", "beaches", "hikes", "menu", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
+    ? ["route", "maps", "conv", "menu", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
+    : ["route", "maps", "conv", "booked", "menu", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   const bar = $("#tabbar");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
