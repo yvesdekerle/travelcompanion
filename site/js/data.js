@@ -430,7 +430,7 @@ window.GUIDE = {
           note: ["À prévoir", "Chaussures qui accrochent et qui peuvent aller dans l'eau, maillot sous le short, sac étanche, serviette, en-cas. Annulation possible en cas de forte pluie."] },
         { t: "drive", d: "46 min · 43 km · Henrietta → Trou aux Biches" },
         { when: "Mi-journée · 11h00 — 14h30", where: "Trou aux Biches · l'appartement", title: "Retour à l'appartement : douche, déjeuner, sieste", home: true,
-          text: "Retour au nord pour se laver et se changer après le canyon. Déjeuner tranquille (La Croisette ou le village), sieste, puis on redescend vers Tamarin pour la fin de journée. C'est le prix de la douche : 1 h 40 de route en plus ; sinon, se rincer dans les bassins et filer directement à Tamarin (22 min).",
+          text: "Retour au nord pour se laver et se changer après le canyon. Déjeuner tranquille (La Croisette ou le village), sieste, puis on redescend vers Tamarin pour la fin de journée.",
           places: [["L'appartement, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] },
         { t: "drive", d: "14h30 · 52 min · 46 km · Trou aux Biches → Tamarin" },
         { when: "Après-midi · 15h30", where: "Tamarin", title: "Plage de Tamarin",
