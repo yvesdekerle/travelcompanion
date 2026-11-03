@@ -1,8 +1,8 @@
 /* Carnet Maurice — application (HTML/CSS/JS natif, hors ligne via service worker)
    Une URL par page :
    /  (aujourd'hui)   /jour/3   /reservations   /logements   /todo   /todo/checklist   /todo/voiture
-   /todo/a-reserver   /todo/a-verifier   /infos   /convertisseur   /bons-plans   /annexes   /notes
-   /bienvenue   /installer   /plus */
+   /todo/a-reserver   /todo/a-verifier   /infos   /convertisseur   /plages   /randos   /bons-plans
+   /annexes   /notes   /bienvenue   /installer   /plus */
 (function () {
   "use strict";
   const G = window.GUIDE;
@@ -56,7 +56,9 @@
     install: sv('<rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3"/>'),
     chev: sv('<path d="m9.5 5 7 7-7 7"/>'),
     back: sv('<path d="m14.5 5-7 7 7 7"/>'),
-    search: sv('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')
+    search: sv('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
+    beach: sv('<path d="M3 12.5a9 9 0 0 1 18 0z"/><path d="M12 3.5c-2.6 0-4.6 4-4.6 9M12 3.5c2.6 0 4.6 4 4.6 9M12 12.5V21M9 21h6"/>'),
+    brain: sv('<path d="M12 5.2a3 3 0 0 0-5.7 1.1 3.3 3.3 0 0 0-2.1 5.1 3.3 3.3 0 0 0 .9 5.5A3.2 3.2 0 0 0 12 19.2"/><path d="M12 5.2a3 3 0 0 1 5.7 1.1 3.3 3.3 0 0 1 2.1 5.1 3.3 3.3 0 0 1-.9 5.5A3.2 3.2 0 0 1 12 19.2"/><path d="M12 5.2v14M9.2 9.6c.9.5 1.5 1.3 1.7 2.4M14.8 9.6c-.9.5-1.5 1.3-1.7 2.4M6.4 12.6c.9-.2 1.7 0 2.3.6M17.6 12.6c-.9-.2-1.7 0-2.3.6M8.2 16.4c.8-.1 1.5.1 2 .6M15.8 16.4c-.8-.1-1.5.1-2 .6"/>')
   };
   const ico = (name, size) => (size ? I[name].replace("<svg", `<svg width="${size}" height="${size}"`) : I[name]);
 
@@ -161,18 +163,25 @@
   const checkRows = (list, keyFn) => `<div class="cl single">${list.map((x, i) => { const k = keyFn(i), c = store.get(k, false); return `<div class="lbl ${c ? "checked" : ""}">${esc(x)}</div><div class="bx"><input class="chk" type="checkbox" data-store-check="${k}" ${c ? "checked" : ""} aria-label="${esc(x)}"></div>`; }).join("")}</div>`;
 
   /* ───────── Navigation ───────── */
-  const NAV = [
-    { href: "/", t: "Itinéraire", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
-    { t: "Cartes", i: "map", sheet: "maps" },
-    { href: "/convertisseur", t: "Convertisseur", i: "conv" },
-    { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
-    { href: "/logements", t: "Logements", i: "bed" },
-    { href: "/todo", t: "To-do", i: "todo", match: (p) => p.startsWith("/todo") },
-    { href: "/infos", t: "Infos", i: "info" },
-    { href: "/annexes", t: "Annexes", i: "book" },
-    { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
-  ];
+  const NAV_ITEMS = {
+    route: { href: "/", t: "Itinéraire", i: "route", match: (p) => p === "/" || p.startsWith("/jour/") },
+    maps: { t: "Cartes", i: "map", sheet: "maps" },
+    conv: { href: "/convertisseur", t: "Convertisseur", i: "conv" },
+    booked: { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
+    beaches: { href: "/plages", t: "Plages", i: "beach" },
+    hikes: { href: "/randos", t: "Randos", i: "boot" },
+    stays: { href: "/logements", t: "Logements", i: "bed" },
+    todo: { href: "/todo", t: "To-do", i: "todo", match: (p) => p.startsWith("/todo") },
+    info: { href: "/infos", t: "Infos", i: "info" },
+    annex: { href: "/annexes", t: "Annexes", i: "book" },
+    more: { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer"].includes(p) }
+  };
+  // Avant l'atterrissage, la to-do est en 4e position ; une fois sur place, elle passe en dernier.
+  const NAV_ORDER = () => (nowMs() < ARRIVAL
+    ? ["route", "maps", "conv", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
+    : ["route", "maps", "conv", "booked", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   function renderNav(path) {
+    const NAV = NAV_ORDER();
     $("#topnav").innerHTML = NAV.map((n) => { const on = n.deskMatch ? n.deskMatch(path) : n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${n.t}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${n.tl || n.t}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
     const bar = $("#tabbar");
@@ -455,18 +464,25 @@
   }
 
   /* ───────── Convertisseur ───────── */
+  // Montant courant (en roupies) et sens d'affichage : euros à gauche quand cv.eur est vrai.
+  const cv = { rs: 1000, eur: store.get("conv:eur", false) };
   function pageConverter() {
     const r = G.rate, f = (v) => v.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
+    const rsField = `<label><span>Roupies</span><input id="cvRs" inputmode="decimal" value="${f(cv.rs)}" aria-label="Montant en roupies"></label>`;
+    const eurField = `<label><span>Euros</span><input id="cvEur" inputmode="decimal" aria-label="Montant en euros"></label>`;
+    const quick = cv.eur
+      ? [5, 10, 20, 50, 100, 200, 500, 1000].map((v) => `<button type="button" data-eur="${v}">${f(v)} €</button>`)
+      : [100, 500, 1000, 1500, 3500, 5000, 10000, 14000, 33000].map((v) => `<button type="button" data-rs="${v}">${f(v)} Rs</button>`);
     return `<div class="container">${pageHead("", "Convertisseur", `1 € ≈ ${String(r).replace(".", ",")} Rs. Fonctionne sans réseau.`)}
-      <div class="grid c2 top-align">
+      <div class="narrow">
         <div class="card">
-          <div class="conv"><label><span>Roupies</span><input id="cvRs" inputmode="decimal" value="1000" aria-label="Montant en roupies"></label><span class="sw">⇄</span><label><span>Euros</span><input id="cvEur" inputmode="decimal" aria-label="Montant en euros"></label></div>
-          <div class="quick">${[100, 500, 1000, 1500, 3500, 14000, 33000].map((v) => `<button type="button" data-rs="${v}">${f(v)} Rs</button>`).join("")}</div>
-          <div class="callout"><span class="k">De tête</span><span>Enlever deux zéros, puis multiplier par 2 : 2 500 Rs → 25 → 50 €. Un peu au-dessus du vrai taux — parfait pour ne pas se tromper dans le mauvais sens.</span></div>
+          <div class="conv">${cv.eur ? eurField : rsField}<button type="button" class="sw" id="cvSwap" aria-label="Inverser le sens de conversion" title="Inverser">${I.conv}</button>${cv.eur ? rsField : eurField}</div>
+          <div class="quick">${quick.join("")}</div>
         </div>
-        <div class="card"><div class="eyebrow">Repères</div><h3>Prix courants</h3><div class="rows">
-          ${[["Dholl puri (×2)", 35], ["Repas street food", 200], ["Table d'hôte", 900], ["Entrée 7 couleurs + cascade", 600], ["Essence (1 L)", 68], ["Vanill'Art (par pers.)", 1500], ["Plongée (par pers.)", 3500], ["Speedboat Nemo", 14000], ["Catamaran Baba Cool", 33000]]
-            .map(([l, v]) => `<div class="row"><span class="rl">${l}</span><span>${f(v)} Rs <em>${(v / r).toLocaleString("fr-FR", { maximumFractionDigits: v / r < 10 ? 1 : 0 })} €</em></span></div>`).join("")}
+        <div class="card mental"><span class="brain">${I.brain}</span><div>
+          <h3>De tête</h3>
+          <p class="text">Enlever deux zéros, puis multiplier par 2. Un peu au-dessus du vrai taux : parfait pour ne pas se tromper dans le mauvais sens.</p>
+          <div class="ex">${[[1000, 10, 20], [2500, 25, 50], [3500, 35, 70], [33000, 330, 660]].map(([a, b, c]) => `<span>${f(a)} Rs <i>→</i> ${b} <i>→</i> <b>${c} €</b></span>`).join("")}</div>
         </div></div>
       </div></div>`;
   }
@@ -475,29 +491,43 @@
   const pageTips = () => `<div class="container">${pageHead("", "Bons plans", "Street food, marchés, snorkeling, couchers de soleil, apps : pour mieux dépenser, mieux manger, mieux dormir.")}
     <div class="grid c2">${G.tips.map((c) => `<div class="card"><div class="eyebrow">${esc(c.k)}</div><h3>${esc(c.title)}</h3><div class="text">${c.html}</div></div>`).join("")}</div></div>`;
 
+  /* ───────── Plages & randonnées ───────── */
+  const fromStays = (f) => `<div class="from"><span class="pill">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
+  // "Sam 7" → le jour du programme correspondant
+  const hikeDay = (h) => h.day ? G.days.find((d) => dow(d) === h.day.slice(0, 3) && +d.date.slice(8) === +h.day.split(" ")[1]) : null;
+  const hikeCard = (h) => { const d = hikeDay(h); return `<div class="card lc">
+    <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
+    <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
+    ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from)}
+    <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}</div></div>`; };
+  const beachCard = (b) => `<div class="card lc">
+    ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
+    <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
+    <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
+    ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from)}
+    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a></div></div>`;
+  function pageBeaches() {
+    return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, de la mieux notée à la moins. Toutes publiques et gratuites ; temps de route depuis chaque logement, note Google relevée le 28 octobre 2026.`)}
+      <div class="grid c3">${G.beaches.map(beachCard).join("")}</div>
+      <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>
+    </div>`;
+  }
+  function pageHikes() {
+    return `<div class="container">${pageHead("", "Les randonnées", "Celles du programme, puis d'autres sommets et sentiers pour improviser une journée. Temps de route depuis chaque logement.")}
+      <nav class="chips"><a href="/randos#programme">Au programme</a><a href="/randos#autres">Autres idées</a></nav>
+      ${section("programme", "", "Au programme", "Distances, dénivelés et durées du programme ; note AllTrails convertie sur 20 (note /5 × 4).", `<div class="grid c3">${G.hikes.map(hikeCard).join("")}</div>`)}
+      ${section("autres", "", "Autres randonnées possibles", "Les sommets et sentiers notés 15/20 ou plus.", `<div class="grid c3">${G.hikesMore.map(hikeCard).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>`)}
+    </div>`;
+  }
+
   /* ───────── Annexes ───────── */
   const tels = (list, sos = 0) => list.map((e, i) => `<a class="tel ${i < sos ? "sos" : ""}" href="tel:${e[2]}"><span class="t">${esc(e[0])}${e[3] ? `<small>${esc(e[3])}</small>` : ""}</span><span class="n">${esc(e[1])}</span></a>`).join("");
   function pageAnnex() {
-    const from = (f) => `<div class="from"><span class="pill">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
-    const hike = (h) => `<div class="card lc">
-      <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
-      <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
-      ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${from(h.from)}
-      <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Fiche & trace</a></div></div>`;
-    const beach = (b) => `<div class="card lc">
-      ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
-      <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
-      <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
-      ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${from(b.from)}
-      <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a></div></div>`;
     const total = G.cash.reduce((a, r) => a + r[3], 0);
-    return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, randonnées, plages, lexique créole, plats à goûter et cash à prévoir.")}
-      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#randos">Randonnées</a><a href="/annexes#plages">Plages</a><a href="/annexes#lexique">Lexique</a><a href="/annexes#plats">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a></nav>
+    return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, lexique créole, plats à goûter et cash à prévoir.")}
+      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#lexique">Lexique</a><a href="/annexes#plats">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a><a href="/plages">Plages</a><a href="/randos">Randonnées</a></nav>
       ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
       ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
-      ${section("randos", "Annexes", "Les randonnées", "Celles du programme. Note AllTrails convertie sur 20 (note /5 × 4) ; distances, D+ et durées : ton programme.", `<div class="grid c3">${G.hikes.map(hike).join("")}</div>`)}
-      ${section("autres-randos", "Annexes", "Autres randonnées possibles", "Les sommets et sentiers notés 15/20 ou plus, pour improviser une journée.", `<div class="grid c3">${G.hikesMore.map(hike).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>`)}
-      ${section("plages", "Annexes", "Les plages", "Celles notées 15/20 ou plus, de la mieux notée à la moins. Note Google relevée le 28 octobre 2026.", `<div class="grid c3">${G.beaches.map(beach).join("")}</div><div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>`)}
       ${section("lexique", "Annexes", "Mini-lexique créole", esc(G.lexiconNote), `<div class="lex">${G.lexicon.map(([fr, kr]) => `<div><small>${esc(fr)}</small><b>${esc(kr)}</b></div>`).join("")}</div>`)}
       ${section("plats", "Annexes", "Plats à goûter", "", `<div class="grid c2">${G.food.map(([t, rows]) => `<div class="card"><div class="eyebrow">${esc(t)}</div><div class="rows">${rows.map(([n, d]) => `<div class="row block"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div>`).join("")}</div></div>`).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`)}
       ${section("cash", "Annexes", "Cash à prévoir", "Les prestations à régler sur place, en roupies et en espèces.", `
@@ -583,13 +613,13 @@
             ${item("/bienvenue", "sun", "Bienvenue", "La couverture du carnet")}
             ${item("/infos", "info", "Infos pratiques", "Monnaie, météo, conduite, santé")}
             ${item("/bons-plans", "star", "Bons plans", "Street food, marchés, snorkeling")}
-            ${item("/annexes", "book", "Annexes", "Randonnées, plages, lexique, plats, cash")}
+            ${item("/annexes", "book", "Annexes", "Urgences, lexique, plats, cash")}
             ${item("/notes", "pen", "Notes", "Ton carnet de route")}
           </div></div>
         </div>
         <div class="menu-group"><span class="eyebrow">Accès rapide</span><div class="menu-list">
-          ${item("/annexes#plages", "wave", "Les plages", "17 plages notées, avec « Y aller »")}
-          ${item("/annexes#randos", "boot", "Randonnées", "Fiches et traces")}
+          ${item("/plages", "beach", "Les plages", `${G.beaches.length} plages notées, avec « Y aller »`)}
+          ${item("/randos", "boot", "Les randonnées", "Fiches, traces et temps de route")}
           ${item("/annexes#cash", "cash", "Cash à prévoir", G.cashTotals.group + " pour le groupe")}
           ${item("/annexes#lexique", "lex", "Lexique créole", "Bonzour, mersi boukou…")}
           ${item("/annexes#plats", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
@@ -642,10 +672,18 @@
     if (rs) {
       const num = (v) => parseFloat(String(v).replace(/\s/g, "").replace(",", ".")) || 0;
       const fmt = (v, d) => v.toLocaleString("fr-FR", { maximumFractionDigits: d });
-      const fromRs = () => (eur.value = fmt(num(rs.value) / G.rate, 2));
+      const fromRs = () => { cv.rs = num(rs.value); eur.value = fmt(cv.rs / G.rate, 2); };
+      const fromEur = () => { cv.rs = num(eur.value) * G.rate; rs.value = fmt(cv.rs, 0); };
       rs.addEventListener("input", fromRs);
-      eur.addEventListener("input", () => (rs.value = fmt(num(eur.value) * G.rate, 0)));
+      eur.addEventListener("input", fromEur);
+      // Toucher une case la vide pour saisir ; si on repart sans rien taper, l'ancien montant revient
+      [rs, eur].forEach((el) => {
+        el.addEventListener("focus", () => { el.dataset.prev = el.value; el.value = ""; });
+        el.addEventListener("blur", () => { if (el.value.trim() === "") { el.value = el.dataset.prev || "0"; (el === rs ? fromRs : fromEur)(); } });
+      });
       $$("[data-rs]", main).forEach((b) => (b.onclick = () => { rs.value = b.dataset.rs; fromRs(); }));
+      $$("[data-eur]", main).forEach((b) => (b.onclick = () => { eur.value = b.dataset.eur; fromEur(); }));
+      $("#cvSwap").onclick = () => { cv.eur = !cv.eur; store.set("conv:eur", cv.eur); render(); };
       fromRs();
     }
 
@@ -683,15 +721,19 @@
     "/todo": [pageTodo, "To-do"], "/todo/checklist": [pageChecklist, "Checklist"], "/todo/voiture": [pageCar, "Voiture"],
     "/todo/a-reserver": [pageToBook, "À réserver"], "/todo/a-verifier": [pageToCheck, "Points à vérifier"],
     "/infos": [pageInfo, "Infos pratiques"], "/convertisseur": [pageConverter, "Convertisseur"], "/bons-plans": [pageTips, "Bons plans"],
+    "/plages": [pageBeaches, "Plages"], "/randos": [pageHikes, "Randonnées"],
     "/annexes": [pageAnnex, "Annexes"], "/notes": [pageNotes, "Notes"], "/bienvenue": [pageWelcome, "Bienvenue"],
     "/installer": [pageInstall, "Installer"], "/plus": [pagePlus, "Plus"]
   };
-  const ALIAS = { "/checklist": "/todo/checklist", "/aujourdhui": "/", "/itineraire": "/" };
+  const ALIAS = { "/checklist": "/todo/checklist", "/aujourdhui": "/", "/itineraire": "/", "/plage": "/plages", "/rando": "/randos", "/randonnees": "/randos" };
+  // Anciens liens vers les sections d'annexes devenues des pages
+  const MOVED = { "/annexes#randos": "/randos", "/annexes#autres-randos": "/randos#autres", "/annexes#plages": "/plages" };
   let lastPath = null;
   function render(restoreY) {
     if (typeof restoreY !== "number") restoreY = undefined;
     let path = location.pathname.replace(/\/+$/, "") || "/";
     if (ALIAS[path]) { path = ALIAS[path]; history.replaceState(null, "", path + location.hash); }
+    if (MOVED[path + location.hash]) { const to = MOVED[path + location.hash]; history.replaceState(null, "", to); path = to.split("#")[0]; }
     let html, title, day = "";
     const m = /^\/jour\/(\d+)$/.exec(path);
     if (m && G.days.some((d) => d.n === +m[1])) { day = +m[1]; html = pageDay(day, false); title = `Jour ${day} · ${G.days[day - 1].title}`; }

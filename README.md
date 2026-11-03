@@ -30,9 +30,14 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/reservations` | Activités déjà réservées, contacts, points de rendez-vous |
 | `/logements` | Les deux adresses ; codes, téléphone et wifi à noter sur place |
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
+| `/plages` | Les 17 plages notées, avec « Y aller » depuis chaque logement |
+| `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
 Sur mobile : glisser à gauche ou à droite pour changer de jour. Sur clavier : flèches ← →.
+
+Le menu (barre du haut sur ordinateur, barre du bas sur mobile) change à l'atterrissage : avant, la To-do est en
+4e position ; une fois sur place, elle passe en dernier.
 
 ## Modifier le contenu
 

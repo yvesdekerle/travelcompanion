@@ -448,7 +448,18 @@ tfoot td { background: var(--bg); font-weight: 700; color: var(--ink); }
 .conv { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; }
 .conv label span { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 5px; }
 .conv input { width: 100%; font: 600 26px var(--serif); padding: 8px 12px; border-radius: var(--r-sm); border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); font-variant-numeric: tabular-nums; }
-.conv .sw { padding-bottom: 14px; color: var(--muted); }
+.conv .sw { width: 40px; height: 40px; margin-bottom: 4px; border: 0; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; cursor: pointer; transition: transform .15s; }
+.conv .sw svg { width: 20px; height: 20px; }
+.conv .sw:hover { background: var(--brand); color: #fff; }
+.conv .sw:active { transform: rotate(180deg); }
+.narrow { max-width: 640px; display: grid; gap: 12px; }
+.mental { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.mental .brain { width: 46px; height: 46px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); display: grid; place-items: center; }
+.mental .brain svg { width: 28px; height: 28px; }
+.mental h3 { font-size: 19px; margin: 6px 0 4px; }
+.mental .ex { display: grid; gap: 5px; margin-top: 12px; font: 500 14px/1.4 var(--sans); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.mental .ex i { font-style: normal; color: var(--muted); margin: 0 2px; }
+.mental .ex b { color: var(--ink); font-weight: 600; }
 .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .quick button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 99px; padding: 6px 11px; font-size: 13px; font-weight: 500; }
 .quick button:hover { background: var(--bg); }
