@@ -542,9 +542,12 @@
       const merged = mergePlan(plan, remote);
       const changed = Object.keys(merged.days).filter((k) => JSON.stringify(merged.days[k]) !== JSON.stringify(plan.days[k]));
       if (!changed.length) return;
+      // Ce qui change visiblement : un jour réordonné, ou un jour remis à l'ordre du guide alors qu'on l'avait modifié
+      const visible = changed.filter((k) => { const m = merged.days[k], o = plan.days[k]; return (m.order || (m.removed && m.removed.length)) || (o && (o.order || (o.removed && o.removed.length))); });
       plan = merged; store.set("plan", plan);
-      const by = [...new Set(changed.map((k) => remote.days[k] && remote.days[k].by).filter(Boolean))];
-      toast(`Programme mis à jour${by.length ? ` par ${by.join(" et ")}` : ""} : jour${changed.length > 1 ? "s" : ""} ${changed.sort((a, b) => a - b).join(", ")}`);
+      if (!visible.length) return;
+      const by = [...new Set(visible.map((k) => remote.days[k] && remote.days[k].by).filter(Boolean))];
+      toast(`Programme mis à jour${by.length ? ` par ${by.join(" et ")}` : ""} : jour${visible.length > 1 ? "s" : ""} ${visible.sort((a, b) => a - b).join(", ")}`);
       if (main.dataset.day && !document.activeElement.matches("input, textarea")) render();
     } catch {}
   }

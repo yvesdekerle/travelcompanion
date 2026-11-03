@@ -252,8 +252,9 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .cd-text small + small { opacity: .62; }
 @media (max-width: 560px) { .banner.count { grid-template-columns: minmax(0, 1fr) auto; } .cd { grid-column: 1 / -1; } .cd > span { flex: 1; } }
 
-.callout { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; border-radius: var(--r); padding: 12px 14px; font-size: 14.5px; line-height: 1.5; background: var(--brand-soft); color: var(--ink); margin-top: 14px; }
-.callout .k { font-weight: 700; color: var(--brand-ink); white-space: nowrap; }
+/* Encarts : le libellé au-dessus du texte, sur toute la largeur (lisible sur mobile, quel que soit le libellé) */
+.callout { display: grid; grid-template-columns: 1fr; gap: 3px; border-radius: var(--r); padding: 12px 14px; font-size: 14.5px; line-height: 1.5; background: var(--brand-soft); color: var(--ink); margin-top: 14px; }
+.callout .k { font: 700 12.5px/1.4 var(--sans); color: var(--brand-ink); }
 .callout.warn { background: var(--coral-soft); }
 .callout.warn .k { color: var(--coral-ink); }
 .callout.party { background: var(--sun-soft); grid-template-columns: 1fr; margin-top: 16px; }
@@ -298,8 +299,8 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .card-step h3 .star-mark svg { width: 15px; height: 15px; }
 .card-step .text { color: var(--ink-2); font-size: 15px; line-height: 1.6; max-width: 85ch; }
 .card-step .text b { color: var(--ink); font-weight: 600; }
-.rdv { display: flex; gap: 10px; align-items: baseline; font-size: 14px; color: var(--ink-2); background: var(--bg); padding: 9px 12px; border-radius: var(--r-sm); margin-top: 12px; }
-.rdv b { font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+.rdv { display: grid; gap: 2px; font-size: 14px; color: var(--ink-2); background: var(--bg); padding: 9px 12px; border-radius: var(--r-sm); margin-top: 12px; }
+.rdv b { font-size: 12.5px; color: var(--ink); }
 
 /* Trajets en voiture : connecteur pointillé, durée en avant, « Trajet » aligné à droite */
 .tl-drive::before { width: 0; background: none; border-left: 2px dashed var(--line-2); }
@@ -324,7 +325,9 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .place .pin { color: var(--coral); display: grid; place-items: center; flex: none; }
 .place .pin svg { width: 16px; height: 16px; }
 .place.trail .pin { color: var(--ok-ink); }
-.place .name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
+/* Un nom de lieu trop long pour tenir à côté des boutons passe au-dessus, les boutons sur la ligne suivante */
+.place { flex-wrap: wrap; justify-content: flex-end; }
+.place .name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 600; line-height: 1.3; }
 .place .see { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: var(--ink-2); background: var(--bg); text-decoration: none; flex: none; }
 .place .see:hover { color: var(--ink); background: var(--surface-2); }
 .place .see svg { width: 16px; height: 16px; }
