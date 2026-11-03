@@ -570,6 +570,14 @@ tfoot td { background: var(--bg); font-weight: 700; color: var(--ink); }
 .cl .lbl { padding: 10px 0; border-top: 1px solid var(--line); line-height: 1.4; }
 .cl .bx { border-top: 1px solid var(--line); align-self: stretch; display: grid; place-items: center; }
 .cl .lbl.checked { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-2); }
+/* Plats à goûter : nom en gras, description dessous, compteur par catégorie */
+.card.food .cl { margin-top: 6px; }
+.card.food .cl .lbl b { display: block; font-weight: 600; }
+.card.food .cl .lbl .muted { font-size: 13.5px; line-height: 1.4; }
+.card.food .cl .lbl.checked { text-decoration: none; }
+.card.food .cl .lbl.checked b { text-decoration: line-through; text-decoration-color: var(--line-2); }
+.card.food .eyebrow { display: flex; justify-content: space-between; align-items: baseline; }
+.card.food .eyebrow .cnt { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
 input[type="checkbox"].chk { appearance: none; -webkit-appearance: none; width: 26px; height: 26px; margin: 0; border-radius: 8px; border: 2px solid var(--line-2); background: var(--surface); display: grid; place-items: center; cursor: pointer; transition: background .15s, border-color .15s; flex: none; }
 input[type="checkbox"].chk:checked { background: var(--ok-ink); border-color: var(--ok-ink); }
 input[type="checkbox"].chk:checked::after { content: ""; width: 6px; height: 11px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: translate(0, -1px) rotate(45deg); }

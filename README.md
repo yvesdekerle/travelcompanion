@@ -39,6 +39,9 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
+Dans `/annexes`, la liste « Plats à goûter » (entrées, plats, desserts, boissons) a une case par plat, cochée sur
+l'appareil, avec un compteur par catégorie.
+
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
 Tous les numéros de téléphone du carnet sont cliquables : un mobile mauricien (+230 5…) s'affiche en bloc vert
 WhatsApp, logo en tête, qui ouvre la conversation, avec un petit bouton d'appel à côté ; un fixe se compose d'un

@@ -1046,7 +1046,9 @@
       ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
       ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
       ${section("lexique", "Annexes", "Mini-lexique créole", esc(G.lexiconNote), `<div class="lex">${G.lexicon.map(([fr, kr]) => `<div><small>${esc(fr)}</small><b>${esc(kr)}</b></div>`).join("")}</div>`)}
-      ${section("plats", "Annexes", "Plats à goûter", "", `<div class="grid c2">${G.food.map(([t, rows]) => `<div class="card"><div class="eyebrow">${esc(t)}</div><div class="rows">${rows.map(([n, d]) => `<div class="row block"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div>`).join("")}</div></div>`).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`)}
+      ${section("plats", "Annexes", "Plats à goûter", "Une case par plat : on coche ce qu'on a goûté, ça reste enregistré sur le téléphone.", `<div class="grid c2">${G.food.map(([t, rows], g) => {
+        const keys = rows.map((_, i) => `food:${g}:${i}`), done = keys.filter((k) => store.get(k, false)).length;
+        return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single">${rows.map(([n, d], i) => { const c = store.get(keys[i], false); return `<div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`)}
       ${section("cash", "Annexes", "Cash à prévoir", "Les prestations à régler sur place, en roupies et en espèces.", `
         <div class="grid c2 totals">
           <div class="card"><div class="eyebrow">Total groupe, en espèces</div><div class="bignum">${esc(G.cashTotals.group)}</div><p class="muted">${esc(G.cashTotals.groupEur)}</p></div>
@@ -1223,6 +1225,8 @@
     $$("[data-store]", main).forEach((el) => el.addEventListener("input", () => store.set(el.dataset.store, el.value)));
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);
+      const card = el.closest(".card.food"); // compteur « goûtés » de la catégorie
+      if (card) { const cs = $$("[data-store-check]", card); $("[data-food-count]", card).textContent = `${cs.filter((c) => c.checked).length} / ${cs.length}`; }
     }));
     $$("[data-tobook]", main).forEach((el) => el.addEventListener("change", () => { store.set("tobook:" + el.dataset.tobook, el.checked); render(); }));
     const all = $("#allDays"); if (all) all.onclick = () => openDaysSheet(+main.dataset.day);
