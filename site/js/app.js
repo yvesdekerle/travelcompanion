@@ -42,6 +42,8 @@
     boot: sv('<path d="m3 20 7-14 4 6 2-3 5 11z"/>'),
     phone: sv('<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/>'),
     mail: sv('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7.5l9 6 9-6"/>'),
+    // Logo Gmail (le « M » bleu, rouge, jaune, vert)
+    gmail: '<svg viewBox="0 0 128 96" aria-hidden="true"><path fill="#4285F4" d="M0 26l29 20v50H9.5A9.5 9.5 0 0 1 0 86.5z"/><path fill="#34A853" d="M128 26L99 46v50h19.5a9.5 9.5 0 0 0 9.5-9.5z"/><path fill="#FBBC04" d="M128 26V19a9.5 9.5 0 0 0-9.5-9.5H99V46z"/><path fill="#C5221F" d="M0 26V19a9.5 9.5 0 0 1 9.5-9.5H29V46z"/><path fill="#EA4335" d="M29 9.5l35 25 35-25V46L64 72.5 29 46z"/></svg>',
     walk: sv('<circle cx="13" cy="4" r="1.2"/><path d="M7 21l3-4"/><path d="M16 21l-2-4-3-3 1-6"/><path d="M6 12l2-3 4-1 3 3 3 1"/>'),
     wa: sv('<path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>'),
     ext: sv('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
@@ -183,7 +185,7 @@
   // Chaque entrée est "valeur" ou [libellé, valeur]
   const contactRows = (list) => `<div class="contact">${list.map((e) => {
     const [label, v] = Array.isArray(e) ? e : ["", e], num = digits(v), sub = label ? `<small>${esc(label)}</small>` : "";
-    if (v.includes("@")) return `<a class="c em" href="mailto:${v}"><i>${I.mail}</i><span>${esc(v)}${sub}</span></a>`;
+    if (v.includes("@")) return `<a class="c em" ${ext("https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(v))} aria-label="Écrire à ${esc(v)} dans Gmail"><i>${I.gmail}</i><span>${esc(v)}${sub}</span></a>`;
     if (isMobile(num)) return `<div class="c wa"><a class="lnk" ${ext(waUrl(num))} aria-label="WhatsApp ${esc(v)}"><i>${I.wa}</i><span>${esc(v)}${sub}</span></a><a class="call" href="tel:+${num}" aria-label="Appeler ${esc(v)}" title="Appeler">${I.phone}</a></div>`;
     return `<a class="c ph" href="tel:+${num}"><i>${I.phone}</i><span>${esc(v)}${sub}</span></a>`;
   }).join("")}</div>`;
@@ -191,11 +193,12 @@
   const traceSite = (url) => /alltrails/i.test(url) ? "AllTrails" : /wikiloc/i.test(url) ? "Wikiloc" : /visorando/i.test(url) ? "Visorando" : /komoot/i.test(url) ? "Komoot" : "en ligne";
   // Boutons d'une fiche : appel, WhatsApp (mobile), page interne (ex. le menu)
   const contactBtns = (b) => { const tel = b.tel || (b.wa ? "+" + b.wa : ""); return (tel ? telBtn(tel) : "") + (b.wa || (tel && isMobile(digits(tel))) ? waBtn(b.wa || tel) : "") + (b.page ? `<a class="btn sm" href="${b.page[0]}">${I.food}${esc(b.page[1])}</a>` : ""); };
-  const placeRow = ([label, q], origin) => `
+  // Un lieu : « Carte » (recherche Google Maps, ou un lien Maps précis s'il est donné) et « Y aller » (itinéraire)
+  const placeRow = ([label, q, mapUrl], origin) => `
     <div class="place two"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span>
-      <span class="acts"><a class="see" ${ext(searchUrl(q))} aria-label="Voir ${esc(label)} sur la carte">${I.map}Carte</a><a class="go" ${ext(dirUrl(q, origin))}>${I.nav}Y aller</a></span></div>`;
+      <span class="acts"><a class="see" ${ext(mapUrl || searchUrl(q))} aria-label="Voir ${esc(label)} sur la carte">${I.map}Carte</a><a class="go" ${ext(dirUrl(q, origin))}>${I.nav}Y aller</a></span></div>`;
   const linkRow = ([label, url, kind]) => kind === "map"
-    ? `<div class="place"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span><a class="go" ${ext(url)}>${I.nav}Y aller</a></div>`
+    ? `<div class="place two"><span class="pin">${I.pin}</span><span class="name">${esc(label)}</span><span class="acts"><a class="see" ${ext(url)}>${I.map}Carte</a><a class="go" ${ext(dirUrl(label))}>${I.nav}Y aller</a></span></div>`
     : kind === "page"
     ? `<a class="place page" href="${url}"><span class="pin">${url === "/menu" ? I.food : I.book}</span><span class="name">${esc(label)}</span><span class="chev">${I.chev}</span></a>`
     : `<div class="place trail"><span class="pin">${I.boot}</span><span class="name">${esc(label)}</span><a class="see" ${ext(url)} aria-label="Ouvrir la trace">${I.ext}</a></div>`;

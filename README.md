@@ -42,7 +42,10 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 Dans la bande des jours, une étoile jaune marque les jours où quelque chose est réservé à horaire fixe.
 Tous les numéros de téléphone du carnet sont cliquables : un mobile mauricien (+230 5…) s'affiche en bloc vert
 WhatsApp, logo en tête, qui ouvre la conversation, avec un petit bouton d'appel à côté ; un fixe se compose d'un
-toucher ; les adresses e-mail ouvrent la messagerie.
+toucher ; une adresse e-mail (logo Gmail) ouvre un nouveau message dans Gmail. Dans les étapes et les fiches
+Réservations, les contacts sont des lignes (`contact` dans data.js) : une par numéro ou adresse.
+Chaque lieu d'une étape a deux boutons, « Carte » (recherche Google Maps, ou un lien Maps précis donné en
+troisième position dans `places`) et « Y aller » (itinéraire depuis le lieu précédent).
 Chaque randonnée a sa trace en ligne : AllTrails quand la fiche existe, sinon Wikiloc (Gris-Gris, Pieter Both) ou
 Visorando (Tourelle du Tamarin) ; le bouton « Trace … » de la page Randos nomme le site.
 

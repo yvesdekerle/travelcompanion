@@ -40,7 +40,7 @@ const FIX = {
   "Pieter Both trail La Laura, Mauritius": [-20.1776, 57.5496],
   "Lakaz Kayak, Cap Tamarin, Mauritius": [-20.3232, 57.3762],
   "La Karaye de Val Calodyne, Mauritius": [-19.9972, 57.6446],
-  "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius": [-20.0376, 57.5447],
+  "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius": [-20.0381775, 57.543705], // pin Google de l'appartement
   "La Jetée Road, Grande Rivière Noire, Mauritius": [-20.3663, 57.3718],
   // La villa elle-même (pin Google « River Haven - Five-Bedroom House »), à 400 m à pied de l'embarcadère JPH
   "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius": [-20.364095, 57.375731],

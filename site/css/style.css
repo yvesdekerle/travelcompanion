@@ -690,7 +690,8 @@ a.tl:hover { color: var(--brand-ink); }
 .contact .wa span { color: var(--wa-ink); }
 .contact .ph i { background: var(--brand-ink); }
 .contact .ph span { color: var(--brand-ink); }
-.contact .em i { background: #D93025; }
+.contact .em i { background: var(--surface); border: 1px solid var(--line); }
+.contact .em i svg { width: 18px; height: 14px; }
 .contact .em span { white-space: normal; overflow-wrap: anywhere; }
 .contact .call { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--brand-soft); color: var(--brand-ink); flex: none; }
 .contact .call svg { width: 15px; height: 15px; }
