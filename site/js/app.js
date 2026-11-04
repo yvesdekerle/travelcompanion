@@ -1041,12 +1041,14 @@
   // `img` = les deux tailles du guide (img/nom-s.webp et img/nom.webp)
   const cover = (x) => x.pic ? `<div class="lc-cover"><img src="/img/lieux/${x.pic}.webp" alt="${esc(x.name)}" loading="lazy" decoding="async"></div>`
     : x.img ? `<div class="lc-cover">${img(x.img, x.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : "";
-  // Crédits des photos Commons de la page : auteur, licence, lien vers la page du fichier
-  const credits = (list) => { const l = list.filter((x) => x.credit); return l.length ? `<details class="credits"><summary>Crédits des photos</summary><ul>${l.map((x) => `<li>${esc(x.name)} : <a ${ext("https://commons.wikimedia.org/wiki/" + encodeURIComponent(x.credit[2]).replace(/%3A/g, ":"))}>${esc(x.credit[0])}</a>, ${esc(x.credit[1])}, Wikimedia Commons</li>`).join("")}</ul></details>` : ""; };
+  // Crédits des photos de la page : Commons (auteur, licence, nom du fichier) ou site de la fiche (site, mention, URL)
+  const credits = (list) => { const l = list.filter((x) => x.credit); return l.length ? `<details class="credits"><summary>Crédits des photos</summary><ul>${l.map((x) => { const [a, lic, ref] = x.credit, web = /^https?:/.test(ref); return `<li>${esc(x.name)} : <a ${ext(web ? ref : "https://commons.wikimedia.org/wiki/" + encodeURIComponent(ref).replace(/%3A/g, ":"))}>${esc(a)}</a>, ${esc(lic)}${web ? "" : ", Wikimedia Commons"}</li>`; }).join("")}</ul></details>` : ""; };
+  // « En un coup d'œil » des randos : distance, dénivelé, durée et note relevés sur la fiche (AllTrails, Wikiloc ou Visorando), champ `glance`
+  const hglance = (h) => h.glance ? `<dl class="glance">${[[I.walk, "Distance", h.glance[0]], [I.up, "Dénivelé", h.glance[1]], [I.clock, "Durée", h.glance[2]], [I.star, "Note " + traceSite(h.url), h.glance[3]]].filter((r) => r[2]).map((r) => `<div><dt>${r[0]}${esc(r[1])}</dt><dd>${esc(r[2])}</dd></div>`).join("")}</dl>` : "";
   const hikeCard = (h, by) => { const d = hikeDay(h); return `<div class="card lc">
     ${cover(h)}
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
-    <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
+    <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span>${h.src ? `<span>${esc(h.src)}</span>` : ""}</div><div class="see">${esc(h.see)}</div>${hglance(h)}
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
     <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Trace ${traceSite(h.url)}</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
   // « En un coup d'œil » : affluence, baignade, clarté de l'eau et sable relevés sur Mauritius Beach Life (champ `glance`)
@@ -1061,7 +1063,7 @@
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
     <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>${glance(b)}
     ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
-    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(b.q + " Mauritius"))}>${I.photo}Photos</a>${b.bl ? `<a class="btn sm" ${ext("https://mauritiusbeachlife.com/fr/beach/" + b.bl)}>${I.info}Fiche</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
+    <div class="card-actions cols"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(b.q + " Mauritius"))}>${I.photo}Photos</a>${b.bl ? `<a class="btn sm" ${ext("https://mauritiusbeachlife.com/fr/beach/" + b.bl)}>${I.info}Fiche</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
   function pageBeaches() {
     const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
     return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}

@@ -35,7 +35,7 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/logements` | Les deux adresses ; codes, téléphone et wifi à noter sur place |
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
 | `/plages` | Les 17 plages notées, chacune avec sa photo et son « coup d'œil » (affluence, baignade, clarté de l'eau, sable), triables par note, par temps de route depuis chaque logement ou par zone ; lien vers la fiche Mauritius Beach Life |
-| `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo, mêmes tris |
+| `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo et « coup d'œil » (distance, dénivelé, durée, note de la fiche AllTrails, Wikiloc ou Visorando), mêmes tris |
 | `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
@@ -60,12 +60,15 @@ troisième position dans `places`) et « Y aller » (itinéraire depuis le lieu 
 Chaque randonnée a sa trace en ligne : AllTrails quand la fiche existe, sinon Wikiloc (Gris-Gris, Pieter Both) ou
 Visorando (Tourelle du Tamarin) ; le bouton « Trace … » de la page Randos nomme le site.
 
-Les photos des plages et des randonnées viennent de Wikimedia Commons (licences CC BY, CC BY-SA ou domaine
-public), pas d'AllTrails ni de Google, dont les photos ne sont pas réutilisables : une image par fiche dans
+Les photos des plages viennent de Wikimedia Commons (licences CC BY, CC BY-SA ou domaine public), celles des
+randonnées de leur fiche (photo principale AllTrails, ou Wikiloc pour Gris-Gris ; Pieter Both et la Tourelle du
+Tamarin gardent une photo Commons, leurs traces n'ayant pas de photo exploitable) : une image par fiche dans
 `site/img/lieux/` (champ `pic` dans data.js ; WebP 800 × 400, recadrée au centre en 2:1 comme la vignette de la
-fiche ; environ 1 Mo pour les 21), mise en cache comme le reste du carnet. Le
-champ `credit` (auteur, licence, nom du fichier Commons) alimente le bloc « Crédits des photos » replié en bas des
-pages Plages et Randos, comme l'exigent ces licences. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
+fiche ; environ 1,5 Mo pour les 29), mise en cache comme le reste du carnet. Le
+champ `credit` (auteur, licence, nom du fichier Commons ; ou site, mention, URL de la fiche) alimente le bloc
+« Crédits des photos » replié en bas des pages Plages et Randos, comme l'exigent les licences Commons.
+Sur chaque rando, le bloc « Distance · Dénivelé · Durée · Note » (champ `glance` : quatre textes, `null` quand la
+fiche ne donne pas la valeur) reprend la fiche de la trace ; le bouton « Trace … » y mène. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
 champ `img` à deux tailles. Six plages sans photo libre (La Cambuse, Riambel, Palmar, Pomponette, Baie du Jacotet, Saint-Félix)
 ont une photo fournie à la main (originaux dans `tmp/plage/`, jamais commités ; même format WebP, pas de `credit`).
 
