@@ -61,8 +61,8 @@ Chaque randonnée a sa trace en ligne : AllTrails quand la fiche existe, sinon W
 Visorando (Tourelle du Tamarin) ; le bouton « Trace … » de la page Randos nomme le site.
 
 Les photos des plages viennent de Wikimedia Commons (licences CC BY, CC BY-SA ou domaine public), celles des
-randonnées de leur fiche (photo principale AllTrails, ou Wikiloc pour Gris-Gris ; Pieter Both et la Tourelle du
-Tamarin gardent une photo Commons, leurs traces n'ayant pas de photo exploitable) : une image par fiche dans
+randonnées de leur fiche AllTrails (photo principale) ; Gris-Gris, Pieter Both et la Tourelle du Tamarin, qui
+sont sur Wikiloc ou Visorando, gardent une photo Commons : une image par fiche dans
 `site/img/lieux/` (champ `pic` dans data.js ; WebP 800 × 400, recadrée au centre en 2:1 comme la vignette de la
 fiche ; environ 1,5 Mo pour les 29), mise en cache comme le reste du carnet. Le
 champ `credit` (auteur, licence, nom du fichier Commons ; ou site, mention, URL de la fiche) alimente le bloc
