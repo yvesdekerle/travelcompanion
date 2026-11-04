@@ -583,9 +583,9 @@ tfoot td { background: var(--bg); font-weight: 700; color: var(--ink); }
 .card.food .cl .lbl .muted { font-size: 13.5px; line-height: 1.4; }
 .card.food .cl .lbl.checked { text-decoration: none; }
 .card.food .cl .lbl.checked b { text-decoration: line-through; text-decoration-color: var(--line-2); }
-.card.food .cl.pics { grid-template-columns: 54px minmax(0, 1fr) 46px; }
-.card.food .cl .ph { border-top: 1px solid var(--line); align-self: stretch; display: grid; align-items: center; }
-.card.food .cl .ph img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: var(--bg); transition: opacity .2s; }
+.card.food .cl.pics { grid-template-columns: 96px minmax(0, 1fr) 46px; }
+.card.food .cl .ph { border-top: 1px solid var(--line); align-self: stretch; display: grid; align-items: center; padding: 8px 0; }
+.card.food .cl .ph img { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; background: var(--bg); transition: opacity .2s; cursor: zoom-in; }
 .card.food .cl .ph:has(+ .lbl.checked) img { opacity: .45; }
 .card.food .eyebrow { display: flex; justify-content: space-between; align-items: baseline; }
 .card.food .eyebrow .cnt { font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -794,16 +794,19 @@ a.tl:hover { color: var(--brand-ink); }
 .dish .price b { display: block; font: 600 17px/1.2 var(--serif); color: var(--ink); font-variant-numeric: tabular-nums; }
 .dish .price small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
 .dish p { grid-column: 2; margin: 6px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); max-width: 70ch; }
-/* Photo du plat : sur téléphone à côté du texte (titre et prix gardent toute la largeur), sur grand écran sur
-   toute la hauteur à droite */
-.dish.has-ph { grid-template-columns: 22px minmax(0, 1fr) 76px; }
-.dish .dish-top { grid-column: 2 / -1; }
-.dish .ph { grid-column: 3; grid-row: 2; align-self: start; width: 76px; height: 76px; margin-top: 6px; border-radius: 12px; object-fit: cover; background: var(--bg); }
-@media (min-width: 720px) {
-  .dish.has-ph { grid-template-columns: 22px minmax(0, 1fr) 84px; }
-  .dish.has-ph .dish-top { grid-column: 2; }
-  .dish .ph { grid-row: 1 / span 2; width: 84px; height: 84px; margin-top: 0; }
-}
+/* Photo du plat sous le descriptif, aussi large que le texte ; un toucher ouvre la visionneuse */
+.dish .ph { grid-column: 2; width: 100%; max-width: 70ch; margin-top: 12px; aspect-ratio: 3 / 2; border-radius: 12px; object-fit: cover; background: var(--bg); cursor: zoom-in; }
+@media (min-width: 720px) { .dish .ph { aspect-ratio: 5 / 2; } }
+
+/* ───────── Visionneuse (photo d'un plat en grand) ───────── */
+.lightbox { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; background: rgba(26, 43, 61, .88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); animation: fade .2s; cursor: zoom-out; }
+.lightbox figure { margin: 0; max-width: min(100%, 960px); text-align: center; }
+.lightbox img { display: inline-block; max-width: 100%; max-height: calc(100vh - 150px); border-radius: 14px; object-fit: contain; background: #000; }
+.lightbox figcaption { margin-top: 12px; color: #fff; }
+.lightbox figcaption b { display: block; font: 600 18px/1.3 var(--serif); }
+.lightbox figcaption small { display: block; margin-top: 4px; font-size: 12.5px; color: rgba(255, 255, 255, .7); }
+.lightbox .x { position: absolute; top: calc(12px + var(--safe-t)); right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .16); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.lightbox .x svg { width: 20px; height: 20px; }
 
 /* ───────── Mode édition du programme ───────── */
 .tl-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 26px 0 4px; }

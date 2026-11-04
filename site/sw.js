@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "92e0c03d54";
+const VERSION = "b000906913";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -90,6 +90,7 @@ const FILES = [
   "/img/plats/f-fangourin.webp",
   "/img/plats/f-gateau-piment.webp",
   "/img/plats/f-gato-patate.webp",
+  "/img/plats/f-gato-sucre.webp",
   "/img/plats/f-mine-frit.webp",
   "/img/plats/f-napolitaine.webp",
   "/img/plats/f-phoenix.webp",

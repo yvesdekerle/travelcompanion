@@ -1204,15 +1204,22 @@
     const keys = rows.map((_, i) => `food:${g}:${i}`), done = keys.filter((k) => store.get(k, false)).length;
     // Ligne = [nom, description, photo (img/plats), crédit] ; la cellule photo précède le libellé pour que le
     // basculement « goûté » (frère précédent de la case) continue de viser le libellé
-    return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single pics">${rows.map(([n, d, pic], i) => { const c = store.get(keys[i], false); return `<div class="ph">${pic ? plate(pic) : ""}</div><div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`;
-  // Vignette carrée d'un plat (photos Wikimedia Commons dans img/plats, crédits en bas de la page Menu)
-  const plate = (pic) => `<img class="ph" src="/img/plats/${pic}.webp" alt="" loading="lazy" decoding="async">`;
+    return `<div class="card food" data-food="${g}"><div class="eyebrow">${esc(t)}<span class="cnt" data-food-count>${done} / ${rows.length}</span></div><div class="cl single pics">${rows.map(([n, d, pic, credit], i) => { const c = store.get(keys[i], false); return `<div class="ph">${pic ? plate(pic, n, credit) : ""}</div><div class="lbl ${c ? "checked" : ""}"><b>${esc(n)}</b><div class="muted">${esc(d)}</div></div><div class="bx"><input class="chk" type="checkbox" data-store-check="${keys[i]}" ${c ? "checked" : ""} aria-label="${esc(n)} goûté"></div>`; }).join("")}</div></div>`; }).join("")}</div><div class="callout"><span class="k">Où</span><span>${esc(G.foodNote)}</span></div>`;
+  // Photo d'un plat (Wikimedia Commons dans img/plats, crédits en bas de la page Menu) ; un toucher l'ouvre en grand
+  const plate = (pic, name, credit) => `<img class="ph" src="/img/plats/${pic}.webp" alt="" loading="lazy" decoding="async" data-name="${esc(name || "")}" data-credit="${credit ? esc(`${credit[0]}, ${credit[1]} · Wikimedia Commons`) : ""}">`;
+  const lightbox = (el) => {
+    const box = document.createElement("div"); box.className = "lightbox"; box.setAttribute("role", "dialog"); box.setAttribute("aria-label", el.dataset.name || "Photo");
+    box.innerHTML = `<figure><img src="${el.src}" alt=""><figcaption><b>${esc(el.dataset.name || "")}</b>${el.dataset.credit ? `<small>${esc(el.dataset.credit)}</small>` : ""}</figcaption></figure><button class="x" type="button" aria-label="Fermer">${I.x}</button>`;
+    const onKey = (e) => { if (e.key === "Escape") close(); }, close = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+    box.addEventListener("click", close); document.addEventListener("keydown", onKey);
+    document.body.appendChild(box); box.querySelector(".x").focus();
+  };
 
   function pageMenu() {
     const m = G.menu, eur = (rs) => (rs / G.rate).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
     // Chaque section garde la couleur et le picto de la carte imprimée (astérisque bleu, hibiscus rouge, feuille verte)
-    const dish = (it, ic) => `<div class="dish${it.pic ? " has-ph" : ""}"><i class="pic">${ic}</i><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
-      <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p>${it.pic ? plate(it.pic) : ""}</div>`;
+    const dish = (it, ic) => `<div class="dish"><i class="pic">${ic}</i><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
+      <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p>${it.pic ? plate(it.pic, it.name, it.credit) : ""}</div>`;
     // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
     const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
@@ -1289,6 +1296,7 @@
       else { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain" })); a.download = "notes-maurice.txt"; a.click(); }
     };
     $$("[data-store]", main).forEach((el) => el.addEventListener("input", () => store.set(el.dataset.store, el.value)));
+    $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);
       const card = el.closest(".card.food"); // compteur « goûtés » de la catégorie
