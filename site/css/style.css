@@ -583,8 +583,10 @@ tfoot td { background: var(--bg); font-weight: 700; color: var(--ink); }
 .card.food .cl .lbl .muted { font-size: 13.5px; line-height: 1.4; }
 .card.food .cl .lbl.checked { text-decoration: none; }
 .card.food .cl .lbl.checked b { text-decoration: line-through; text-decoration-color: var(--line-2); }
-.card.food .cl.pics { grid-template-columns: 96px minmax(0, 1fr) 46px; }
-.card.food .cl .ph { border-top: 1px solid var(--line); align-self: stretch; display: grid; align-items: center; padding: 8px 0; }
+/* Avec la photo de 84 px, tout s'aligne en haut de la ligne : photo, nom et case sur la même ligne de départ */
+.card.food .cl.pics { grid-template-columns: 96px minmax(0, 1fr) 46px; align-items: start; }
+.card.food .cl.pics .bx { align-self: start; padding-top: 8px; }
+.card.food .cl .ph { border-top: 1px solid var(--line); align-self: stretch; padding: 8px 0; }
 .card.food .cl .ph img { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; background: var(--bg); transition: opacity .2s; cursor: zoom-in; }
 .card.food .cl .ph:has(+ .lbl.checked) img { opacity: .45; }
 .card.food .eyebrow { display: flex; justify-content: space-between; align-items: baseline; }
