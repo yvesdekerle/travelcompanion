@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "7c05ebc6b6";
+const VERSION = "30f4d42d23";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -54,18 +54,23 @@ const FILES = [
   "/img/lieux/blue-bay.webp",
   "/img/lieux/ferney.webp",
   "/img/lieux/gris-gris.webp",
+  "/img/lieux/jacotet.webp",
+  "/img/lieux/la-cambuse.webp",
   "/img/lieux/la-prairie.webp",
   "/img/lieux/lion-mountain.webp",
   "/img/lieux/macchabee.webp",
   "/img/lieux/mont-choisy.webp",
   "/img/lieux/morne-brabant.webp",
   "/img/lieux/nicoliere.webp",
+  "/img/lieux/palmar.webp",
   "/img/lieux/parakeet.webp",
   "/img/lieux/pereybere.webp",
   "/img/lieux/pieter-both.webp",
   "/img/lieux/piton-riviere-noire.webp",
   "/img/lieux/pointe-d-esny.webp",
+  "/img/lieux/pomponette.webp",
   "/img/lieux/poudre-d-or.webp",
+  "/img/lieux/riambel.webp",
   "/img/lieux/sept-cascades.webp",
   "/img/lieux/tourelle-tamarin.webp",
   "/img/lieux/trois-mamelles.webp",

@@ -72,6 +72,8 @@
     x: sv('<path d="M6 6l12 12M18 6 6 18"/>'),
     plus: sv('<path d="M12 5v14M5 12h14"/>'),
     photo: sv('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.2"/>'),
+    people: sv('<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19v-1.2a4.5 4.5 0 0 1 4.5-4.5h2a4.5 4.5 0 0 1 4.5 4.5V19"/><path d="M15.5 4.6a3.2 3.2 0 0 1 0 6.4"/><path d="M17.3 13.4a4.5 4.5 0 0 1 3.2 4.3V19"/>'),
+    drop: sv('<path d="M12 3.5s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>'),
     clock: sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
     down: sv('<path d="M12 5v14M19 12l-7 7-7-7"/>'),
     undo: sv('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
@@ -1047,18 +1049,26 @@
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
     <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Trace ${traceSite(h.url)}</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
+  // « En un coup d'œil » : affluence, baignade, clarté de l'eau et sable relevés sur Mauritius Beach Life (champ `glance`)
+  const CROWD = { low: "Faible", medium: "Moyenne", high: "Forte" };
+  const glance = (b) => b.glance ? `<dl class="glance">
+      <div><dt>${I.people}Affluence</dt><dd>${esc(CROWD[b.glance[0]] || b.glance[0])}</dd></div>
+      <div><dt>${I.wave}Baignade</dt><dd>${b.glance[1]}<small>/5</small></dd></div>
+      <div><dt>${I.drop}Clarté de l'eau</dt><dd>${b.glance[2]}<small>/5</small></dd></div>
+      <div><dt>${I.spark}Qualité du sable</dt><dd>${b.glance[3]}<small>/5</small></dd></div></dl>` : "";
   const beachCard = (b, by) => `<div class="card lc">
     ${cover(b)}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
-    <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
+    <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>${glance(b)}
     ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
-    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(b.q + " Mauritius"))}>${I.photo}Photos</a>${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
+    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(b.q + " Mauritius"))}>${I.photo}Photos</a>${b.bl ? `<a class="btn sm" ${ext("https://mauritiusbeachlife.com/fr/beach/" + b.bl)}>${I.info}Fiche</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
   function pageBeaches() {
     const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
     return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}
       ${sortBar("plages", by)}
       ${by === "zone" ? grouped(list, card) : `<div class="grid c3">${list.map(card).join("")}</div>`}
       <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>
+      <div class="callout"><span class="k">Pour aller plus loin</span><span>${G.beachesLinks.map((l) => `<a class="link" ${ext(l.url)}>${esc(l.t)}</a> (${esc(l.d)})`).join(" ; ")}.</span></div>
       ${credits(G.beaches)}
     </div>`;
   }

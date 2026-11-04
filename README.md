@@ -34,7 +34,7 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/reservations` | Activités déjà réservées, contacts, points de rendez-vous |
 | `/logements` | Les deux adresses ; codes, téléphone et wifi à noter sur place |
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
-| `/plages` | Les 17 plages notées, chacune avec sa photo, triables par note, par temps de route depuis chaque logement ou par zone |
+| `/plages` | Les 17 plages notées, chacune avec sa photo et son « coup d'œil » (affluence, baignade, clarté de l'eau, sable), triables par note, par temps de route depuis chaque logement ou par zone ; lien vers la fiche Mauritius Beach Life |
 | `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo, mêmes tris |
 | `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
@@ -66,7 +66,14 @@ public), pas d'AllTrails ni de Google, dont les photos ne sont pas réutilisable
 fiche ; environ 1 Mo pour les 21), mise en cache comme le reste du carnet. Le
 champ `credit` (auteur, licence, nom du fichier Commons) alimente le bloc « Crédits des photos » replié en bas des
 pages Plages et Randos, comme l'exigent ces licences. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
-champ `img` à deux tailles.
+champ `img` à deux tailles. Cinq plages sans photo libre (La Cambuse, Riambel, Palmar, Pomponette, Baie du Jacotet)
+ont une photo fournie à la main (originaux dans `tmp/plage/`, jamais commités ; même format WebP, pas de `credit`).
+
+Sur chaque plage, le bloc « Affluence · Baignade · Clarté de l'eau · Qualité du sable » (champ `glance` :
+`["low" | "medium" | "high", baignade/5, clarté/5, sable/5]`) et le bouton « Fiche » (champ `bl`, slug de
+`mauritiusbeachlife.com/fr/beach/…`) reprennent les relevés de Mauritius Beach Life (53 plages) ; deux plages n'y ont
+pas de fiche (Baie du Jacotet, Poudre d'Or). Le bloc « Pour aller plus loin » en bas de la page (`beachesLinks`) renvoie
+au classement des Droners et à Mauritius Beach Life.
 
 Sur mobile : glisser à gauche ou à droite pour changer de jour. Sur clavier : flèches ← →.
 
