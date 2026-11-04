@@ -827,6 +827,7 @@
             ${removedBox}
             ${dayMap(d, cur, stops, mapsUrl, mod)}
             ${notesBox}
+            ${d.credit ? credits([{ name: d.caption, credit: d.credit }]) : ""}
             <nav class="pager">
               ${prev ? `<a href="/jour/${prev.n}"><small>Jour ${prev.n}</small><b>${esc(prev.title)}</b></a>` : ""}
               ${next ? `<a class="next" href="/jour/${next.n}"><small>Jour ${next.n}</small><b>${esc(next.title)}</b></a>` : ""}
@@ -958,7 +959,7 @@
 
   function pageToBook() {
     return `<div class="container">${pageHead("", "À réserver", "Ce qui reste à caler — contacts et prix relevés le 28 octobre 2026, à confirmer en réservant. Coche quand c'est fait.", ["/todo", "To-do"])}
-      <div class="grid c2">${G.toBook.map((b, i) => { const done = store.get("tobook:" + i, false); return `
+      <div class="grid c2">${G.toBook.map((b, i) => [b, i]).sort((x, y) => x[0].day - y[0].day).map(([b, i]) => { const done = store.get("tobook:" + i, false); return `
         <article class="card ${done ? "done" : ""}">
           <div class="top"><span class="eyebrow">${esc(b.when)}</span><label class="check-pill"><input class="chk" type="checkbox" data-tobook="${i}" ${done ? "checked" : ""}>${done ? "Réservé" : "À réserver"}</label></div>
           <h3>${esc(b.title)}</h3>

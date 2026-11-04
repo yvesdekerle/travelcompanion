@@ -190,10 +190,10 @@ window.GUIDE = {
           tags: [["ok", "Confirmé 5 places · 8h"], ["cash", "Cash 3 500 Rs / pers."]], contact: ["+230 5728 9127"],
           note: ["Pendant ce temps", "Plage et baignade à Flic-en-Flac pour Amly, Chloé, Quentin et July — la plage publique est à deux pas du centre de plongée."] },
         { t: "drive", d: "40 min · 38 km · Flic-en-Flac → Beau Plan (Pamplemousses)" },
-        { when: "Après-midi · 13h30 — 15h15", where: "Beau Plan · L'Aventure du Sucre", title: "L'Aventure du Sucre — coupe de canne et dégustation",
-          text: "L'ancienne sucrerie de Beau Plan transformée en musée : machines, histoire de l'île racontée par la canne, et dégustation des sucres spéciaux et des rhums en fin de parcours. Coupe de canne à réserver. Vérifier l'ouverture le mercredi après-midi.",
+        { when: "Après-midi · 13h30 — 15h15", where: "Beau Plan · L'Aventure du Sucre", title: "L'Aventure du Sucre — musée et dégustation",
+          text: "L'ancienne sucrerie de Beau Plan transformée en musée : machines, histoire de l'île racontée par la canne, et dégustation des sucres spéciaux et des rhums en fin de parcours. La coupe de canne (le mercredi à 10h30 uniquement) est demandée pour le mercredi 18. Vérifier l'ouverture le mercredi après-midi.",
           places: [["L'Aventure du Sucre, Beau Plan", "L'Aventure du Sucre Beau Plan, Mauritius"]],
-          tags: [["info", "Entrée ≈ 500 Rs · musée + dégustation"], ["todo", "Coupe de canne à réserver"]] },
+          tags: [["info", "Entrée ≈ 500 Rs · musée + dégustation"], ["info", "Coupe de canne · demandée pour le 18"]] },
         { when: "Après-midi · 15h30 — 17h00", where: "Pamplemousses · Jardin botanique SSR · à 3 min", title: "Jardin de Pamplemousses",
           text: "Le plus vieux jardin botanique de l'hémisphère sud : le bassin des nénuphars géants Victoria amazonica, les palmiers talipot, l'allée des épices, les tortues. Une heure de promenade à l'ombre.",
           places: [["Jardin botanique SSR, Pamplemousses", "SSR Botanical Garden Pamplemousses, Mauritius"]],
@@ -391,10 +391,41 @@ window.GUIDE = {
     /* ───────────── JOUR 13 ───────────── */
     {
       n: 13, date: "2026-11-18", label: "Mercredi 18 novembre", phase: "deux",
+      title: "Canne à sucre et Tamarin",
+      sub: "Matinée au lagon · coupe de canne à L'Aventure du Sucre (réponse attendue) · plage de Tamarin · kayak au coucher du soleil",
+      drive: "≈ 1 h 55 de route · 102 km",
+      img: "j13", caption: "Champs de canne · route de Beau Plan", credit: ["John Tann", "CC BY 2.0", "File:Mauritian mountains (8131997839).jpg"],
+      steps: [
+        { when: "Matin", where: "Trou aux Biches · devant le logement", title: "Matinée au lagon",
+          text: "Pas de réveil aux aurores : baignade et snorkeling devant l'appartement, petit-déjeuner tranquille. Départ vers 10h pour Beau Plan." },
+        { t: "drive", d: "départ 10h05 · 18 min · 14 km · Trou aux Biches → Beau Plan (Pamplemousses)" },
+        { when: "Matin · 10h30", where: "Beau Plan · L'Aventure du Sucre", title: "Coupe de canne à L'Aventure du Sucre",
+          text: "On attend la réponse de L'Aventure du Sucre pour couper la canne à sucre. La coupe se fait le mercredi à 10h30 uniquement, 600 Rs par personne, dix participants minimum ; ensuite le musée et la dégustation des sucres spéciaux et des rhums. Déjeuner sur place au Fangourin, le restaurant du domaine.",
+          contact: ["+230 243 7900", "administration@aventuredusucre.com"],
+          places: [["L'Aventure du Sucre, Beau Plan", "L'Aventure du Sucre Beau Plan, Mauritius"]],
+          tags: [["todo", "Réponse attendue · coupe de canne 10h30"], ["info", "600 Rs / pers. · 10 participants minimum"]] },
+        { t: "drive", d: "13h30 · 45 min · 42 km · Beau Plan → Tamarin par Port-Louis · +10 min en journée" },
+        { when: "Après-midi · 14h30", where: "Tamarin", title: "Plage de Tamarin",
+          text: "Retour sur la baie de la première semaine : après-midi sur la plage publique, sieste sous les filaos, baignade face à la Tourelle.",
+          places: [["Tamarin Public Beach", "Tamarin Public Beach, Mauritius"]] },
+        { when: "Après-midi · 16h30", where: "Rivière Tamarin", title: "Kayak ou paddle au coucher du soleil",
+          text: "Remontée de la rivière Tamarin en kayak ou en paddle, entre mangroves et montagnes, avec le soleil qui tombe dans la baie au retour. Avec Yanature ou Lakaz Kayak, à réserver.",
+          places: [["Lakaz Kayak, Cap Tamarin", "Lakaz Kayak, Cap Tamarin, Mauritius"]],
+          tags: [["todo", "À réserver Yanature ou Lakaz Kayak · 16h30"]] },
+        { t: "drive", d: "52 min · 46 km · retour à Trou aux Biches, de nuit" },
+        { when: "Soir", where: "Trou aux Biches", title: "Soirée astronomique",
+          text: "Pas de prestataire trouvé au nord : on la fait nous-mêmes. Lune à 64 % ce soir-là (premier quartier le 17) : elle se couche vers minuit, donc le meilleur ciel est après 0h30 — ou viser plutôt une nuit la semaine d'avant, autour de la nouvelle lune du 8. S'éloigner des lumières de Grand Baie (plage de Mont Choisy ou pointe de Cap Malheureux), lampe rouge, plaid, et l'app Stellarium ou Sky Guide pour repérer la Croix du Sud, les Nuages de Magellan et le centre de la Voie lactée. Demain, départ à 7h30 pour le speedboat.",
+          tags: [["info", "Lune 64 % · couchée vers minuit"], ["info", "App Stellarium · Sky Guide"]] }
+      ]
+    },
+
+    /* ───────────── JOUR 14 ───────────── */
+    {
+      n: 14, date: "2026-11-19", label: "Jeudi 19 novembre", phase: "deux",
       title: "Speedboat — le lagon du Sud-Est",
       sub: "Île aux Cerfs · Île aux Aigrettes · cascade de GRSE · snorkeling · à deux",
       drive: "≈ 2 h 07 de route · 135 km",
-      img: "j13", caption: "Escale sur le sable · lagon Sud-Est",
+      img: "j14", caption: "Escale sur le sable · lagon Sud-Est",
       intro: "Bateau privatisé avec Nemo Speed Boat pour une journée à deux dans le lagon le plus vaste de l'île. Consigne donnée : éviter les spots bondés, juste un arrêt rapide à l'Île aux Cerfs.",
       steps: [
         { t: "drive", d: "départ 07h30 · 1 h 02 · 66 km · Trou aux Biches → Pointe Jérôme · +15 min en heure de pointe" },
@@ -408,38 +439,8 @@ window.GUIDE = {
           sea: ["Île aux Cerfs", "Cascade de GRSE", "Île aux Aigrettes"],
           note: ["À prévoir", "Sac étanche, lycra, masque, eau, pique-nique."] },
         { t: "drive", d: "1 h 05 · 69 km · retour à Trou aux Biches avant la nuit · +15 min en heure de pointe" },
-        { when: "Soir", where: "Trou aux Biches", title: "Soirée astronomique",
-          text: "Pas de prestataire trouvé au nord : on la fait nous-mêmes. Lune à 64 % ce soir-là (premier quartier le 17) : elle se couche vers minuit, donc le meilleur ciel est après 0h30 — ou viser plutôt une nuit la semaine d'avant, autour de la nouvelle lune du 8. S'éloigner des lumières de Grand Baie (plage de Mont Choisy ou pointe de Cap Malheureux), lampe rouge, plaid, et l'app Stellarium ou Sky Guide pour repérer la Croix du Sud, les Nuages de Magellan et le centre de la Voie lactée. Coucher tôt quand même : demain, départ à 5h.",
-          tags: [["info", "Lune 64 % · couchée vers minuit"], ["info", "App Stellarium · Sky Guide"]] }
-      ]
-    },
-
-    /* ───────────── JOUR 14 ───────────── */
-    {
-      n: 14, date: "2026-11-19", label: "Jeudi 19 novembre", phase: "deux",
-      title: "Les 7 cascades et Tamarin",
-      sub: "Canyon de Tamarind Falls · baignades · plage de Tamarin · kayak au coucher du soleil",
-      drive: "≈ 2 h de route · 109 km",
-      img: "j14", caption: "Cascade dans la forêt · plateau central",
-      steps: [
-        { t: "drive", d: "départ 05h10 · 46 min · 43 km · Trou aux Biches → Chutes de Tamarin (Henrietta)" },
-        { when: "Matin · 06h00 — 10h00", where: "Henrietta · Tamarind Falls", title: "Les 7 cascades de Tamarin", star: true,
-          text: "La rivière Tamarin dégringole le rebord du plateau central en sept chutes successives, au fond d'une gorge verte. Sans guide, avec la trace AllTrails : 2 à 6 km selon le parcours, +120 à +270 m, 3 à 4 h avec les baignades dans les bassins. Terrain glissant, passages dans la rivière — ne pas y aller après une grosse pluie.",
-          places: [["Chutes de Tamarin, Henrietta Branch Road", "Tamarind Falls Henrietta, Mauritius"]],
-          links: [["AllTrails · Seven Cascades Short Loop", "https://www.alltrails.com/fr/trail/mauritius/plaines-wilhems/seven-cascades-short-loop", "trail"]],
-          tags: [["info", "Canyon 2-6 km · +120 à +270 m · 3-4 h"], ["todo", "Trace AllTrails hors-ligne"]],
-          note: ["À prévoir", "Chaussures qui accrochent et qui peuvent aller dans l'eau, maillot sous le short, sac étanche, serviette, en-cas. Pas de retour à l'appartement ensuite, trop loin : on se rince dans les bassins, tenue de rechange dans la voiture. Annulation possible en cas de forte pluie."] },
-        { t: "drive", d: "22 min · 20 km · Henrietta → Tamarin" },
-        { when: "Mi-journée · 12h00", where: "Tamarin", title: "Déjeuner et plage de Tamarin",
-          text: "Retour sur la baie de la première semaine, sans repasser par le nord : déjeuner au village, après-midi sur la plage, sieste sous les filaos.",
-          places: [["Tamarin Public Beach", "Tamarin Public Beach, Mauritius"]] },
-        { when: "Après-midi · 16h30", where: "Rivière Tamarin", title: "Kayak ou paddle au coucher du soleil",
-          text: "Remontée de la rivière Tamarin en kayak ou en paddle, entre mangroves et montagnes, avec le soleil qui tombe dans la baie au retour. Avec Yanature ou Lakaz Kayak, à réserver.",
-          places: [["Lakaz Kayak, Cap Tamarin", "Lakaz Kayak, Cap Tamarin, Mauritius"]],
-          tags: [["todo", "À réserver Yanature ou Lakaz Kayak · 16h30"]] },
-        { t: "drive", d: "52 min · 46 km · retour à Trou aux Biches, de nuit" },
-        { when: "Soir", where: "Trou aux Biches", title: "Retour au nord",
-          text: "Demain, le plus technique des sommets : coucher tôt, matériel prêt." }
+        { when: "Soir", where: "Trou aux Biches", title: "Soirée tranquille au nord",
+          text: "Retour en fin d'après-midi, dîner au village. Demain, le plus technique des sommets : coucher tôt, matériel prêt, départ à 5h55." }
       ]
     },
 
@@ -565,7 +566,7 @@ window.GUIDE = {
     { day: 11, when: "Lun. 16 · 7h55", status: ["ok", "Payé"], title: "Hélicoptère · Corail Hélicoptères",
       desc: "Vol de 45 min pour Yves au départ de Triolet : Le Morne, la cascade sous-marine, Chamarel.",
       rows: [["RDV", "Corail Hélicoptères, Bon Air Road, Triolet · arriver 15 min avant, soit 7h40"], ["Prix", "Déjà payé"], ["Durée", "45 min"], ["À prévoir", "pièce d'identité, appareil photo chargé, pull léger (tôt le matin)"]] },
-    { day: 13, when: "Mer. 18 · 9h", status: ["cash", "À payer sur place · cash"], title: "Speedboat · Nemo Speed Boat",
+    { day: 14, when: "Jeu. 19 · 9h", status: ["cash", "À payer sur place · cash"], title: "Speedboat · Nemo Speed Boat",
       desc: "Journée à deux dans le lagon sud-est : Île aux Cerfs, Île aux Aigrettes, cascade de GRSE, snorkeling.",
       rows: [["RDV", "Pointe Jérôme, Mahébourg (Pointe d'Esny Road) · bateau « NEMO »"], ["Contact", [["Kenza, à l'arrivée", "+230 5753 9671"], ["Jérôme, réservation", "+230 5771 7917"]]], ["Prix", "14 000 Rs pour le bateau, à payer sur place, en cash uniquement"], ["À prévoir", "sac étanche, lycra, masque et tuba, eau, pique-nique, crème minérale"]],
       tel: "+23057539671" },
@@ -579,8 +580,8 @@ window.GUIDE = {
     { day: 5, when: "Mar. 10", title: "Réserve de l'Île aux Aigrettes — MWF",
       details: "Créneau 14h30 · visite guidée ≈ 1h30-2h, bateau 10 min depuis Pointe Jérôme · prix ≈ 800-1 000 Rs/pers. (à confirmer) · réservation obligatoire, par téléphone ou e-mail",
       contact: "+230 697 6097 (siège MWF, Vacoas) · mauritian-wildlife.org", tel: "+2306976097", place: "Pointe Jérôme, embarcadère MWF" },
-    { day: 6, when: "Mer. 11", title: "Coupe de canne — L'Aventure du Sucre",
-      details: "Le mercredi à 10h30 uniquement, 600 Rs/pers., minimum 10 participants, places limitées · ⚠ notre visite est prévue à 13h30 : décaler le matin ou renoncer · entrée musée 1 200 Rs/pers. avec dégustation, ouvert lun-sam 10h-16h",
+    { day: 13, when: "Mer. 18 · 10h30", title: "Coupe de canne — L'Aventure du Sucre",
+      details: "Demandée pour le mercredi 18 à 10h30, réponse attendue · le mercredi à 10h30 uniquement, 600 Rs/pers., minimum 10 participants, places limitées · entrée musée 1 200 Rs/pers. avec dégustation, ouvert lun-sam 10h-16h",
       contact: "+230 243 7900 · administration@aventuredusucre.com", tel: "+2302437900", place: "L'Aventure du Sucre, Beau Plan" },
     { day: 7, when: "Jeu. 12", title: "Massages (matin)",
       details: "Pour ceux qui ne pêchent pas : spa d'hôtel ou masseur à domicile à Rivière Noire — prestataire à choisir",
@@ -588,7 +589,7 @@ window.GUIDE = {
     { day: 12, when: "Mar. 17", title: "La Karaye de Val — table d'hôte",
       details: "Dîner créole sur réservation, Calodyne (18 min de Trou aux Biches) · note Google 4,9",
       contact: "+230 5855 8288", tel: "+23058558288", place: "La Karaye de Val, Chemin du Sourire, Calodyne" },
-    { day: 14, when: "Jeu. 19", title: "Kayak au coucher du soleil — Lakaz Kayak",
+    { day: 13, when: "Mer. 18", title: "Kayak au coucher du soleil — Lakaz Kayak",
       details: "Rivière Tamarin, 2 h dont 1 h de kayak + dégustation de 3 rhums, ≈ 50 €/pers. · RDV base Lakaz Kayak, Parc de Tamarin (Cap Tamarin) · alternative Yanature",
       contact: "+230 5492 8367 · manawa.com", tel: "+23054928367", place: "Lakaz Kayak, Cap Tamarin, Les Terrasses du Barachois" },
     { day: 15, when: "Ven. 20", title: "Guide pour Pieter Both — Trekking Mauritius (Yanature)",
@@ -647,7 +648,7 @@ window.GUIDE = {
       { k: "Monnaie", title: "Roupie mauricienne · Rs (MUR)",
         html: "<p><b>1 € ≈ 52-53 Rs.</b> Règle de tête : enlever deux zéros, puis multiplier par 2.</p><ul><li>2 500 Rs → 25 → 50 €</li><li>1 000 Rs → 10 → 20 €</li><li>3 500 Rs → 35 → 70 €</li><li>33 000 Rs → 330 → 660 €</li></ul><p>Un peu au-dessus du vrai taux : parfait pour ne pas se tromper dans le mauvais sens. Billets de 25 à 2 000 Rs ; les petites coupures servent aux marchés, aux snacks et aux pourboires.</p>" },
       { k: "Cash", title: "Retirer de l'argent",
-        html: "<ul><li>Distributeurs partout — préférer <b>MCB</b> et <b>SBM</b> (les deux grands réseaux, bien répartis, plafonds corrects), Absa en dépannage : Cascavelle et le centre de Flic-en-Flac la première semaine, La Croisette à Grand Baie ensuite.</li><li>Plafond par retrait souvent limité : pour les 88 110 Rs de cash du groupe, répartir les retraits sur plusieurs jours et plusieurs cartes.</li><li>Carte sans frais à l'étranger (Revolut, N26…) ; refuser la conversion en euros proposée par le distributeur.</li><li>Moins de distributeurs dans le Sud-Est : retirer avant le speedboat du 18 et la journée du 10.</li></ul>" },
+        html: "<ul><li>Distributeurs partout — préférer <b>MCB</b> et <b>SBM</b> (les deux grands réseaux, bien répartis, plafonds corrects), Absa en dépannage : Cascavelle et le centre de Flic-en-Flac la première semaine, La Croisette à Grand Baie ensuite.</li><li>Plafond par retrait souvent limité : pour les 88 110 Rs de cash du groupe, répartir les retraits sur plusieurs jours et plusieurs cartes.</li><li>Carte sans frais à l'étranger (Revolut, N26…) ; refuser la conversion en euros proposée par le distributeur.</li><li>Moins de distributeurs dans le Sud-Est : retirer avant le speedboat du 19 et la journée du 10.</li></ul>" },
       { k: "Change", title: "Changer des euros",
         html: "<ul><li>Aéroport : bureaux de change ouverts à l'arrivée, pratiques pour une première petite somme.</li><li>En ville : Absa, HSBC, Bank One ou BCP proposent souvent de meilleurs taux que la MCB ; Shibani est très répandu mais son taux est moins avantageux.</li><li>Apporter des billets en bon état et comparer les taux affichés du jour.</li></ul>" },
       { k: "Paiement", title: "Carte ou cash ?",
@@ -659,7 +660,7 @@ window.GUIDE = {
       { k: "Climat", title: "Début de l'été austral",
         html: "<p>Novembre, c'est le début de la saison chaude et humide : chaleur franche, averses courtes et tropicales surtout sur le plateau et l'est, <b>indice UV extrême (11+) dès 9h</b>. La saison cyclonique commence officiellement en novembre mais concerne surtout janvier à mars ; on garde un œil sur metservice.intnet.mu, sans s'inquiéter.</p>" },
       { k: "Apps", title: "Apps à installer avant le vol",
-        html: "<ul><li><b>Windy</b> + metservice.intnet.mu — vent, houle, pluie, alertes</li><li><b>Google Maps</b> — carte « Île Maurice » téléchargée hors-ligne</li><li><b>AllTrails / Wikiloc</b> — traces des randos hors-ligne (7 cascades sans guide)</li><li><b>Stellarium</b> ou <b>Sky Guide</b> — soirée étoiles</li><li><b>WhatsApp</b> — tous les prestataires répondent par là</li><li><b>Tricount</b> — dépenses du groupe</li><li><b>Revolut / N26</b> — paiements et retraits sans frais</li><li><b>Google Sheets</b> — notre fichier d'activités</li></ul>" },
+        html: "<ul><li><b>Windy</b> + metservice.intnet.mu — vent, houle, pluie, alertes</li><li><b>Google Maps</b> — carte « Île Maurice » téléchargée hors-ligne</li><li><b>AllTrails / Wikiloc</b> — fiches et traces des randos</li><li><b>Stellarium</b> ou <b>Sky Guide</b> — soirée étoiles</li><li><b>WhatsApp</b> — tous les prestataires répondent par là</li><li><b>Tricount</b> — dépenses du groupe</li><li><b>Revolut / N26</b> — paiements et retraits sans frais</li><li><b>Google Sheets</b> — notre fichier d'activités</li></ul>" },
       { k: "Santé", title: "Santé & sécurité",
         html: "<ul><li>Crème solaire minérale (plus respectueuse des coraux) et chapeau : le soleil tape fort même par temps nuageux.</li><li>Chaussures d'eau contre les oursins et les coraux ; ne pas toucher les coraux.</li><li>Rester dans le lagon : les courants sont dangereux au-delà de la barrière de corail ; baignade interdite à Gris-Gris.</li><li>Répulsif anti-moustiques, surtout en fin de journée.</li><li>Préférer l'eau en bouteille.</li><li>Urgences : police <b>999</b> · SAMU <b>114</b> · pompiers <b>115</b>.</li></ul>" },
       { k: "Courses", title: "Supermarchés",
@@ -726,7 +727,7 @@ window.GUIDE = {
     { day: "Dim 15", zone: "Sud", name: "Gris-Gris → La Roche qui Pleure", q: "Gris Gris Beach Souillac, Mauritius", prog: "falaises de Souillac · quasi plat · ≈ 1h30 selon le guide", diff: "Facile", note: "—", from: ["50 min", "1 h 08"],
       see: "Falaises de basalte battues par l'océan, pas de lagon", warn: "Baignade interdite · courants · venteux, sans ombre",
       url: "https://www.wikiloc.com/hiking-trails/gris-gris-103050287", pic: "gris-gris", credit: ["Simisa", "CC BY-SA 3.0", "File:Mauritius 23.08.2009 10-20-03.jpg"], glance: ["2,8 km · aller-retour", "+43 m", "≈ 1 h", "5 · 1 avis"] },
-    { day: "Jeu 19", zone: "Ouest", name: "Les 7 cascades de Tamarin", q: "Tamarind Falls Henrietta, Mauritius", prog: "3 – 4 h avec baignades · variantes plus longues (2 à 6 km)", diff: "Modérée · technique", note: "18,4", from: ["28 min", "46 min"],
+    { zone: "Ouest", name: "Les 7 cascades de Tamarin", q: "Tamarind Falls Henrietta, Mauritius", prog: "3 – 4 h avec baignades · variantes plus longues (2 à 6 km)", diff: "Modérée · technique", note: "18,4", from: ["28 min", "46 min"],
       see: "Sept chutes successives et leurs bassins au fond d'une gorge verte", warn: "Terrain glissant, passages à la main près des chutes, à éviter après la pluie ; sans guide, télécharger la trace",
       url: "https://www.alltrails.com/fr/trail/mauritius/plaines-wilhems/seven-cascades-short-loop", pic: "sept-cascades", credit: ["AllTrails", "photo de la fiche", "https://www.alltrails.com/fr/trail/mauritius/plaines-wilhems/seven-cascades-short-loop"], glance: ["2,3 km · boucle courte", "+91 m", null, "4,6 · 1 032 avis"] },
     { day: "Ven 20", zone: "Nord", name: "Pieter Both", q: "Pieter Both trail La Laura, Mauritius", prog: "≈ 1 km A/R · +330 m · 4 – 7 h selon le guide ; la trace Wikiloc part de plus bas", diff: "Difficile · escalade équipée", note: "—", from: ["49 min", "29 min"],
@@ -812,9 +813,9 @@ window.GUIDE = {
     ["Baptême de plongée", "11 nov", "3 500 Rs × 5 pers. (+ 3 500 Rs si la 6ᵉ plonge)", 17500, "7 000 Rs (2 pers.)"],
     ["Pêche au gros, solde", "12 nov", "≈ 3 370 Rs (64 €) × 3 pers.", 10110, "3 370 Rs (1 pers.)"],
     ["Catamaran Baba Cool", "13 nov", "bateau privatisé, partagé à 9", 33000, "7 333 Rs (2/9)"],
-    ["Speedboat Nemo", "18 nov", "bateau privatisé, à deux", 14000, "14 000 Rs"]
+    ["Speedboat Nemo", "19 nov", "bateau privatisé, à deux", 14000, "14 000 Rs"]
   ],
-  cashTotals: { group: "88 110 Rs", groupEur: "≈ 1 670 € — à retirer sur plusieurs jours et plusieurs cartes", two: "34 703 Rs", twoEur: "≈ 660 € — dont 14 000 Rs pour le speedboat du 18" },
+  cashTotals: { group: "88 110 Rs", groupEur: "≈ 1 670 € — à retirer sur plusieurs jours et plusieurs cartes", two: "34 703 Rs", twoEur: "≈ 660 € — dont 14 000 Rs pour le speedboat du 19" },
   cashNote: "Le catamaran Baba Cool (33 000 Rs, cash uniquement) se paie le vendredi 13 au matin : commencer les retraits dès le lundi 9.",
 
   tools: [

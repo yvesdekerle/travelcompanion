@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "163f3f454f";
+const VERSION = "384015e643";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
