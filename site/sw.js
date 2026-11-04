@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "766b5b5d00";
+const VERSION = "7c05ebc6b6";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -49,6 +49,27 @@ const FILES = [
   "/img/j16.webp",
   "/img/lemorne-s.webp",
   "/img/lemorne.webp",
+  "/img/lieux/bel-ombre.webp",
+  "/img/lieux/belle-mare.webp",
+  "/img/lieux/blue-bay.webp",
+  "/img/lieux/ferney.webp",
+  "/img/lieux/gris-gris.webp",
+  "/img/lieux/la-prairie.webp",
+  "/img/lieux/lion-mountain.webp",
+  "/img/lieux/macchabee.webp",
+  "/img/lieux/mont-choisy.webp",
+  "/img/lieux/morne-brabant.webp",
+  "/img/lieux/nicoliere.webp",
+  "/img/lieux/parakeet.webp",
+  "/img/lieux/pereybere.webp",
+  "/img/lieux/pieter-both.webp",
+  "/img/lieux/piton-riviere-noire.webp",
+  "/img/lieux/pointe-d-esny.webp",
+  "/img/lieux/poudre-d-or.webp",
+  "/img/lieux/sept-cascades.webp",
+  "/img/lieux/tourelle-tamarin.webp",
+  "/img/lieux/trois-mamelles.webp",
+  "/img/lieux/trou-aux-biches.webp",
   "/img/logement1-s.webp",
   "/img/logement1.webp",
   "/img/logement2-s.webp",

@@ -71,6 +71,7 @@
     up: sv('<path d="M12 19V5M5 12l7-7 7 7"/>'),
     x: sv('<path d="M6 6l12 12M18 6 6 18"/>'),
     plus: sv('<path d="M12 5v14M5 12h14"/>'),
+    photo: sv('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.2"/>'),
     clock: sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
     down: sv('<path d="M12 5v14M19 12l-7 7-7-7"/>'),
     undo: sv('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
@@ -233,12 +234,38 @@
   const bar = $("#tabbar");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
+  // Barre du haut (ordinateur) : quand la fenêtre est trop étroite pour les douze entrées, elle glisse.
+  // Fondu du côté où il reste des entrées ; la molette la fait défiler ; à la souris, on peut aussi la tirer.
+  const topnav = $("#topnav");
+  const topnavFade = () => {
+    topnav.classList.toggle("more-l", topnav.scrollLeft > 4);
+    topnav.classList.toggle("more-r", topnav.scrollLeft + topnav.clientWidth < topnav.scrollWidth - 4);
+  };
+  topnav.addEventListener("scroll", topnavFade, { passive: true });
+  addEventListener("resize", topnavFade);
+  topnav.addEventListener("wheel", (e) => {
+    if (topnav.scrollWidth <= topnav.clientWidth || Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+    topnav.scrollLeft += e.deltaY; e.preventDefault();
+  }, { passive: false });
+  let navDrag = null, navDragged = 0;
+  topnav.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse" && topnav.scrollWidth > topnav.clientWidth) navDrag = { x: e.clientX, left: topnav.scrollLeft, moved: false }; });
+  topnav.addEventListener("pointermove", (e) => { if (!navDrag) return; const dx = e.clientX - navDrag.x; if (navDrag.moved || Math.abs(dx) > 4) { navDrag.moved = true; topnav.scrollLeft = navDrag.left - dx; } });
+  const navDragEnd = () => { if (navDrag && navDrag.moved) navDragged = Date.now(); navDrag = null; };
+  ["pointerup", "pointercancel", "pointerleave"].forEach((t) => topnav.addEventListener(t, navDragEnd));
+  topnav.addEventListener("dragstart", (e) => e.preventDefault());
+  topnav.addEventListener("click", (e) => { if (Date.now() - navDragged < 300) { e.preventDefault(); e.stopPropagation(); } }, true);
   function renderNav(path) {
     const NAV = NAV_ORDER();
-    // Libellé long sur grand écran, court en dessous de 1300 px (les douze entrées doivent tenir sur une ligne)
-    const lbl = (n) => `<span class="l">${n.tl || n.t}</span><span class="s">${n.t}</span>`;
+    // Libellés courts (Convertir, Résas) : les douze entrées tiennent alors sur une ligne dans le conteneur de 1 200 px
+    const lbl = (n) => `<span title="${esc(n.tl || n.t)}">${n.t}</span>`;
     $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${lbl(n)}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${lbl(n)}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
+    const tn = $("#topnav"), ta = $("a.active", tn);
+    if (ta) { // entrée active ramenée dans la partie visible quand la barre déborde
+      const l = ta.getBoundingClientRect().left - tn.getBoundingClientRect().left, r = l + ta.offsetWidth;
+      if (l < 44 || r > tn.clientWidth - 44) tn.scrollLeft += l - 44;
+    }
+    topnavFade();
     // La barre du bas n'est construite qu'une fois (puis quand l'ordre change, à l'atterrissage) :
     // elle garde sa position de défilement d'une page à l'autre au lieu de sauter.
     const key = NAV.map((n) => n.t).join(), fresh = key !== barKey;
@@ -1008,23 +1035,31 @@
   const grouped = (list, card) => ZONES.filter((z) => list.some((x) => x.zone === z)).map((z) => `<h3 class="group">${z}</h3><div class="grid c3">${list.filter((x) => x.zone === z).map(card).join("")}</div>`).join("");
   // "Sam 7" → le jour du programme correspondant
   const hikeDay = (h) => h.day ? G.days.find((d) => dow(d) === h.day.slice(0, 3) && +d.date.slice(8) === +h.day.split(" ")[1]) : null;
+  // Photo de la fiche : `pic` = une image unique dans img/lieux (photos Wikimedia Commons, crédit dans `credit`),
+  // `img` = les deux tailles du guide (img/nom-s.webp et img/nom.webp)
+  const cover = (x) => x.pic ? `<div class="lc-cover"><img src="/img/lieux/${x.pic}.webp" alt="${esc(x.name)}" loading="lazy" decoding="async"></div>`
+    : x.img ? `<div class="lc-cover">${img(x.img, x.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : "";
+  // Crédits des photos Commons de la page : auteur, licence, lien vers la page du fichier
+  const credits = (list) => { const l = list.filter((x) => x.credit); return l.length ? `<details class="credits"><summary>Crédits des photos</summary><ul>${l.map((x) => `<li>${esc(x.name)} : <a ${ext("https://commons.wikimedia.org/wiki/" + encodeURIComponent(x.credit[2]).replace(/%3A/g, ":"))}>${esc(x.credit[0])}</a>, ${esc(x.credit[1])}, Wikimedia Commons</li>`).join("")}</ul></details>` : ""; };
   const hikeCard = (h, by) => { const d = hikeDay(h); return `<div class="card lc">
+    ${cover(h)}
     <div class="head"><div><div class="eyebrow">${esc(h.day || h.zone)}</div><h4>${esc(h.name)}</h4></div><div class="score">${esc(h.note)}<small>/20</small></div></div>
     <div class="meta"><span>${esc(h.diff)}</span><span>${esc(h.prog)}</span><span>${esc(h.src)}</span></div><div class="see">${esc(h.see)}</div>
     ${h.warn ? `<div class="warn">⚠ ${esc(h.warn)}</div>` : ""}${fromStays(h.from, by)}
     <div class="card-actions"><a class="btn sm" ${ext(h.url)}>${I.boot}Trace ${traceSite(h.url)}</a>${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="hike:${allHikes.indexOf(h)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
   const beachCard = (b, by) => `<div class="card lc">
-    ${b.img ? `<div class="lc-cover">${img(b.img, b.name, false, "(min-width: 720px) 33vw, 100vw")}</div>` : ""}
+    ${cover(b)}
     <div class="head"><div><div class="eyebrow">${esc(b.zone)}</div><h4>${esc(b.name)}</h4></div><div class="score">${esc(b.note)}<small>/20</small></div></div>
     <div class="meta"><span>Google ${esc(b.g)}</span></div><div class="see">${esc(b.see)}</div>
     ${b.warn ? `<div class="warn">⚠ ${esc(b.warn)}</div>` : ""}${fromStays(b.from, by)}
-    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a>${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
+    <div class="card-actions"><a class="btn sm primary" ${ext(dirUrl(b.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(b.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(b.q + " Mauritius"))}>${I.photo}Photos</a>${canEdit() ? `<button type="button" class="btn sm" data-add="beach:${G.beaches.indexOf(b)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`;
   function pageBeaches() {
     const by = store.get("sort:plages", "note"), list = sorted(G.beaches, by), card = (b) => beachCard(b, by);
     return `<div class="container">${pageHead("", "Les plages", `Les ${G.beaches.length} plages notées 15/20 ou plus, toutes publiques et gratuites. Note Google relevée le 28 octobre 2026 ; temps de route depuis chaque logement.`)}
       ${sortBar("plages", by)}
       ${by === "zone" ? grouped(list, card) : `<div class="grid c3">${list.map(card).join("")}</div>`}
       <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.beachesNote)}</span></div>
+      ${credits(G.beaches)}
     </div>`;
   }
   function pageHikes() {
@@ -1037,6 +1072,7 @@
       ${sortBar("randos", by, { prog: "Au programme" })}
       ${body}
       <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.hikesNote)}</span></div>
+      ${credits(all)}
     </div>`;
   }
 

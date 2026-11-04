@@ -34,8 +34,8 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/reservations` | Activités déjà réservées, contacts, points de rendez-vous |
 | `/logements` | Les deux adresses ; codes, téléphone et wifi à noter sur place |
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
-| `/plages` | Les 17 plages notées, triables par note, par temps de route depuis chaque logement ou par zone |
-| `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, mêmes tris |
+| `/plages` | Les 17 plages notées, chacune avec sa photo, triables par note, par temps de route depuis chaque logement ou par zone |
+| `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo, mêmes tris |
 | `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
@@ -59,6 +59,14 @@ Chaque lieu d'une étape a deux boutons, « Carte » (recherche Google Maps, ou 
 troisième position dans `places`) et « Y aller » (itinéraire depuis le lieu précédent).
 Chaque randonnée a sa trace en ligne : AllTrails quand la fiche existe, sinon Wikiloc (Gris-Gris, Pieter Both) ou
 Visorando (Tourelle du Tamarin) ; le bouton « Trace … » de la page Randos nomme le site.
+
+Les photos des plages et des randonnées viennent de Wikimedia Commons (licences CC BY, CC BY-SA ou domaine
+public), pas d'AllTrails ni de Google, dont les photos ne sont pas réutilisables : une image par fiche dans
+`site/img/lieux/` (champ `pic` dans data.js ; WebP 800 × 400, recadrée au centre en 2:1 comme la vignette de la
+fiche ; environ 1 Mo pour les 21), mise en cache comme le reste du carnet. Le
+champ `credit` (auteur, licence, nom du fichier Commons) alimente le bloc « Crédits des photos » replié en bas des
+pages Plages et Randos, comme l'exigent ces licences. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
+champ `img` à deux tailles.
 
 Sur mobile : glisser à gauche ou à droite pour changer de jour. Sur clavier : flèches ← →.
 

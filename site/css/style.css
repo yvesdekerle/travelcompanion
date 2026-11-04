@@ -96,11 +96,15 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .brand-mark { display: none; }
 .brand b { font: 400 34px/1 var(--script); color: var(--brand-ink); display: block; transform: translateY(2px); }
 .brand small { display: block; font: 500 12px/1 var(--sans); color: var(--muted); white-space: nowrap; }
-.topnav { display: none; gap: 2px; margin-left: 20px; min-width: 0; overflow: hidden; white-space: nowrap; }
+/* Sous 1 300 px environ, les douze entrées ne tiennent plus : la barre glisse (molette, trackpad ou cliquer-glisser)
+   et un fondu marque le côté où il reste des entrées (classes more-l / more-r posées par app.js) */
+.topnav { display: none; gap: 0; margin-left: 20px; min-width: 0; overflow-x: auto; overflow-y: hidden; white-space: nowrap; scrollbar-width: none; overscroll-behavior-x: contain; user-select: none; -webkit-user-select: none; }
+.topnav::-webkit-scrollbar { display: none; }
+.topnav.more-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); }
+.topnav.more-l { -webkit-mask-image: linear-gradient(90deg, transparent, #000 44px); mask-image: linear-gradient(90deg, transparent, #000 44px); }
+.topnav.more-l.more-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
 .topnav button { appearance: none; border: 0; background: none; font: inherit; cursor: pointer; }
-.topnav a, .topnav button { text-decoration: none; color: var(--ink-2); font-size: 14.5px; font-weight: 500; padding: 8px 10px; border-radius: 99px; flex: none; }
-.topnav .s { display: none; }
-@media (max-width: 1299px) { .topnav { gap: 0; } .topnav a, .topnav button { font-size: 14px; padding: 8px 8px; } .topnav .l { display: none; } .topnav .s { display: inline; } }
+.topnav a, .topnav button { text-decoration: none; color: var(--ink-2); font-size: 14px; font-weight: 500; padding: 8px 8px; border-radius: 99px; flex: none; }
 .topnav a:hover, .topnav button:hover { background: var(--surface-2); color: var(--ink); }
 .topnav a.active { color: var(--brand-ink); background: var(--brand-soft); font-weight: 600; }
 @media (min-width: 1024px) { .topnav { display: flex; } }
@@ -597,6 +601,11 @@ input[type="checkbox"].chk:checked::after { content: ""; width: 6px; height: 11p
 .lc .warn { font-size: 13px; color: var(--sun-ink); background: var(--sun-soft); padding: 7px 10px; border-radius: var(--r-sm); }
 .lc .from { display: flex; flex-wrap: wrap; gap: 6px; }
 .lc .card-actions { margin-top: 6px; }
+/* Crédits des photos Wikimedia Commons, repliés en bas des pages Plages et Randos */
+.credits { margin-top: 18px; font-size: 12.5px; color: var(--muted); }
+.credits summary { cursor: pointer; font-weight: 500; width: max-content; }
+.credits ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.5; }
+.credits a { color: inherit; }
 
 /* Téléphones & liens */
 .tels { display: grid; gap: 8px; }
