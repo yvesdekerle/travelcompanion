@@ -66,7 +66,7 @@ public), pas d'AllTrails ni de Google, dont les photos ne sont pas réutilisable
 fiche ; environ 1 Mo pour les 21), mise en cache comme le reste du carnet. Le
 champ `credit` (auteur, licence, nom du fichier Commons) alimente le bloc « Crédits des photos » replié en bas des
 pages Plages et Randos, comme l'exigent ces licences. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
-champ `img` à deux tailles. Cinq plages sans photo libre (La Cambuse, Riambel, Palmar, Pomponette, Baie du Jacotet)
+champ `img` à deux tailles. Six plages sans photo libre (La Cambuse, Riambel, Palmar, Pomponette, Baie du Jacotet, Saint-Félix)
 ont une photo fournie à la main (originaux dans `tmp/plage/`, jamais commités ; même format WebP, pas de `credit`).
 
 Sur chaque plage, le bloc « Affluence · Baignade · Clarté de l'eau · Qualité du sable » (champ `glance` :

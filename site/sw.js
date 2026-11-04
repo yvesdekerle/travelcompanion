@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "30f4d42d23";
+const VERSION = "0dc4f9198e";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -71,6 +71,7 @@ const FILES = [
   "/img/lieux/pomponette.webp",
   "/img/lieux/poudre-d-or.webp",
   "/img/lieux/riambel.webp",
+  "/img/lieux/saint-felix.webp",
   "/img/lieux/sept-cascades.webp",
   "/img/lieux/tourelle-tamarin.webp",
   "/img/lieux/trois-mamelles.webp",
