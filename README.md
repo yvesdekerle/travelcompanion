@@ -71,6 +71,11 @@ Sur chaque rando, le bloc « Distance · Dénivelé · Durée · Note » (champ 
 fiche ne donne pas la valeur) reprend la fiche de la trace ; le bouton « Trace … » y mène. Les deux photos du guide (Le Morne, Flic-en-Flac) gardent le
 champ `img` à deux tailles. Six plages sans photo libre (La Cambuse, Riambel, Palmar, Pomponette, Baie du Jacotet, Saint-Félix)
 ont une photo fournie à la main (originaux dans `tmp/plage/`, jamais commités ; même format WebP, pas de `credit`).
+Les plats de la page Menu ont aussi une vignette Commons (`site/img/plats/`, WebP carrée 176 px, ~10 ko chacune) :
+champ `pic` + `credit` sur chaque plat de Sheila, et pour la liste « À goûter » une ligne `[nom, description, photo,
+crédit]` ; le bloc « Crédits des photos » est en bas de la page. Quand Commons n'a rien d'approchant, la ligne reste
+sans photo (Gato sucre) ; quelques vignettes montrent un plat voisin (chop suey réunionnais, civet de zourite pour
+le cari ourite, falooda pour l'alouda, l'usine Rault pour les biscuits manioc).
 
 Sur chaque plage, le bloc « Affluence · Baignade · Clarté de l'eau · Qualité du sable » (champ `glance` :
 `["low" | "medium" | "high", baignade/5, clarté/5, sable/5]`) et le bouton « Fiche » (champ `bl`, slug de
