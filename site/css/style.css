@@ -121,11 +121,12 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 .icon-btn svg { width: 19px; height: 19px; }
 
 /* ───────── Onglets bas (mobile) ───────── */
-/* Le fond (blanc, flou) est sur la barre fixe, d'un seul tenant ; le défilement est dans .tabs.
-   Les onglets occupent les --tab-h du haut ; la zone du geste iPhone en dessous n'est que du fond : un glissé
-   horizontal sur les onglets n'est plus pris pour un changement d'application. */
+/* Le fond (blanc, flou) est sur la barre fixe, d'un seul tenant ; le défilement est dans .tabs, sur toute la hauteur
+   (zone du geste iPhone comprise : on peut glisser en touchant n'importe où). Chaque onglet est une colonne pleine
+   hauteur, bleue quand elle est active ; l'icône et le libellé sont centrés un peu au-dessus du milieu, pour qu'un
+   glissé qui part de l'icône ne tombe pas dans la zone du geste système (changement d'application). */
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: calc(var(--tab-h) + var(--tab-safe)); padding-bottom: var(--tab-safe);
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: calc(var(--tab-h) + var(--tab-safe));
   background: rgba(255, 255, 255, .96); backdrop-filter: saturate(1.8) blur(18px); -webkit-backdrop-filter: saturate(1.8) blur(18px);
   border-top: 1px solid var(--line);
   -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
@@ -137,13 +138,13 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
   padding: 0 12px; scroll-snap-type: x proximity; scroll-padding-inline-start: 12px;
 }
 .tabs::-webkit-scrollbar { display: none; }
-/* Tous les onglets ont la même largeur ; l'onglet (toute la hauteur) est la zone tactile, .in le bloc surligné */
-.tab { flex: none; width: var(--tab-w); padding: 0; display: flex; align-items: center; justify-content: center; scroll-snap-align: start; text-decoration: none; color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .01em; appearance: none; border: 0; background: none; font-family: inherit; cursor: pointer; white-space: nowrap; }
-.tab .in { display: flex; flex-direction: column; align-items: center; gap: 3px; width: calc(var(--tab-w) - 8px); padding: 6px 0 7px; border-radius: 13px; transition: background .2s var(--ease); }
+/* Tous les onglets ont la même largeur et toute la hauteur ; le bloc icône + libellé est centré dans la hauteur
+   moins la moitié de la zone du bas */
+.tab { flex: none; width: var(--tab-w); height: 100%; padding: 0 0 calc(var(--tab-safe) / 2); display: flex; align-items: center; justify-content: center; scroll-snap-align: start; text-decoration: none; color: var(--muted); font-size: 11.5px; font-weight: 600; letter-spacing: .01em; appearance: none; border: 0; background: none; font-family: inherit; cursor: pointer; white-space: nowrap; transition: background .2s var(--ease); }
+.tab .in { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .tab .ic { height: 24px; display: grid; place-items: center; }
 .tab svg { width: 23px; height: 23px; }
-.tab.active { color: var(--brand-ink); }
-.tab.active .in { background: var(--brand-soft); }
+.tab.active { color: var(--brand-ink); background: var(--brand-soft); }
 .tab.active svg { stroke-width: 2.1; }
 @media (min-width: 1024px) { .tabbar { display: none; } }
 
