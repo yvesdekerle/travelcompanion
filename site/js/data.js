@@ -12,7 +12,7 @@ window.GUIDE = {
     start: "2026-11-06", arrival: "2026-11-06T06:35",
     end: "2026-11-21",
     maps: [
-      { title: "Notre carte My Maps", url: "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", sub: "Les lieux du voyage, dans Google Maps" },
+      { title: "Map des activités", url: "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", sub: "Les lieux du voyage, dans Google Maps" },
       { title: "Full map activités", url: "https://www.google.com/maps/d/viewer?mid=1Y5YQjjZWqRUFBGjXIc7WNzUTbYlt1k8&ll=-20.20193122200105%2C57.55964340000002&z=10", sub: "Toutes les activités repérées sur l'île" }
     ],
     quote: "« Maurice a été créée en premier, puis le paradis — et le paradis fut copié sur Maurice. »",
@@ -818,7 +818,7 @@ window.GUIDE = {
   cashNote: "Le catamaran Baba Cool (33 000 Rs, cash uniquement) se paie le vendredi 13 au matin : commencer les retraits dès le lundi 9.",
 
   tools: [
-    ["Notre carte My Maps", "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", "Les lieux du voyage, dans Google Maps"],
+    ["Map des activités", "https://www.google.com/maps/d/viewer?mid=1RhQ4FVlUXNC8P6KobCM-dG9PTquyISs&ll=-20.1986872370166%2C57.55840500000003&z=10", "Les lieux du voyage, dans Google Maps"],
     ["Full map activités", "https://www.google.com/maps/d/viewer?mid=1Y5YQjjZWqRUFBGjXIc7WNzUTbYlt1k8&ll=-20.20193122200105%2C57.55964340000002&z=10", "Toutes les activités repérées sur l'île"],
     ["Tricount du groupe", "https://tricount.com/tCAWMsJIjREvpRsXwq", "tricount.com/tCAWMsJIjREvpRsXwq"],
     ["Notre fichier d'activités (Google Sheets)", "https://docs.google.com/spreadsheets/d/1gLke_STZEBhsg7DzVOlgpgxQUh5tD4pWSiO6p80Ckz4/edit?usp=drivesdk", "Mauritius_activities — plages, randos, restos, votes"]
