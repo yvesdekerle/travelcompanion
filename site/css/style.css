@@ -47,9 +47,10 @@
   --label: "Poppins", "Inter", system-ui, sans-serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --max: 1200px;
-  --tab-h: 62px;
+  --tab-h: 68px;
   --tab-w: 84px;
-  --tab-safe: max(0px, calc(env(safe-area-inset-bottom, 0px) - 8px));
+  /* Zone du geste iPhone (indicateur d'accueil) : la barre la couvre en entier, les onglets restent au-dessus */
+  --tab-safe: env(safe-area-inset-bottom, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
   --ease: cubic-bezier(.2, .8, .2, 1);
@@ -121,9 +122,10 @@ main { min-height: 70vh; padding-bottom: calc(var(--tab-h) + var(--tab-safe) + 3
 
 /* ───────── Onglets bas (mobile) ───────── */
 /* Le fond (blanc, flou) est sur la barre fixe, d'un seul tenant ; le défilement est dans .tabs.
-   Les onglets se centrent sur toute la hauteur, zone du bas comprise : autant d'air au-dessus qu'en dessous. */
+   Les onglets occupent les --tab-h du haut ; la zone du geste iPhone en dessous n'est que du fond : un glissé
+   horizontal sur les onglets n'est plus pris pour un changement d'application. */
 .tabbar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: calc(var(--tab-h) + var(--tab-safe));
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; height: calc(var(--tab-h) + var(--tab-safe)); padding-bottom: var(--tab-safe);
   background: rgba(255, 255, 255, .96); backdrop-filter: saturate(1.8) blur(18px); -webkit-backdrop-filter: saturate(1.8) blur(18px);
   border-top: 1px solid var(--line);
   -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
