@@ -47,7 +47,7 @@
   --label: "Poppins", "Inter", system-ui, sans-serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --max: 1200px;
-  --tab-h: 68px;
+  --tab-h: 62px;
   --tab-w: 84px;
   /* Zone du geste iPhone (indicateur d'accueil) : la barre la couvre en entier, les onglets restent au-dessus */
   --tab-safe: env(safe-area-inset-bottom, 0px);
