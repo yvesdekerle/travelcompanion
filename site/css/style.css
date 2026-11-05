@@ -803,6 +803,10 @@ a.tl:hover { color: var(--brand-ink); }
 .choices .choice-head, .choices .choice-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .choices .choice-head { position: sticky; top: 0; z-index: 5; padding: 8px 12px 6px; margin: 0 0 6px; background: rgba(245, 241, 232, .94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .choices .choice-head span { font: 600 13px/1.3 var(--label); color: var(--ink-2); }
+.choices .choice-head small { display: block; font: 500 12px/1.3 var(--sans); color: var(--muted); }
+/* Jour du premier dîner : liste des jours du voyage, demain par défaut */
+.choices .choice-day { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; color: var(--ink-2); }
+.choices .choice-day select { width: auto; flex: 1; max-width: 240px; }
 .choices .choice-rows { display: grid; gap: 8px; }
 .choices .choice-row { padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); align-items: center; }
 .choices .who { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }

@@ -1224,8 +1224,13 @@
   // Récapitulatif des choix (message pour le groupe WhatsApp) : pour chaque jour où quelqu'un a choisi, « commande
   // pour x personnes », le total par plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien
   // n'apparaissent pas. Chaîne vide si personne n'a rien choisi
+  // Jour de la colonne « Demain » : choisi parmi les jours du voyage (clé choix:day), demain par défaut ;
+  // « Après-demain » est le lendemain de ce jour
+  const isoMU = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "Indian/Mauritius", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
+  const choiceDay = () => { const s = store.get("choix:day", ""); if (G.days.some((d) => d.date === s)) return s; const t = isoMU(nowMs() + 864e5); return G.days.some((d) => d.date === t) ? t : G.days[0].date; };
+  const dayAt = (iso, n, long) => new Date(Date.parse(iso + "T12:00:00+04:00") + n * 864e5).toLocaleDateString("fr-FR", long ? { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" } : { timeZone: "Indian/Mauritius", weekday: "short", day: "numeric" });
   const choicesText = () => {
-    const t0 = nowMs(), dayLabel = (n) => new Date(t0 + n * 864e5).toLocaleDateString("fr-FR", { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" });
+    const d0 = choiceDay(), dayLabel = (n) => dayAt(d0, n - 1, true);
     const cast = [...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr"));
     const blocks = [["Demain", 1], ["Après-demain", 2]].map(([label, col]) => {
       const rows = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]).filter(([, c]) => c.d);
@@ -1257,8 +1262,10 @@
       ${sel("dish-sel", c.d || "", "Plat", dishOptions)}
       ${sel("side-sel", c.s || "", "Accompagnement", [["Avec", ["Riz blanc", "Pain", "Riz blanc et pain"]]])}
       <div class="chili" role="group" aria-label="Piment de 0 à 5"><span>Piment <b>${p}</b>/5</span><div class="dots">${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="dot ${n <= p ? "on" : ""}" data-p="${n}" aria-label="Piment ${n} sur 5" aria-pressed="${n <= p}">${I.chili}</button>`).join("")}</div></div></div>`; };
+    const d0 = choiceDay();
     const choices = `<div class="choices">
-      <div class="choice-head"><span></span><span>Demain</span><span>Après-demain</span></div>
+      <label class="choice-day">Demain, c'est le <select id="choiceDay" aria-label="Jour du premier dîner">${G.days.map((d) => `<option value="${d.date}" ${d.date === d0 ? "selected" : ""}>${esc(d.label.toLowerCase())}</option>`).join("")}</select></label>
+      <div class="choice-head"><span></span><span>Demain<small>${dayAt(d0, 0)}</small></span><span>Après-demain<small>${dayAt(d0, 1)}</small></span></div>
       <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div>
       <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a></div>
       <p class="hint">WhatsApp s'ouvre avec le message prêt : choisis le groupe dans la liste des discussions. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre></div>`;
@@ -1361,6 +1368,7 @@
       sc.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
       const pre = $("#choicesRecap", main); pre.textContent = text; pre.hidden = false;
     });
+    const cd = $("#choiceDay", main); if (cd) cd.addEventListener("change", () => { store.set("choix:day", cd.value); const h = $$(".choice-head small", main); h[0].textContent = dayAt(cd.value, 0); h[1].textContent = dayAt(cd.value, 1); const pre = $("#choicesRecap", main); if (!pre.hidden) pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; });
     const sh = $("#showChoices", main); if (sh) sh.addEventListener("click", (e) => { e.preventDefault(); const pre = $("#choicesRecap", main); pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; pre.hidden = !pre.hidden; });
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {

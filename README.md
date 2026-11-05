@@ -44,7 +44,8 @@ La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une
 un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
 
 Tout en bas du menu, « Choix » (`/menu#choix`) : une ligne par personnage du groupe (ordre alphabétique, dessin et
-prénom), deux colonnes « Demain » et « Après-demain », chacune avec un plat de la carte de Sheila (une entrée par
+prénom), deux colonnes « Demain » et « Après-demain » (le jour de « Demain » se choisit parmi les jours du voyage,
+demain par défaut, clé `choix:day` ; la date est affichée sous chaque colonne), chacune avec un plat de la carte de Sheila (une entrée par
 variante : « Porc ou poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et cinq piments à toucher
 (niveau 0 à 5 ; pas de curseur, sur iOS le glissé déclenchait la sélection de texte). Les choix sont enregistrés sur
 l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés. Le bouton « Envoyer la commande sur WhatsApp » ouvre
