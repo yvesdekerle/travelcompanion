@@ -17,6 +17,10 @@
     get(k, d) { try { const v = localStorage.getItem(KEY + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
     set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch {} }
   };
+  // Cases « À réserver » : clé = titre de l'entrée, stable quand la liste change. Migration des anciennes clés par
+  // index (nov. 2026) : la coupe de canne, ancien index 1, est passée dans les réservations
+  const toBookKey = (b) => "tobook:" + b.title;
+  if (!store.get("tobook:v", 0)) { for (let i = 0; i <= G.toBook.length; i++) { const b = i === 1 ? null : G.toBook[i > 1 ? i - 1 : i]; if (b && store.get("tobook:" + i, false)) store.set(toBookKey(b), true); } store.set("tobook:v", 1); }
 
   /* ───────── Icônes ───────── */
   const sv = (d, extra = "") => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
@@ -161,7 +165,7 @@
   const todoCounts = {
     checklist() { let t = 0, d = 0; G.checklist.forEach(([, items], g) => items.forEach((_, i) => [0, 1].forEach((p) => { t++; if (store.get(`cl:${g}:${i}:${p}`, false)) d++; }))); return [d, t]; },
     voiture() { let d = 0; G.info.carOut.forEach((_, i) => { if (store.get(`car:out:${i}`, false)) d++; }); G.info.carBack.forEach((_, i) => { if (store.get(`car:back:${i}`, false)) d++; }); return [d, G.info.carOut.length + G.info.carBack.length]; },
-    reserver() { return [G.toBook.filter((_, i) => store.get("tobook:" + i, false)).length, G.toBook.length]; },
+    reserver() { return [G.toBook.filter((b) => store.get(toBookKey(b), false)).length, G.toBook.length]; },
     verifier() { return [G.toCheck.filter((_, i) => store.get("check:" + i, false)).length, G.toCheck.length]; }
   };
 
@@ -959,7 +963,7 @@
 
   function pageToBook() {
     return `<div class="container">${pageHead("", "À réserver", "Ce qui reste à caler — contacts et prix relevés le 28 octobre 2026, à confirmer en réservant. Coche quand c'est fait.", ["/todo", "To-do"])}
-      <div class="grid c2">${G.toBook.map((b, i) => [b, i]).sort((x, y) => x[0].day - y[0].day).map(([b, i]) => { const done = store.get("tobook:" + i, false); return `
+      <div class="grid c2">${G.toBook.map((b, i) => [b, i]).sort((x, y) => x[0].day - y[0].day).map(([b, i]) => { const done = store.get(toBookKey(b), false); return `
         <article class="card ${done ? "done" : ""}">
           <div class="top"><span class="eyebrow">${esc(b.when)}</span><label class="check-pill"><input class="chk" type="checkbox" data-tobook="${i}" ${done ? "checked" : ""}>${done ? "Réservé" : "À réserver"}</label></div>
           <h3>${esc(b.title)}</h3>
@@ -1303,7 +1307,7 @@
       const card = el.closest(".card.food"); // compteur « goûtés » de la catégorie
       if (card) { const cs = $$("[data-store-check]", card); $("[data-food-count]", card).textContent = `${cs.filter((c) => c.checked).length} / ${cs.length}`; }
     }));
-    $$("[data-tobook]", main).forEach((el) => el.addEventListener("change", () => { store.set("tobook:" + el.dataset.tobook, el.checked); render(); }));
+    $$("[data-tobook]", main).forEach((el) => el.addEventListener("change", () => { store.set(toBookKey(G.toBook[+el.dataset.tobook]), el.checked); render(); }));
     const all = $("#allDays"); if (all) all.onclick = () => openDaysSheet(+main.dataset.day);
     $$("[data-sort]", main).forEach((b) => (b.onclick = () => { const [k, v] = b.dataset.sort.split(":"); store.set("sort:" + k, v); render(); }));
 
