@@ -46,7 +46,9 @@ un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`),
 Tout en bas du menu, « Choix » (`/menu#choix`) : une ligne par personnage du groupe (ordre alphabétique, dessin et
 prénom), deux colonnes « Demain » et « Après-demain », chacune avec un plat de la carte de Sheila (une entrée par
 variante : « Porc ou poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et un curseur de piment de
-0 à 5. Les choix sont enregistrés sur l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés.
+0 à 5. Les choix sont enregistrés sur l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés. Le bouton
+« Envoyer les choix à Sheila » ouvre WhatsApp avec le récapitulatif : pour chaque jour (daté), le total par plat et
+par accompagnement, puis la ligne de chacun, et les personnes sans plat.
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
 groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi seize (CSS

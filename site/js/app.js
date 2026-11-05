@@ -1220,6 +1220,22 @@
     document.body.appendChild(box); box.querySelector(".x").focus();
   };
 
+  // Récapitulatif des choix pour Sheila (texte du message WhatsApp) : pour chaque jour, le total par plat et par
+  // accompagnement, puis la ligne de chacun ; les personnes sans plat sont listées à part
+  const choicesText = () => {
+    const t0 = nowMs(), dayLabel = (n) => new Date(t0 + n * 864e5).toLocaleDateString("fr-FR", { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" });
+    const cast = [...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr"));
+    const blocks = [["Demain", 1], ["Après-demain", 2]].map(([label, col]) => {
+      const all = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]), rows = all.filter(([, c]) => c.d);
+      if (!rows.length) return `*${label} (${dayLabel(col)})* : pas de choix pour l'instant`;
+      const count = (key, lower) => { const m = new Map(); rows.forEach(([, c]) => { if (c[key]) { const k = lower ? c[key].toLowerCase() : c[key]; m.set(k, (m.get(k) || 0) + 1); } }); return [...m].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${n} × ${k}`).join(", "); };
+      const sides = count("s", true), missing = all.filter(([, c]) => !c.d).map(([name]) => name);
+      return [`*${label} (${dayLabel(col)}) — ${rows.length} ${rows.length > 1 ? "plats" : "plat"}*`, `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
+        ...rows.map(([name, c]) => `– ${name} : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`), missing.length ? `Sans plat : ${missing.join(", ")}` : ""].filter(Boolean).join("\n");
+    });
+    return `Bonjour Sheila, voici nos choix pour les deux prochains dîners.\n\n${blocks.join("\n\n")}\n\nMerci !`;
+  };
+
   function pageMenu() {
     const m = G.menu, eur = (rs) => (rs / G.rate).toLocaleString("fr-FR", { maximumFractionDigits: 1 });
     // Chaque section garde la couleur et le picto de la carte imprimée (astérisque bleu, hibiscus rouge, feuille verte)
@@ -1241,7 +1257,8 @@
       <label class="chili"><span>Piment <b>${p}</b>/5</span><input type="range" min="0" max="5" step="1" value="${p}" aria-label="Piment de 0 à 5"></label></div>`; };
     const choices = `<div class="choices">
       <div class="choice-head"><span></span><span>Demain</span><span>Après-demain</span></div>
-      <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div></div>`;
+      <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div>
+      <div class="card-actions"><button class="btn wa" type="button" id="sendChoices">${I.wa}Envoyer les choix à Sheila</button></div></div>`;
     // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
     const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
@@ -1254,7 +1271,7 @@
         <hr class="rule">
         ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
         <hr class="rule">
-        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone.", choices)}
+        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas compose le message WhatsApp pour Sheila, le total puis le détail par personne.", choices)}
         ${photoCredits}
       </div></div>`;
   }
@@ -1327,6 +1344,10 @@
       if (t.tagName === "SELECT") t.classList.toggle("empty", !t.value);
       store.set("choix:" + p.dataset.key, v);
     }));
+    const sc = $("#sendChoices", main); if (sc) sc.addEventListener("click", () => {
+      if (!G.cast.some(([f]) => [1, 2].some((col) => store.get(`choix:${f}:${col}`, {}).d))) { toast("Aucun plat choisi pour l'instant"); return; }
+      window.open(`${waUrl(G.menu.wa)}?text=${encodeURIComponent(choicesText())}`, "_blank", "noopener");
+    });
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);
