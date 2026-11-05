@@ -1,5 +1,5 @@
 /* Service worker — généré par scripts/build_sw.py, ne pas éditer à la main */
-const VERSION = "31d83a210f";
+const VERSION = "d61f72e2bd";
 const CACHE = "maurice-" + VERSION;
 const FILES = [
   "/css/style.css",
@@ -153,7 +153,9 @@ self.addEventListener("fetch", (e) => {
     const hit = await cache.match(req, { ignoreSearch: true });
     if (hit) return hit;
     try {
-      const res = await fetch(req);
+      // Hors précache (dessins des personnages) : on revalide auprès du serveur, sinon le cache HTTP du navigateur
+      // (max-age d'une semaine sur /img) resservirait l'ancienne image après une mise à jour
+      const res = await fetch(req.mode === "navigate" ? req : new Request(req, { cache: "no-cache" }));
       if (res.ok) cache.put(req, res.clone());
       return res;
     } catch {

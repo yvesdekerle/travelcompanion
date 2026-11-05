@@ -5,10 +5,12 @@ import hashlib, os, pathlib
 root = pathlib.Path(__file__).resolve().parent.parent / "site"
 files, h = [], hashlib.sha256()
 for p in sorted(root.rglob("*")):
-    # img/p (personnages du clin d'œil) reste hors du cache initial : le SW les garde à la première demande
-    if p.is_file() and p.name not in ("sw.js", ".DS_Store", "robots.txt", "plan.json") and "img/p/" not in p.as_posix():
-        rel = p.relative_to(root).as_posix(); files.append("/" + rel)
-        h.update(rel.encode()); h.update(p.read_bytes())
+    if not p.is_file() or p.name in ("sw.js", ".DS_Store", "robots.txt", "plan.json"): continue
+    rel = p.relative_to(root).as_posix()
+    # img/p (personnages du clin d'œil) reste hors du cache initial : le SW les garde à la première demande.
+    # Leur contenu compte quand même dans la version, pour que l'ancien cache soit jeté quand les dessins changent
+    if "img/p/" not in rel: files.append("/" + rel)
+    h.update(rel.encode()); h.update(p.read_bytes())
 tpl = (root.parent / "scripts" / "sw.template.js").read_text()
 out = tpl.replace("__VERSION__", h.hexdigest()[:10]).replace("__FILES__", ",\n  ".join(f'"{f}"' for f in files))
 (root / "sw.js").write_text(out)
