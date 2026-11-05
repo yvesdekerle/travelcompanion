@@ -18,7 +18,7 @@ scripts/
   serve.py            ← serveur local avec les URL propres
   build_sw.py         ← régénère site/sw.js
   build_geo.mjs       ← régénère site/js/geo.js (Nominatim + OSRM, réponses gardées dans geo-cache.json)
-  cutout_cast.py      ← détoure et réduit les dessins des personnages (tmp/personnage → site/img/p)
+  cutout_cast.py      ← détoure et réduit les dessins des personnages (tmp/personnage_v2 → site/img/p ; un PNG déjà transparent est seulement recadré et réduit)
   sw.template.js
 vercel.json           ← Vercel sert site/ tel quel (aucun build) et renvoie index.html pour toutes les pages
 ```
@@ -42,6 +42,11 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 
 La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec
 un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
+
+Tout en bas du menu, « Choix » (`/menu#choix`) : une ligne par personnage du groupe (ordre alphabétique, dessin et
+prénom), deux colonnes « Demain » et « Après-demain », chacune avec un plat de la carte de Sheila (une entrée par
+variante : « Porc ou poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et un curseur de piment de
+0 à 5. Les choix sont enregistrés sur l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés.
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
 groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi seize (CSS

@@ -1225,6 +1225,23 @@
     // Chaque section garde la couleur et le picto de la carte imprimée (astérisque bleu, hibiscus rouge, feuille verte)
     const dish = (it, ic) => `<div class="dish"><i class="pic">${ic}</i><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
       <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p>${it.pic ? plate(it.pic, it.name, it.credit) : ""}</div>`;
+    // Choix des deux prochains dîners : une ligne par personnage (ordre alphabétique), colonnes Demain / Après-demain,
+    // chacune avec un plat de la carte (une entrée par variante : « Porc ou poulet » en fait deux), l'accompagnement et
+    // le piment de 0 à 5. Enregistré sur l'appareil (clé choix:<personnage>:<colonne>)
+    const dishOptions = m.sections.map((sec) => [sec.title, sec.items.flatMap((it) => {
+      const o = it.opt || "";
+      if (/sur demande/.test(o)) return [it.name, `${it.name} · végétarienne`];
+      const v = / ou /.test(o) ? o.split(/,\s*| ou /).map((x) => x.trim().toLowerCase()) : [];
+      return v.length ? v.map((x) => `${it.name} · ${x}`) : [it.name];
+    })]);
+    const sel = (cls, cur, label, groups) => `<select class="${cls} ${cur ? "" : "empty"}" aria-label="${label}"><option value="">${label}…</option>${groups.map(([g, opts]) => `<optgroup label="${esc(g)}">${opts.map((o) => `<option value="${esc(o)}" ${o === cur ? "selected" : ""}>${esc(o)}</option>`).join("")}</optgroup>`).join("")}</select>`;
+    const pick = (file, col) => { const c = store.get(`choix:${file}:${col}`, {}), p = +c.p || 0; return `<div class="pick" data-key="${file}:${col}">
+      ${sel("dish-sel", c.d || "", "Plat", dishOptions)}
+      ${sel("side-sel", c.s || "", "Accompagnement", [["Avec", ["Riz blanc", "Pain", "Riz blanc et pain"]]])}
+      <label class="chili"><span>Piment <b>${p}</b>/5</span><input type="range" min="0" max="5" step="1" value="${p}" aria-label="Piment de 0 à 5"></label></div>`; };
+    const choices = `<div class="choices">
+      <div class="choice-head"><span></span><span>Demain</span><span>Après-demain</span></div>
+      <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div></div>`;
     // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
     const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
@@ -1236,6 +1253,8 @@
         <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
         <hr class="rule">
         ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
+        <hr class="rule">
+        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone.", choices)}
         ${photoCredits}
       </div></div>`;
   }
@@ -1301,6 +1320,13 @@
       else { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain" })); a.download = "notes-maurice.txt"; a.click(); }
     };
     $$("[data-store]", main).forEach((el) => el.addEventListener("input", () => store.set(el.dataset.store, el.value)));
+    // Choix des dîners (page menu) : chaque changement est enregistré aussitôt, le chiffre du piment suit le curseur
+    $$(".choices .pick", main).forEach((p) => p.addEventListener("input", (e) => {
+      const t = e.target, v = store.get("choix:" + p.dataset.key, {});
+      if (t.matches(".dish-sel")) v.d = t.value; else if (t.matches(".side-sel")) v.s = t.value; else if (t.type === "range") { v.p = +t.value; $(".chili b", p).textContent = t.value; }
+      if (t.tagName === "SELECT") t.classList.toggle("empty", !t.value);
+      store.set("choix:" + p.dataset.key, v);
+    }));
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);

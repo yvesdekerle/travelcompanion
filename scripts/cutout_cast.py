@@ -26,7 +26,7 @@ def decode(path):
                 cur[i] = (cur[i] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
         for x in range(w):
             o = (y * w + x) * 4; s = x * bpp
-            out[o:o+3] = cur[s:s+3]; out[o+3] = 255
+            out[o:o+3] = cur[s:s+3]; out[o+3] = cur[s+3] if bpp == 4 else 255
         prev = cur
     return w, h, out
 
@@ -147,7 +147,8 @@ if len(sys.argv) != 4: sys.exit("usage : cutout_cast.py <dossier source> <dossie
 src, dst, H = sys.argv[1], pathlib.Path(sys.argv[2]), int(sys.argv[3]); dst.mkdir(parents=True, exist_ok=True)
 for f in sorted(glob.glob(f"{src}/*.png")):
     w, h, px = decode(f)
-    px = cutout(w, h, px, KEEP.get(pathlib.Path(f).stem, ()))
+    # Un PNG déjà détouré (fond transparent, v2 des personnages) est seulement recadré et réduit
+    if all(px[i] == 255 for i in range(3, w * h * 4, 4)): px = cutout(w, h, px, KEEP.get(pathlib.Path(f).stem, ()))
     for y in range(h):  # bords du scan (colonne parfois noire) : 3 px effacés tout autour
         for x in list(range(3)) + list(range(w-3, w)): px[(y*w+x)*4+3] = 0
     for x in range(w):
