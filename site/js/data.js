@@ -622,7 +622,7 @@ window.GUIDE = {
     by: "Catering Sheila Mauritius",
     intro: "La carte de Sheila, qui livre les dîners de la villa les deux premiers soirs. Chaque plat est pour une personne ; les salades se commandent pour 2, 4 ou 6.",
     order: "Pour passer commande, contacter Sheila sur WhatsApp au +230 5986 3130. Toutes les commandes doivent être passées au moins 24 h à l'avance, pour un minimum de 2 personnes.",
-    tel: "+23059863130", wa: "23059863130",
+    tel: "+23059863130", wa: "23059863130", group: "https://chat.whatsapp.com/EADLPXXOZOPFe7MTJNY7pl",
     sections: [
       { title: "Plats à base de viande", tone: "sea", icon: "spark", items: [
         { name: "Rougail saucisse", opt: "Porc ou poulet", rs: 500, text: "Saucisses fumées et boucané (lard fumé) dans leur sauce tomate, lentilles noires, le tout accompagné de riz blanc ou de pain, ainsi que d'une salade de concombre et d'un sauté de brèdes.", pic: "m-rougail-saucisse", credit: ["Zanywikiphoto", "CC0", "File:Rougail Saucisses.jpg"] },

@@ -49,6 +49,7 @@
     // Logo Gmail (le « M » bleu, rouge, jaune, vert)
     gmail: '<svg viewBox="0 0 128 96" aria-hidden="true"><path fill="#4285F4" d="M0 26l29 20v50H9.5A9.5 9.5 0 0 1 0 86.5z"/><path fill="#34A853" d="M128 26L99 46v50h19.5a9.5 9.5 0 0 0 9.5-9.5z"/><path fill="#FBBC04" d="M128 26V19a9.5 9.5 0 0 0-9.5-9.5H99V46z"/><path fill="#C5221F" d="M0 26V19a9.5 9.5 0 0 1 9.5-9.5H29V46z"/><path fill="#EA4335" d="M29 9.5l35 25 35-25V46L64 72.5 29 46z"/></svg>',
     walk: sv('<circle cx="13" cy="4" r="1.2"/><path d="M7 21l3-4"/><path d="M16 21l-2-4-3-3 1-6"/><path d="M6 12l2-3 4-1 3 3 3 1"/>'),
+    chili: sv('<path d="M16 4.5c-1 8-5.6 13.3-12.5 14.8 2.9 1.9 7.6 1.4 11-1.5 4-3.4 5.6-8.9 4.3-13.3"/><path d="M16 4.5c.5-1.6 1.8-2.4 3.8-2.5"/>'),
     wa: sv('<path fill="currentColor" stroke="none" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>'),
     ext: sv('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
     share: sv('<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>'),
@@ -1220,20 +1221,21 @@
     document.body.appendChild(box); box.querySelector(".x").focus();
   };
 
-  // Récapitulatif des choix pour Sheila (texte du message WhatsApp) : pour chaque jour, le total par plat et par
-  // accompagnement, puis la ligne de chacun ; les personnes sans plat sont listées à part
+  // Récapitulatif des choix (message pour le groupe WhatsApp) : pour chaque jour où quelqu'un a choisi, « commande
+  // pour x personnes », le total par plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien
+  // n'apparaissent pas. Chaîne vide si personne n'a rien choisi
   const choicesText = () => {
     const t0 = nowMs(), dayLabel = (n) => new Date(t0 + n * 864e5).toLocaleDateString("fr-FR", { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" });
     const cast = [...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr"));
     const blocks = [["Demain", 1], ["Après-demain", 2]].map(([label, col]) => {
-      const all = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]), rows = all.filter(([, c]) => c.d);
-      if (!rows.length) return `*${label} (${dayLabel(col)})* : pas de choix pour l'instant`;
+      const rows = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]).filter(([, c]) => c.d);
+      if (!rows.length) return "";
       const count = (key, lower) => { const m = new Map(); rows.forEach(([, c]) => { if (c[key]) { const k = lower ? c[key].toLowerCase() : c[key]; m.set(k, (m.get(k) || 0) + 1); } }); return [...m].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${n} × ${k}`).join(", "); };
-      const sides = count("s", true), missing = all.filter(([, c]) => !c.d).map(([name]) => name);
-      return [`*${label} (${dayLabel(col)}) — ${rows.length} ${rows.length > 1 ? "plats" : "plat"}*`, `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
-        ...rows.map(([name, c]) => `– ${name} : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`), missing.length ? `Sans plat : ${missing.join(", ")}` : ""].filter(Boolean).join("\n");
-    });
-    return `Bonjour Sheila, voici nos choix pour les deux prochains dîners.\n\n${blocks.join("\n\n")}\n\nMerci !`;
+      const sides = count("s", true);
+      return [`*${label}, ${dayLabel(col)} — commande pour ${rows.length} personne${rows.length > 1 ? "s" : ""}*`, `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
+        ...rows.map(([name, c]) => `– ${name} : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`)].filter(Boolean).join("\n");
+    }).filter(Boolean);
+    return blocks.length ? `Bonjour, voici notre commande pour les prochains dîners.\n\n${blocks.join("\n\n")}\n\nMerci !` : "";
   };
 
   function pageMenu() {
@@ -1254,11 +1256,12 @@
     const pick = (file, col) => { const c = store.get(`choix:${file}:${col}`, {}), p = +c.p || 0; return `<div class="pick" data-key="${file}:${col}">
       ${sel("dish-sel", c.d || "", "Plat", dishOptions)}
       ${sel("side-sel", c.s || "", "Accompagnement", [["Avec", ["Riz blanc", "Pain", "Riz blanc et pain"]]])}
-      <label class="chili"><span>Piment <b>${p}</b>/5</span><input type="range" min="0" max="5" step="1" value="${p}" aria-label="Piment de 0 à 5"></label></div>`; };
+      <div class="chili" role="group" aria-label="Piment de 0 à 5"><span>Piment <b>${p}</b>/5</span><div class="dots">${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="dot ${n <= p ? "on" : ""}" data-p="${n}" aria-label="Piment ${n} sur 5" aria-pressed="${n <= p}">${I.chili}</button>`).join("")}</div></div></div>`; };
     const choices = `<div class="choices">
       <div class="choice-head"><span></span><span>Demain</span><span>Après-demain</span></div>
       <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div>
-      <div class="card-actions"><button class="btn wa" type="button" id="sendChoices">${I.wa}Envoyer les choix à Sheila</button></div></div>`;
+      <div class="card-actions"><button class="btn wa" type="button" id="sendChoices">${I.wa}Envoyer la commande au groupe</button></div>
+      <p class="hint">Le message est copié, puis le groupe WhatsApp s'ouvre : il reste à le coller. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre></div>`;
     // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
     const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
@@ -1271,7 +1274,7 @@
         <hr class="rule">
         ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
         <hr class="rule">
-        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas compose le message WhatsApp pour Sheila, le total puis le détail par personne.", choices)}
+        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas prépare la commande pour le groupe WhatsApp, le total puis le détail par personne.", choices)}
         ${photoCredits}
       </div></div>`;
   }
@@ -1338,16 +1341,27 @@
     };
     $$("[data-store]", main).forEach((el) => el.addEventListener("input", () => store.set(el.dataset.store, el.value)));
     // Choix des dîners (page menu) : chaque changement est enregistré aussitôt, le chiffre du piment suit le curseur
-    $$(".choices .pick", main).forEach((p) => p.addEventListener("input", (e) => {
-      const t = e.target, v = store.get("choix:" + p.dataset.key, {});
-      if (t.matches(".dish-sel")) v.d = t.value; else if (t.matches(".side-sel")) v.s = t.value; else if (t.type === "range") { v.p = +t.value; $(".chili b", p).textContent = t.value; }
-      if (t.tagName === "SELECT") t.classList.toggle("empty", !t.value);
-      store.set("choix:" + p.dataset.key, v);
-    }));
-    const sc = $("#sendChoices", main); if (sc) sc.addEventListener("click", () => {
-      if (!G.cast.some(([f]) => [1, 2].some((col) => store.get(`choix:${f}:${col}`, {}).d))) { toast("Aucun plat choisi pour l'instant"); return; }
-      window.open(`${waUrl(G.menu.wa)}?text=${encodeURIComponent(choicesText())}`, "_blank", "noopener");
+    $$(".choices .pick", main).forEach((p) => {
+      const save = (fn) => { const v = store.get("choix:" + p.dataset.key, {}); fn(v); store.set("choix:" + p.dataset.key, v); };
+      p.addEventListener("input", (e) => { const t = e.target; if (t.tagName !== "SELECT") return; t.classList.toggle("empty", !t.value); save((v) => { v[t.matches(".dish-sel") ? "d" : "s"] = t.value; }); });
+      // Piments : toucher le n-ième met le niveau à n ; toucher à nouveau le dernier allumé remet à zéro
+      p.addEventListener("click", (e) => {
+        const b = e.target.closest(".dot"); if (!b) return;
+        const cur = $$(".dot.on", p).length, n = +b.dataset.p === cur ? 0 : +b.dataset.p;
+        $$(".dot", p).forEach((d) => { const on = +d.dataset.p <= n; d.classList.toggle("on", on); d.setAttribute("aria-pressed", on); });
+        $(".chili b", p).textContent = n; save((v) => { v.p = n; });
+      });
     });
+    // Commande pour le groupe WhatsApp : un lien de groupe n'accepte pas de texte prérempli, on copie le message et on
+    // ouvre le groupe (les deux dans le geste du toucher) ; le message reste visible sous le bouton
+    const sc = $("#sendChoices", main); if (sc) sc.addEventListener("click", () => {
+      const text = choicesText(); if (!text) { toast("Aucun plat choisi pour l'instant"); return; }
+      const pre = $("#choicesRecap", main); pre.textContent = text; pre.hidden = false;
+      const copy = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject();
+      window.open(G.menu.group, "_blank", "noopener");
+      copy.then(() => toast("Message copié : colle-le dans le groupe"), () => toast("Copie impossible ici : sélectionne le message ci-dessous"));
+    });
+    const sh = $("#showChoices", main); if (sh) sh.addEventListener("click", (e) => { e.preventDefault(); const pre = $("#choicesRecap", main); pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; pre.hidden = !pre.hidden; });
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);
