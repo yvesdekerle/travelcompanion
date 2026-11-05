@@ -47,11 +47,12 @@ Tout en bas du menu, « Choix » (`/menu#choix`) : une ligne par personnage du g
 prénom), deux colonnes « Demain » et « Après-demain », chacune avec un plat de la carte de Sheila (une entrée par
 variante : « Porc ou poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et cinq piments à toucher
 (niveau 0 à 5 ; pas de curseur, sur iOS le glissé déclenchait la sélection de texte). Les choix sont enregistrés sur
-l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés. Le bouton « Envoyer la commande au groupe » copie le
-récapitulatif et ouvre le groupe WhatsApp (`menu.group` dans data.js ; un lien de groupe n'accepte pas de texte
-prérempli, il reste à coller) : pour chaque jour où quelqu'un a choisi, « commande pour x personnes », le total par
-plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas. « Voir le
-message » l'affiche sous le bouton.
+l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés. Le bouton « Envoyer la commande sur WhatsApp » ouvre
+`wa.me/?text=…` sans numéro : WhatsApp s'ouvre avec le message prêt et laisse choisir la discussion, groupe compris
+(un lien de groupe n'accepte pas de texte prérempli ; « Ouvrir le groupe » pointe sur `menu.group` dans data.js).
+Le message : pour chaque jour où quelqu'un a choisi, « commande pour x personnes », le total par plat et par
+accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas. « Voir le message »
+l'affiche sous le bouton. Les `<select>` sont écoutés sur `change` (Safari iOS ne lève pas toujours `input`).
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
 groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi seize (CSS

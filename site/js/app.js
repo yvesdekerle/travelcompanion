@@ -1260,8 +1260,8 @@
     const choices = `<div class="choices">
       <div class="choice-head"><span></span><span>Demain</span><span>Après-demain</span></div>
       <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div>
-      <div class="card-actions"><button class="btn wa" type="button" id="sendChoices">${I.wa}Envoyer la commande au groupe</button></div>
-      <p class="hint">Le message est copié, puis le groupe WhatsApp s'ouvre : il reste à le coller. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre></div>`;
+      <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a></div>
+      <p class="hint">WhatsApp s'ouvre avec le message prêt : choisis le groupe dans la liste des discussions. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre></div>`;
     // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
     const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
     return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
@@ -1274,7 +1274,7 @@
         <hr class="rule">
         ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
         <hr class="rule">
-        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas prépare la commande pour le groupe WhatsApp, le total puis le détail par personne.", choices)}
+        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas envoie la commande sur WhatsApp, le total puis le détail par personne.", choices)}
         ${photoCredits}
       </div></div>`;
   }
@@ -1343,7 +1343,8 @@
     // Choix des dîners (page menu) : chaque changement est enregistré aussitôt, le chiffre du piment suit le curseur
     $$(".choices .pick", main).forEach((p) => {
       const save = (fn) => { const v = store.get("choix:" + p.dataset.key, {}); fn(v); store.set("choix:" + p.dataset.key, v); };
-      p.addEventListener("input", (e) => { const t = e.target; if (t.tagName !== "SELECT") return; t.classList.toggle("empty", !t.value); save((v) => { v[t.matches(".dish-sel") ? "d" : "s"] = t.value; }); });
+      // « change » et non « input » : Safari iOS ne lève pas toujours « input » sur un <select>
+      p.addEventListener("change", (e) => { const t = e.target; if (t.tagName !== "SELECT") return; t.classList.toggle("empty", !t.value); save((v) => { v[t.matches(".dish-sel") ? "d" : "s"] = t.value; }); });
       // Piments : toucher le n-ième met le niveau à n ; toucher à nouveau le dernier allumé remet à zéro
       p.addEventListener("click", (e) => {
         const b = e.target.closest(".dot"); if (!b) return;
@@ -1352,14 +1353,13 @@
         $(".chili b", p).textContent = n; save((v) => { v.p = n; });
       });
     });
-    // Commande pour le groupe WhatsApp : un lien de groupe n'accepte pas de texte prérempli, on copie le message et on
-    // ouvre le groupe (les deux dans le geste du toucher) ; le message reste visible sous le bouton
-    const sc = $("#sendChoices", main); if (sc) sc.addEventListener("click", () => {
-      const text = choicesText(); if (!text) { toast("Aucun plat choisi pour l'instant"); return; }
+    // Commande sur WhatsApp : un lien de groupe n'accepte pas de texte prérempli, mais wa.me sans numéro ouvre
+    // WhatsApp avec le message et laisse choisir la discussion (groupe compris). Le lien est un vrai <a> dont le href
+    // est fixé au moment du toucher, le plus fiable sur iPhone ; le message reste visible sous le bouton
+    const sc = $("#sendChoices", main); if (sc) sc.addEventListener("click", (e) => {
+      const text = choicesText(); if (!text) { e.preventDefault(); toast("Aucun plat choisi pour l'instant"); return; }
+      sc.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
       const pre = $("#choicesRecap", main); pre.textContent = text; pre.hidden = false;
-      const copy = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject();
-      window.open(G.menu.group, "_blank", "noopener");
-      copy.then(() => toast("Message copié : colle-le dans le groupe"), () => toast("Copie impossible ici : sélectionne le message ci-dessous"));
     });
     const sh = $("#showChoices", main); if (sh) sh.addEventListener("click", (e) => { e.preventDefault(); const pre = $("#choicesRecap", main); pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; pre.hidden = !pre.hidden; });
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
