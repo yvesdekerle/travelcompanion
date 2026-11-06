@@ -69,7 +69,7 @@ const FIX = {
   "Cascade de GRSE": [-20.2865, 57.7735],
   // Départs des randonnées hors programme (relevés approximatifs, à quelques centaines de mètres près)
   "Lion Mountain trailhead, Vieux Grand Port, Mauritius": [-20.3745, 57.7215],
-  "Tourelle du Tamarin trailhead, Tamarin, Mauritius": [-20.3305, 57.391],
+  "Tourelle du Tamarin trailhead, Tamarin, Mauritius": [-20.3410, 57.3787], // réservoir d'eau, départ Visorando et Google Maps
   "Trois Mamelles trailhead, Cascavelle, Mauritius": [-20.312, 57.433],
   "Macchabée trail, Le Pétrin, Mauritius": [-20.405, 57.467],
   "Parakeet Trail, Le Pétrin, Mauritius": [-20.405, 57.467],
