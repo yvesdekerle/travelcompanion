@@ -62,7 +62,9 @@ jour où quelqu'un a choisi, « commande pour x personnes », « Livraison souha
 accompagnements), « Détail par personne » (prénom en gras), un sous-total par jour quand il y en a deux et
 « Total : x Rs » à la fin ; ceux qui ne prennent rien n'apparaissent pas. Une ligne par plat, parce que sur mobile les
 lignes longues se replient et les retours à la ligne ne se voient plus.
-« Voir le message » l'affiche sous le bouton, et il suit chaque changement. Les `<select>` sont écoutés sur `change`
+« Voir le message » l'affiche sous le bouton, et il suit chaque changement. « Reset la sélection » efface les plats,
+accompagnements, piments et heures de livraison des deux colonnes (le jour choisi et l'option « copain de Mathieu »
+restent) : deux touchers, « Confirmer ? » pendant 3 s, puis « annuler » dans le message qui s'affiche. Les `<select>` sont écoutés sur `change`
 (Safari iOS ne lève pas toujours `input`).
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du

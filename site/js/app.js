@@ -1334,7 +1334,7 @@
           <div class="choice-row delivery"><div class="who">${I.clock}<b>Livraison</b></div>${timeCell(1)}${timeCell(2)}</div>
           ${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}
         </div>
-        <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a><a class="btn sm" href="/menu">${I.food}Voir la carte</a></div>
+        <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a><a class="btn sm" href="/menu">${I.food}Voir la carte</a><button type="button" class="btn sm" id="resetChoices">${I.undo}Reset la sélection</button></div>
         <p class="hint">WhatsApp s'ouvre avec le message prêt : choisis le groupe dans la liste des discussions. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre>
       </div></div>`;
   }
@@ -1427,6 +1427,16 @@
     });
     const cd = $("#choiceDay", main); if (cd) cd.addEventListener("change", () => { store.set("choix:day", cd.value); const h = $$(".choice-head small", main); h[0].textContent = dayAt(cd.value, 0); h[1].textContent = dayAt(cd.value, 1); refreshRecap(); });
     const sh = $("#showChoices", main); if (sh) sh.addEventListener("click", (e) => { e.preventDefault(); const pre = $("#choicesRecap", main); pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; pre.hidden = !pre.hidden; });
+    // Reset de la sélection : plats, accompagnements, piments et heures de livraison des deux colonnes (le jour choisi
+    // et l'option « copain de Mathieu » restent). Deux touchers (« Confirmer ? » pendant 3 s), puis « annuler » dans le toast
+    const rc = $("#resetChoices", main); if (rc) { const label = rc.innerHTML; rc.addEventListener("click", () => {
+      const keys = [...G.cast.flatMap(([f]) => [`choix:${f}:1`, `choix:${f}:2`]), "choix:time:1", "choix:time:2"];
+      const saved = keys.map((k) => [k, localStorage.getItem(KEY + k)]).filter(([, v]) => v !== null);
+      if (!saved.length) return toast("La sélection est déjà vide");
+      if (!rc.dataset.armed) { rc.dataset.armed = "1"; rc.textContent = "Confirmer ?"; setTimeout(() => { if (rc.isConnected) { delete rc.dataset.armed; rc.innerHTML = label; } }, 3000); return; }
+      saved.forEach(([k]) => localStorage.removeItem(KEY + k)); render();
+      toast("Sélection effacée — annuler", () => { saved.forEach(([k, v]) => localStorage.setItem(KEY + k, v)); render(); toast("Sélection rétablie"); });
+    }); }
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
       store.set(el.dataset.storeCheck, el.checked); el.parentElement.previousElementSibling.classList.toggle("checked", el.checked);
