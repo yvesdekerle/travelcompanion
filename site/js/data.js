@@ -48,8 +48,8 @@ window.GUIDE = {
         { when: "Après-midi", where: "Flic-en-Flac", title: "Première plage — Flic-en-Flac",
           text: "La grande plage publique de la côte ouest : des kilomètres de sable blanc sous les filaos, un lagon calme et peu profond, parfait pour une première baignade sans effort. Ananas découpés chez les vendeurs.",
           places: [["Flic en Flac Public Beach", "Flic en Flac Public Beach, Mauritius"]] },
-        { when: "Soir · 18h15", where: "La Preneuse · à 5 min de la villa", title: "Coucher de soleil à La Preneuse",
-          text: "La plage publique de La Preneuse, juste au sud de la villa, face à l'ouest : la tour Martello d'un côté, le Morne au loin de l'autre, et le soleil qui tombe dans la mer vers 18h15. Ce soir et demain soir, dîner livré à la villa par Catering Sheila (réservé) ; ensuite, un restaurant quand l'envie vient. Coucher tôt : demain, rando à 6h30.",
+        { when: "Soir · 18h15", where: "La Preneuse · à 5 min de Villamly", title: "Coucher de soleil à La Preneuse",
+          text: "La plage publique de La Preneuse, juste au sud de Villamly, face à l'ouest : la tour Martello d'un côté, le Morne au loin de l'autre, et le soleil qui tombe dans la mer vers 18h15. Ce soir et demain soir, dîner livré à Villamly par Catering Sheila (réservé) ; ensuite, un restaurant quand l'envie vient. Coucher tôt : demain, rando à 6h30.",
           places: [["La Preneuse Public Beach, Rivière Noire", "La Preneuse Public Beach, Mauritius"]],
           links: [["Menu Morisyen de Sheila · commander sur WhatsApp", "/menu", "page"]],
           tags: [["ok", "Dîner livré Catering Sheila · réservé"]] }
@@ -60,7 +60,7 @@ window.GUIDE = {
     {
       n: 2, date: "2026-11-07", label: "Samedi 7 novembre", phase: "neuf",
       title: "Piton et plateau central",
-      sub: "Le toit de l'île à l'aube · douche à la villa · lac sacré · dégustation de thé · plage de Tamarin",
+      sub: "Le toit de l'île à l'aube · douche à Villamly · lac sacré · dégustation de thé · plage de Tamarin",
       drive: "≈ 2 h 32 de route · 112 km",
       img: "j02", caption: "La côte ouest vue du ciel · Le Morne",
       steps: [
@@ -71,7 +71,7 @@ window.GUIDE = {
           links: [["AllTrails · Little Black River Peak", "https://www.alltrails.com/fr/trail/mauritius/savanne/piton-mauritius-trail", "trail"]],
           tags: [["info", "Rando 6,3 km · +215 m · 2h30-3h"], ["info", "Eau 1,5 L par personne"]] },
         { t: "drive", d: "33 min · 20 km · redescente vers Rivière Noire" },
-        { when: "Matin · 10h00 — 10h45", where: "Rivière Noire · la villa", title: "Retour à la villa : douche et deuxième petit-déjeuner", home: true,
+        { when: "Matin · 10h00 — 10h45", where: "Rivière Noire · Villamly", title: "Retour à Villamly : douche et deuxième petit-déjeuner", home: true,
           text: "On redescend se laver et se changer avant la suite de la journée. Trois quarts d'heure, pas plus : le lac et le thé attendent.",
           places: [["La villa, La Jetée Road", "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius"]] },
         { t: "drive", d: "43 min · 29 km · Rivière Noire → Grand Bassin par Plaine Champagne" },
@@ -85,7 +85,7 @@ window.GUIDE = {
           tags: [["info", "Visite usine + dégustation ≈ 1 h"], ["info", "Déjeuner restaurant panoramique"]] },
         { t: "drive", d: "41 min · 37 km · par la A3" },
         { when: "Après-midi · 15h15", where: "Tamarin", title: "Plage de Tamarin, puis coucher de soleil",
-          text: "Baie de sable doré face à la Tourelle, vagues à l'embouchure pour les surfeurs, lagon calme à gauche. Coucher de soleil à Tamarin ou à Flic-en-Flac. Quentin et July atterrissent à 17h10 et rejoignent la villa avec leur propre voiture : le soir, le groupe est au complet. Dîner livré à la villa par Catering Sheila. Demain, dauphins à 7h — réveil 6h.",
+          text: "Baie de sable doré face à la Tourelle, vagues à l'embouchure pour les surfeurs, lagon calme à gauche. Coucher de soleil à Tamarin ou à Flic-en-Flac. Quentin et July atterrissent à 17h10 et rejoignent Villamly avec leur propre voiture : le soir, le groupe est au complet. Dîner livré à Villamly par Catering Sheila. Demain, dauphins à 7h — réveil 6h.",
           places: [["Tamarin Public Beach", "Tamarin Public Beach, Mauritius"]],
           links: [["Menu Morisyen de Sheila · commander sur WhatsApp", "/menu", "page"]],
           tags: [["info", "Arrivée 17h10 · Quentin et July"], ["ok", "Dîner livré Catering Sheila · réservé"]] }
@@ -171,7 +171,7 @@ window.GUIDE = {
           places: [["Pointe Jérôme, embarcadère MWF", "Pointe Jerome Embarkation Point, Mahebourg, Mauritius"]], sea: ["Île aux Aigrettes"],
           tags: [["todo", "À réserver MWF · créneau 14h30"], ["info", "Durée ≈ 2 h · bateau inclus"]] },
         { t: "drive", d: "1 h · 60 km · retour à Rivière Noire par la M2 · +10 min en heure de pointe" },
-        { when: "Soir", where: "Rivière Noire", title: "Retour avant la nuit", text: "Soirée libre à la villa." }
+        { when: "Soir", where: "Rivière Noire", title: "Retour avant la nuit", text: "Soirée libre à Villamly." }
       ]
     },
 
@@ -231,7 +231,7 @@ window.GUIDE = {
           tags: [["info", "Parking : coupons en station-service · ou parking Caudan"], ["ok", "Marché ouvert lun-sam 5h-18h · vérifié"]],
           note: ["Bouchons", "Port-Louis se bloque de 16h à 18h30 : repartir avant 16h, ou dîner sur place et rentrer après.", "warn"] },
         { t: "drive", d: "43 min · 33 km · retour à Rivière Noire · +10 min en heure de pointe" },
-        { when: "Soir", where: "Rivière Noire · au logement", title: "Soirée à la villa", text: "Récit de pêche obligatoire." }
+        { when: "Soir", where: "Rivière Noire · au logement", title: "Soirée à Villamly", text: "Récit de pêche obligatoire." }
       ]
     },
 
@@ -269,7 +269,7 @@ window.GUIDE = {
     {
       n: 9, date: "2026-11-14", label: "Samedi 14 novembre", phase: "neuf",
       title: "Le Morne Brabant",
-      sub: "Ascension à l'aube · douche à la villa · plage du Morne · coucher de soleil à La Prairie",
+      sub: "Ascension à l'aube · douche à Villamly · plage du Morne · coucher de soleil à La Prairie",
       drive: "≈ 1 h 30 de route · 71 km",
       img: "j09", caption: "Depuis le sommet du Morne · 556 m · UNESCO",
       intro: "La montagne-refuge des esclaves marrons, classée à l'UNESCO en 2008. On part de nuit pour arriver au sommet avant la chaleur, avec Adrien, l'ami d'Yves, qui connaît la montagne — pas de guide professionnel.",
@@ -282,8 +282,8 @@ window.GUIDE = {
           tags: [["info", "Rando 7 km A/R · +540 m · 3-5 h · soutenue"], ["ok", "Avec Adrien"]],
           note: ["Partie finale", "Exposée et glissante si mouillée : pas de vertige, chaussures accrochées, 2 L d'eau par personne, départ avant 6h30 pour éviter la fournaise de la crête.", "warn"] },
         { t: "drive", d: "21 min · 17 km · Le Morne → Rivière Noire" },
-        { when: "Mi-journée · 11h00 — 13h30", where: "Rivière Noire · la villa", title: "Retour à la villa : douche, déjeuner, sieste", home: true,
-          text: "Douche, déjeuner côté villa ou à Tamarin (10 min), un peu de repos à l'ombre : les jambes ont donné ce matin.",
+        { when: "Mi-journée · 11h00 — 13h30", where: "Rivière Noire · Villamly", title: "Retour à Villamly : douche, déjeuner, sieste", home: true,
+          text: "Douche, déjeuner à Villamly ou à Tamarin (10 min), un peu de repos à l'ombre : les jambes ont donné ce matin.",
           places: [["La villa, La Jetée Road", "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius"]] },
         { t: "drive", d: "21 min · 17 km · Rivière Noire → plage du Morne" },
         { when: "Après-midi · 14h00", where: "Le Morne · plage publique", title: "Après-midi sur la plage du Morne",
@@ -311,7 +311,7 @@ window.GUIDE = {
           places: [["Gris-Gris, Souillac", "Gris Gris Beach Souillac, Mauritius"], ["Pont Naturel", "Pont Naturel, Mauritius"]],
           links: [["Wikiloc · Gris-Gris / Roche qui Pleure", "https://www.wikiloc.com/hiking-trails/gris-gris-103050287", "trail"]],
           tags: [["info", "Balade 4 km A/R · plat · 1h30"], ["todo", "Baignade interdite à Gris-Gris · courants"]],
-          note: ["Pas de retour douche", "Balade plate et courte, à 50 min de la villa : on enchaîne, et c'est la baignade de Blue Bay qui rince. Serviette et tenue de rechange dans la voiture."] },
+          note: ["Pas de retour douche", "Balade plate et courte, à 50 min de Villamly : on enchaîne, et c'est la baignade de Blue Bay qui rince. Serviette et tenue de rechange dans la voiture."] },
         { t: "drive", d: "Gris-Gris → Pont Naturel 40 min · 25 km · puis Pont Naturel → Mahébourg 29 min · 16 km" },
         { when: "Mi-journée · 12h00", where: "Mahébourg · front de mer", title: "Déjeuner sur le front de mer",
           text: "La vieille ville du sud-est, face à l'Île aux Aigrettes et à la montagne du Lion. Le marché couvert ferme en général vers midi le dimanche : viser un restaurant du waterfront.",
@@ -351,8 +351,8 @@ window.GUIDE = {
           tags: [["cash", "Cash petites coupures"], ["info", "Après-midi Pointe d'Esny · snorkeling"]] },
         { t: "drive", d: "16h00 · 1 h 05 · 69 km · retour à Trou aux Biches · +15 min en heure de pointe" },
         { when: "Soir · 18h00", where: "Trou aux Biches", title: "Installation et coucher de soleil",
-          text: "Installation dans l'appartement, les pieds dans le lagon. Coucher de soleil sur la plage juste devant.",
-          places: [["Serge's Beachfront by Serenity", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] }
+          text: "Installation dans Villa Serge, les pieds dans le lagon. Coucher de soleil sur la plage juste devant.",
+          places: [["Villa Serge, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] }
       ]
     },
 
@@ -372,9 +372,9 @@ window.GUIDE = {
           tags: [["info", "Canyon 2-6 km · +120 à +270 m · 3-4 h"]],
           note: ["À prévoir", "Chaussures qui accrochent et qui peuvent aller dans l'eau, maillot sous le short, sac étanche, serviette, en-cas. Annulation possible en cas de forte pluie. Pour ceux qui ne marchent pas : snorkeling avec les tortues devant le logement tôt le matin, elles broutent les herbiers à quelques dizaines de mètres de la plage."] },
         { t: "drive", d: "46 min · 43 km · Henrietta → Trou aux Biches" },
-        { when: "Mi-journée · 10h50 — 11h30", where: "Trou aux Biches · l'appartement", title: "Retour à l'appartement : douche", home: true,
+        { when: "Mi-journée · 10h50 — 11h30", where: "Trou aux Biches · Villa Serge", title: "Retour à Villa Serge : douche", home: true,
           text: "Le reste de la journée se passe au nord, à deux pas : on repasse se laver et se changer avant les plages.",
-          places: [["L'appartement, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] },
+          places: [["Villa Serge, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] },
         { t: "drive", d: "15 min · 9 km" },
         { when: "Mi-journée · 12h00", where: "Balaclava · Turtle Bay", title: "Baie aux Tortues",
           text: "Parc marin de Balaclava : corail, poissons, tortues. Déjeuner léger ou pique-nique.",
@@ -405,7 +405,7 @@ window.GUIDE = {
       img: "j13", caption: "Champs de canne · route de Beau Plan", credit: ["John Tann", "CC BY 2.0", "File:Mauritian mountains (8131997839).jpg"],
       steps: [
         { when: "Matin", where: "Trou aux Biches · devant le logement", title: "Matinée au lagon",
-          text: "Pas de réveil aux aurores : baignade et snorkeling devant l'appartement, petit-déjeuner tranquille. Départ vers 11h pour Beau Plan." },
+          text: "Pas de réveil aux aurores : baignade et snorkeling devant Villa Serge, petit-déjeuner tranquille. Départ vers 11h pour Beau Plan." },
         { t: "drive", d: "départ 11h05 · 18 min · 14 km · Trou aux Biches → Beau Plan (Pamplemousses)" },
         { when: "Mi-journée · 11h30 — 14h00", where: "Beau Plan · L'Aventure du Sucre", title: "Coupe de canne à L'Aventure du Sucre", star: true, fixed: true,
           text: "Réservée pour deux adultes, confirmée par e-mail : rendez-vous à 11h30 pour couper la canne dans les champs du domaine, puis le musée et la dégustation des sucres spéciaux et des rhums. Déjeuner sur place au Fangourin, le restaurant du domaine. Pour les autres, musée et dégustation en attendant, ou la matinée prolongée au lagon.",
@@ -470,9 +470,9 @@ window.GUIDE = {
           tags: [["info", "Escalade 1 km A/R · +330 m · 4-7 h"], ["todo", "Guide Trekking Mauritius · à réserver"], ["info", "WhatsApp +230 5251 4050"]],
           note: ["Conditions", "Annulé si la roche est mouillée ou s'il y a du vent ; déconseillé en cas de vertige. Gants légers utiles pour les barreaux, 2 L d'eau, départ avant 7h.", "warn"] },
         { t: "drive", d: "29 min · 22 km · La Laura → Trou aux Biches" },
-        { when: "Mi-journée · 12h30 — 13h15", where: "Trou aux Biches · l'appartement", title: "Retour à l'appartement : douche express", home: true,
+        { when: "Mi-journée · 12h30 — 13h15", where: "Trou aux Biches · Villa Serge", title: "Retour à Villa Serge : douche express", home: true,
           text: "Trois quarts d'heure pour se laver et se changer avant la table d'hôte. Escale Créole ne sert que le midi : prévenir d'une arrivée vers 13h45.",
-          places: [["L'appartement, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] },
+          places: [["Villa Serge, Trou aux Biches", "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius"]] },
         { t: "drive", d: "30 min · 30 km · Trou aux Biches → Moka par la M2" },
         { when: "Mi-journée · 13h45 — 16h30", where: "Moka · Escale Créole · puis Eureka à 4 min", title: "Déjeuner à Escale Créole, puis la maison Eureka",
           text: "Table d'hôte créole dans un jardin de Moka, cuisine de famille : caris, rougailles, achards, gato patate. Uniquement le midi — réserver sur WhatsApp en prévenant d'une arrivée vers 13h45. Juste à côté ensuite, la maison coloniale Eureka : demeure créole de 1830 aux 109 portes au pied des Montagnes de Moka, mobilier d'époque, véranda, et un jardin qui descend vers des cascades où l'on peut tremper les pieds.",
@@ -522,8 +522,8 @@ window.GUIDE = {
   stays: [
     {
       id: "riverhaven", range: "J1 → J11", dates: "5 → 16 nov · 11 nuits · à neuf · Airbnb",
-      name: "River Haven", place: "Rivière Noire (Black River)", img: "logement1",
-      address: "La Jetée Road, Rivière Noire, Rivière Noire District 90605",
+      name: "Villamly", place: "Rivière Noire (Black River)", img: "logement1",
+      address: "River Haven (annonce Airbnb) · La Jetée Road, Rivière Noire, Rivière Noire District 90605",
       mapsQ: "River Haven - Five-Bedroom House, Grande Rivière Noire, Mauritius",
       host: "Amelie (Airbnb)",
       checkin: "Arrivée jeu. 5 nov. dès 15h — la nuit du 5 est réservée : on peut entrer dès l'arrivée le 6 au matin",
@@ -535,15 +535,15 @@ window.GUIDE = {
     },
     {
       id: "serge", range: "J11 → J16", dates: "16 → 21 nov · 5 nuits · à deux · Booking",
-      name: "Serge's Beachfront by Serenity", place: "Trou aux Biches", img: "logement2",
-      address: "Coastal Road, Trou-aux-Biches · Appartement ★★★★ · 2 adultes · clés dans un coffre sécurisé sur place",
+      name: "Villa Serge", place: "Trou aux Biches", img: "logement2",
+      address: "Serge's Beachfront by Serenity (annonce Booking) · Coastal Road, Trou-aux-Biches · Appartement ★★★★ · 2 adultes · clés dans un coffre sécurisé sur place",
       mapsQ: "Serge's Beachfront by Serenity, Trou aux Biches, Mauritius",
       checkin: "Arrivée lun. 16 nov. 15h – 18h",
       checkout: "Départ sam. 21 nov. 8h – 12h",
       around: ["Super U La Croisette · 8 min", "Store 2000 Grand Baie · prix bas", "Intermart Calodyne · 18 min"],
       desc: "Appartement les pieds dans le lagon : les tortues broutent les herbiers juste devant, le coucher de soleil se regarde depuis la fenêtre. Base de la deuxième semaine, à deux.",
       fields: ["Code du coffre à clés", "Téléphone de l'hôte", "Wifi"],
-      note: ["À convenir avec l'hôte", "Le check-in officiel est 15h–18h : demander si on peut déposer les bagages vers 9h le lundi 16 (entre l'hélicoptère et Mahébourg). Et prévenir qu'on quitte l'appartement samedi 21 vers 7h30, avant la fenêtre 8h–12h : clés dans le coffre."]
+      note: ["À convenir avec l'hôte", "Le check-in officiel est 15h–18h : demander si on peut déposer les bagages vers 9h le lundi 16 (entre l'hélicoptère et Mahébourg). Et prévenir qu'on quitte Villa Serge samedi 21 vers 7h30, avant la fenêtre 8h–12h : clés dans le coffre."]
     }
   ],
 
@@ -620,7 +620,7 @@ window.GUIDE = {
   menu: {
     title: "Menu Morisyen",
     by: "Catering Sheila Mauritius",
-    intro: "La carte de Sheila, qui livre les dîners de la villa les deux premiers soirs. Chaque plat est pour une personne ; les salades se commandent pour 2, 4 ou 6.",
+    intro: "La carte de Sheila, qui livre les dîners à Villamly les deux premiers soirs. Chaque plat est pour une personne ; les salades se commandent pour 2, 4 ou 6.",
     order: "Pour passer commande, contacter Sheila sur WhatsApp au +230 5986 3130. Toutes les commandes doivent être passées au moins 24 h à l'avance, pour un minimum de 2 personnes.",
     tel: "+23059863130", wa: "23059863130", group: "https://chat.whatsapp.com/EADLPXXOZOPFe7MTJNY7pl",
     sections: [
@@ -664,7 +664,7 @@ window.GUIDE = {
       { k: "Paiement", title: "Carte ou cash ?",
         html: "<p>La carte passe dans les supermarchés et la plupart des restaurants. Le cash reste indispensable pour les marchés, la street food et plusieurs prestataires : Baba Cool (33 000 Rs), Nemo (14 000 Rs), plongée, Vanill'Art, solde de la pêche. Tableau détaillé dans « Cash à prévoir ».</p>" },
       { k: "Connexion", title: "Téléphone & électricité",
-        html: "<ul><li>SIM touristique Emtel ou my.t, en vente à l'aéroport — passeport demandé. Data largement suffisante pour Maps et WhatsApp.</li><li>Prises de type G (anglaises) et C, 230 V : prévoir un adaptateur type G par personne, une multiprise pour la villa.</li></ul>" },
+        html: "<ul><li>SIM touristique Emtel ou my.t, en vente à l'aéroport — passeport demandé. Data largement suffisante pour Maps et WhatsApp.</li><li>Prises de type G (anglaises) et C, 230 V : prévoir un adaptateur type G par personne, une multiprise pour Villamly.</li></ul>" },
       { k: "Culture", title: "Vie locale",
         html: "<ul><li>Langues : créole mauricien, français et anglais — le français passe partout.</li><li>Pourboire non obligatoire ; environ 5 à 10 % au restaurant s'il n'y a pas de frais de service.</li><li>Divali le dimanche 8 novembre : jour férié, certains sites et commerces peuvent être fermés.</li><li>Temples : tenue couvrant épaules et genoux, chaussures retirées à l'entrée.</li></ul>" },
       { k: "Climat", title: "Début de l'été austral",
@@ -695,8 +695,8 @@ window.GUIDE = {
     carOut: ["Photos et vidéo du tour complet de chaque voiture : rayures, bosses, jantes, pare-brise, intérieur", "Niveau d'essence noté sur le contrat (plein ? à rendre pareil)", "Kilométrage noté", "Pression des pneus, roue de secours, cric, triangle", "Clim, phares, essuie-glaces, klaxon : on teste", "Caution : montant et mode (empreinte CB) — un seul payeur par voiture, noté dans Tricount", "Assurance : franchise, ce qui est exclu (pneus, vitres, bas de caisse)", "Contrat + permis international dans la boîte à gants"],
     carBack: ["Plein refait au même niveau qu'au départ (station la plus proche : Plaine Magnien)", "Nouvelles photos du tour, intérieur vidé", "État des lieux signé en présence de l'agent, copie du PV", "Libération de la caution : délai demandé par écrit"],
     routes: {
-      a: ["Depuis la villa (Rivière Noire)", [["La Balise Marina (JPH)", "6 min à pied · 400 m"], ["Le Morne", "21 min · 17 km"], ["Flic-en-Flac (plage)", "24 min · 18 km"], ["Plaine Champagne", "33 min · 20 km"], ["Chamarel (7 couleurs)", "29 min · 16 km"], ["Port-Louis (marché)", "43 min · 33 km"], ["Chamouny (Vanill'Art)", "45 min · 36 km"], ["Gris-Gris", "50 min · 41 km"], ["Aéroport SSR", "53 min · 55 km"], ["Triolet (hélico)", "54 min · 46 km"], ["Grand Baie", "59 min · 57 km"], ["Mahébourg · Pointe Jérôme", "1 h · 60 km"], ["Pereybère", "1 h 07 · 61 km"]]],
-      b: ["Depuis Trou aux Biches", [["Triolet (hélico)", "6 min · 5 km"], ["Grand Baie · La Croisette", "12 min · 8 km"], ["Turtle Bay (Balaclava)", "15 min · 9 km"], ["Calodyne", "22 min · 18 km"], ["Port-Louis (marché)", "25 min · 21 km"], ["La Laura (Pieter Both)", "32 min · 22 km"], ["Moka (Eureka)", "30 min · 30 km"], ["Henrietta (7 cascades)", "46 min · 43 km"], ["Tamarin", "52 min · 46 km"], ["Aéroport SSR", "56 min · 61 km"], ["Rivière Noire (villa)", "58 min · 49 km"], ["Mahébourg", "1 h 01 · 65 km"], ["Vallée de Ferney", "1 h 02 · 68 km"]]],
+      a: ["Depuis Villamly (Rivière Noire)", [["La Balise Marina (JPH)", "6 min à pied · 400 m"], ["Le Morne", "21 min · 17 km"], ["Flic-en-Flac (plage)", "24 min · 18 km"], ["Plaine Champagne", "33 min · 20 km"], ["Chamarel (7 couleurs)", "29 min · 16 km"], ["Port-Louis (marché)", "43 min · 33 km"], ["Chamouny (Vanill'Art)", "45 min · 36 km"], ["Gris-Gris", "50 min · 41 km"], ["Aéroport SSR", "53 min · 55 km"], ["Triolet (hélico)", "54 min · 46 km"], ["Grand Baie", "59 min · 57 km"], ["Mahébourg · Pointe Jérôme", "1 h · 60 km"], ["Pereybère", "1 h 07 · 61 km"]]],
+      b: ["Depuis Villa Serge (Trou aux Biches)", [["Triolet (hélico)", "6 min · 5 km"], ["Grand Baie · La Croisette", "12 min · 8 km"], ["Turtle Bay (Balaclava)", "15 min · 9 km"], ["Calodyne", "22 min · 18 km"], ["Port-Louis (marché)", "25 min · 21 km"], ["La Laura (Pieter Both)", "32 min · 22 km"], ["Moka (Eureka)", "30 min · 30 km"], ["Henrietta (7 cascades)", "46 min · 43 km"], ["Tamarin", "52 min · 46 km"], ["Aéroport SSR", "56 min · 61 km"], ["Villamly (Rivière Noire)", "58 min · 49 km"], ["Mahébourg", "1 h 01 · 65 km"], ["Vallée de Ferney", "1 h 02 · 68 km"]]],
       note: "Temps relevés sur Google Maps en conditions fluides (vrais pour les départs de 5h à 7h). Ajouter 10 à 20 min pour tout trajet qui passe par Port-Louis ou Phoenix entre 7h et 9h30 et entre 16h et 18h30."
     }
   },
@@ -720,7 +720,7 @@ window.GUIDE = {
     { k: "Acheter", title: "Marchés", html: "<ul><li>Port-Louis, marché central — tous les jours, épices et vanille au premier étage</li><li>Mahébourg — le lundi, le plus vivant</li><li>Flacq — mercredi et dimanche, le plus grand de l'île</li><li>Quatre Bornes — jeudi et dimanche, textile</li></ul><p>Négocier gentiment sur les souvenirs, jamais sur les fruits.</p>" },
     { k: "Se baigner", title: "Plages publiques", html: "<p>Toutes gratuites, toutes ombragées de filaos. Les plus belles : Le Morne, La Prairie (coucher de soleil), Mont Choisy, Pereybère, Trou aux Biches, Blue Bay, La Cambuse, Flic-en-Flac. Le dimanche, elles se remplissent de familles et de musique dès 10h : y aller tôt, ou choisir ce jour-là une balade.</p>" },
     { k: "Sous l'eau", title: "Snorkeling depuis la plage", html: "<ul><li>Trou aux Biches — tortues sur les herbiers, tôt le matin</li><li>Blue Bay — parc marin, corail et poissons par centaines</li><li>Turtle Bay (Balaclava) — parc marin du nord-ouest</li><li>Pereybère — eau la plus claire du nord</li><li>Flic-en-Flac — à droite de la plage publique</li></ul><p>Chaussures d'eau, lycra, et on ne touche à rien.</p>" },
-    { k: "Regarder", title: "Couchers de soleil", html: "<p>Toute la côte ouest regarde le soleil tomber dans la mer vers 18h15. Arriver 30 min avant, avec de quoi boire : Rivière Noire et Tamarin (à côté de la villa), La Prairie, Flic-en-Flac, Le Morne, puis Trou aux Biches et Mont Choisy la deuxième semaine. La lumière dure 10 minutes : être en place.</p>" },
+    { k: "Regarder", title: "Couchers de soleil", html: "<p>Toute la côte ouest regarde le soleil tomber dans la mer vers 18h15. Arriver 30 min avant, avec de quoi boire : Rivière Noire et Tamarin (à côté de Villamly), La Prairie, Flic-en-Flac, Le Morne, puis Trou aux Biches et Mont Choisy la deuxième semaine. La lumière dure 10 minutes : être en place.</p>" },
     { k: "Rapporter", title: "À rapporter", html: "<ul><li>Rhum arrangé de Chamarel, rhum de Saint Aubin ou New Grove</li><li>Thé à la vanille de Bois Chéri</li><li>Sucres spéciaux de l'Aventure du Sucre</li><li>Biscuits manioc Rault</li><li>Vanille de Vanill'Art, piments confits, achards</li></ul><p>Rhum en bagage en soute, bien emballé.</p>" },
     { k: "Dépenser mieux", title: "Économiser", html: "<ul><li>Essence : prix fixé par l'État, identique partout — prendre la station la plus proche</li><li>Retraits : MCB ou SBM, refuser la conversion en euros</li><li>Tables d'hôte et snacks locaux : 400 à 900 Rs le repas complet, contre 1 500+ en restaurant d'hôtel</li><li>Eau : bidons de 5 L au supermarché</li><li>Fruits au bord de la route (ananas, mangues)</li><li>Cash pour les petits achats, carte pour les courses</li></ul>" },
     { k: "Anticiper", title: "Météo mobile", html: "<p>Le nuage qui bouche le plateau n'atteint presque jamais la côte ouest : s'il pleut à Curepipe, il fait beau à Tamarin. Les randos du plateau (Piton, 7 cascades, Pieter Both) se font le matin, avant que les nuages montent ; les plages l'après-midi. Après une grosse pluie, les rivières des 7 cascades grossissent vite : le guide décide.</p>" }
@@ -755,7 +755,7 @@ window.GUIDE = {
     { zone: "Gorges", name: "Parakeet Trail", q: "Parakeet Trail, Le Pétrin, Mauritius", prog: "départ Le Pétrin", diff: "Très difficile", note: "15,5", from: ["39 min", "58 min"], see: "Le sentier le plus exigeant et le plus récompensé de l'île ; perruche endémique de Maurice", warn: "Traversées de rivières, dénivelés importants, guide recommandé", url: "https://www.alltrails.com/fr/randonnee/mauritius/riviere-noire/machabee-parakeet-paille-en-queue-and-colophanne-trails", pic: "parakeet", credit: ["AllTrails", "photo de la fiche", "https://www.alltrails.com/fr/randonnee/mauritius/riviere-noire/machabee-parakeet-paille-en-queue-and-colophanne-trails"], glance: ["20,1 km · boucle", "+789 m", "6,5 – 7 h", "4,5 · 30 avis"] },
     { zone: "Nord", name: "Cascades de la Nicolière", q: "Nicolière Reservoir, Mauritius", prog: "réservoir de la Nicolière · ~25 min de marche", diff: "Modérée · guide obligatoire", note: "15,0", from: ["55 min", "31 min"], see: "Sentier forestier non balisé vers des cascades secrètes", warn: "Pont en bois branlant", url: "https://www.alltrails.com/fr/randonnee/mauritius/moka/la-nicoliere-reservoir-to-pont-jamblon-bridge", pic: "nicoliere", credit: ["AllTrails", "photo de la fiche", "https://www.alltrails.com/fr/randonnee/mauritius/moka/la-nicoliere-reservoir-to-pont-jamblon-bridge"], glance: ["4,3 km · aller-retour", "+44 m", "1 – 1,5 h", "4,2 · 35 avis"] }
   ],
-  hikesNote: "Les plus votées par le groupe : la Tourelle du Tamarin (coucher de soleil, 2 h, à 10 min de la villa) et Lion Mountain (côté Mahébourg, à combiner avec Blue Bay). Le Parakeet Trail est une journée entière.",
+  hikesNote: "Les plus votées par le groupe : la Tourelle du Tamarin (coucher de soleil, 2 h, à 10 min de Villamly) et Lion Mountain (côté Mahébourg, à combiner avec Blue Bay). Le Parakeet Trail est une journée entière.",
 
   beaches: [
     { zone: "Sud-ouest", name: "Plage du Morne", from: ["21 min", "1 h 22"], note: "19,0", g: "4,6 · 2 679 avis", q: "Le Morne Public Beach", see: "Sable blanc, lagon turquoise et la montagne du Morne en toile de fond : la carte postale de l'île. Superbe en fin de journée pour le coucher de soleil. Kitesurfeurs d'un côté", warn: "Peu d'ombre sur la zone publique", img: "lemorne", bl: "le-morne", glance: ["medium", 4, 5, 5] },
@@ -776,6 +776,42 @@ window.GUIDE = {
     { zone: "Sud", name: "Bel Ombre (Saint-Martin)", from: ["31 min", "1 h 27"], note: "15,0", g: "4,6 · 252 avis", q: "Bel Ombre Public Beach", see: "Plage publique sauvage bordée de filaos, lagon turquoise, pas d'hôtels", pic: "bel-ombre", credit: ["Simisa", "CC BY-SA 3.0", "File:Mauritius 23.08.2009 09-41-05.jpg"], bl: "bel-ombre", glance: ["low", 4, 4, 4] },
     { zone: "Sud", name: "Pomponette", from: ["45 min", "1 h 17"], note: "15,0", g: "4,6 · 134 avis", q: "Pomponette Public Beach", see: "Plage publique sauvage du Sud, longue et peu fréquentée, à côté de Riambel. Filaos, sable clair", warn: "Mer parfois agitée : plus pour la balade que la baignade", pic: "pomponette", bl: "pomponette", glance: ["low", 2, 3, 3] }
   ],
+  /* ───────────── CASCADES ET PISCINES NATURELLES ───────────── */
+  // Fiches comme les plages : note Google relevée le 6 novembre 2026 et convertie sur 20 (note /5 × 4), temps de route
+  // Google Maps hors trafic depuis Villamly puis Villa Serge (champ from), « coup d'œil » = [accès à pied, baignade,
+  // hauteur, entrée] (champ glance), photo dans img/lieux (pic + credit Commons) ; day = jour du programme
+  falls: [
+    { day: "Mar 17", zone: "Centre", name: "Les 7 cascades de Tamarin", q: "Tamarind Falls Henrietta, Mauritius", prog: "Henrietta · 3 – 4 h avec baignades", note: "18,4", g: "4,6 · 728 avis", from: ["28 min", "46 min"],
+      see: "Sept chutes successives et leurs vasques au fond d'une gorge verte : on descend, on nage, on remonte. Les plus belles piscines naturelles de l'île, et elles se méritent", warn: "Terrain glissant, passages à la main près des chutes ; à éviter après la pluie. Sans guide, télécharger la trace",
+      url: "https://www.alltrails.com/fr/trail/mauritius/plaines-wilhems/seven-cascades-short-loop", pic: "sept-cascades", credit: ["AllTrails", "photo de la fiche", "https://www.alltrails.com/fr/trail/mauritius/plaines-wilhems/seven-cascades-short-loop"], glance: ["2 à 6 km de canyon · 3 – 4 h", "Oui, plusieurs vasques", "≈ 45 m pour la plus haute", "Gratuit · guide en option"] },
+    { day: "Dim 8", zone: "Sud-ouest", name: "Cascade de Chamarel", q: "Chamarel Waterfall, Mauritius", prog: "Géoparc des 7 couleurs · belvédère", note: "18,0", g: "4,5 · 5 762 avis", from: ["29 min", "1 h 39"],
+      see: "La plus haute chute d'un seul jet de l'île, une centaine de mètres dans un cirque de basalte et de forêt. Le belvédère est à cinq minutes du parking, dans l'enceinte du géoparc, sur le chemin de la Terre des 7 couleurs", warn: "Pas de baignade par ses propres moyens : le pied de la chute ne se rejoint qu'en canyoning, avec un prestataire",
+      pic: "chamarel-cascade", credit: ["dronepicr", "CC BY 2.0", "File:Chamarel Waterfall in Mauritius (53698126454).jpg"], glance: ["5 min du parking", "Non · canyoning seulement", "≈ 100 m", "Billet du géoparc, 7 couleurs comprises"] },
+    { zone: "Sud", name: "Rochester Falls", q: "Rochester Falls, Souillac, Mauritius", prog: "Souillac · 500 m à pied dans les cannes", note: "17,6", g: "4,4 · 2 143 avis", from: ["58 min", "1 h 31"],
+      see: "Une chute large de dix mètres qui tombe sur des orgues de basalte, et un grand bassin où l'on se baigne au pied. Piste cahoteuse dans les champs de canne, puis quelques minutes à pied ; à dix minutes de Gris-Gris", warn: "Piste défoncée, rouler doucement ; gardiens de parking officieux, un petit pourboire ; à éviter après les grosses pluies, le courant devient dangereux",
+      pic: "rochester", credit: ["Lukas von Daeniken", "CC BY-SA 2.0", "File:Rochester Falls near Souillac Savanne (23538729186).jpg"], glance: ["5 min à pied · piste 2 km", "Oui, grand bassin", "≈ 10 m", "Gratuit · pourboire parking"] },
+    { zone: "Gorges", name: "Alexandra Falls", q: "Alexandra Falls Viewpoint, Mauritius", prog: "Plaine Champagne · belvédère", note: "17,6", g: "4,4 · 1 862 avis", from: ["38 min", "1 h 13"],
+      see: "Belvédère sur la forêt des gorges et la côte sud, la chute en contrebas : deux minutes à pied du parking, sur la route de Grand Bassin. Jolie plutôt que spectaculaire, selon la pluie des jours précédents",
+      pic: "alexandra", credit: ["Z thomas", "CC BY-SA 4.0", "File:Alexandra Falls Mauritius 2019-09-28.jpg"], glance: ["2 min du parking", "Non · point de vue", null, "Gratuit"] },
+    { day: "Mar 10", zone: "Sud", name: "Cascade 500 pieds", q: "Cascade 500 Pieds Chamouny, Mauritius", prog: "Chamouny · depuis le parking d'Alexandra Falls", note: "18,8", g: "4,7 · 170 avis", from: ["38 min", "1 h 13"],
+      see: "La plus haute cascade de l'île, trois bras qui tombent dans une vasque au cœur de la forêt. Le belvédère du haut se gagne en quarante minutes de marche depuis le parking d'Alexandra Falls, avec des bassins où l'on se baigne ; le pied demande trois quarts d'heure de plus", warn: "Le bas est sur les terres d'Agrïa : autorisation et guide nécessaires ; sentier glissant, dangereux par temps de pluie",
+      pic: "cinq-cents-pieds", credit: ["carrotmadman6", "CC BY 2.0", "File:Cascade 500 pieds panorama (6393830415).jpg"], glance: ["40 min de marche · +45 min pour le pied", "Oui, vasques du haut", "≈ 150 m", "Gratuit · guide pour le pied"] },
+    { zone: "Sud-est", name: "Eau Bleue", q: "Eau Bleu Waterfall, Cluny, Mauritius", prog: "Cluny · 30 min à pied dans les cannes", note: "15,2", g: "3,8 · 61 avis", from: ["56 min", "1 h 04"],
+      see: "Cinq ou six petites chutes de 5 à 8 m aux bassins d'un bleu laiteux, où l'on se baigne. Alimentée par le trop-plein du réservoir d'Eau Bleue : plus belle de décembre à février, parfois presque à sec en novembre", warn: "Accès raide et glissant, stationnement dans les cannes ; vérifier le débit avant d'y aller",
+      glance: ["30 min à pied", "Oui, deux bassins", "5 – 8 m", "Gratuit"] },
+    { day: "Jeu 19", zone: "Est", name: "Cascade de la Grande Rivière Sud-Est", q: "GRSE Waterfall, Mauritius", prog: "GRSE · en bateau depuis Trou d'Eau Douce", note: "18,0", g: "4,5 · 1 708 avis", from: ["1 h 32", "1 h 16"],
+      see: "La chute qui tombe dans l'embouchure de la rivière, qu'on approche en bateau depuis le lagon : l'arrêt classique des sorties à l'Île aux Cerfs, et celui du speedboat du 19. On peut aussi descendre à pied depuis la route, par un sentier raide", warn: "Sentier glissant après la pluie ; en bateau, tôt le matin pour éviter la file",
+      pic: "grse", credit: ["Z thomas", "CC BY-SA 4.0", "File:Grand river south east Mauritius 2019-09-29 5.jpg"], glance: ["En bateau · ou sentier raide", "Oui, dans la rivière", "≈ 10 m", "Gratuit, hors bateau"] },
+    { day: "Ven 20", zone: "Centre", name: "Cascades d'Eureka", q: "Eureka La Maison Creole Moka, Mauritius", prog: "Moka · derrière la maison créole", note: "17,6", g: "4,4 · 858 avis", from: ["44 min", "30 min"],
+      see: "Trois chutes dans le ravin derrière la maison Eureka, sur un sentier balisé : les deux premières sont petites, la troisième tombe dans un bassin assez profond pour nager. Compter deux à trois heures avec la visite de la maison", warn: "Sentier glissant, bonnes chaussures et anti-moustiques ; ouvert de 9h à 16h30, fermé le dimanche et les jours fériés",
+      glance: ["20 – 30 min de marche", "Oui, au troisième bassin", null, "≈ 300 – 400 Rs, maison comprise"] },
+    { zone: "Sud", name: "Cascade Léon", q: "Cascade Leon, Mauritius", prog: "Savanne · 15 min à pied depuis les lodges de L'Exil", note: "17,2", g: "4,3 · 117 avis", from: ["54 min", "1 h 24"],
+      see: "Une chute de six mètres dans un bassin clair, au bout d'un sentier facile de quinze minutes, quelques rochers à enjamber : baignade, grotte derrière le rideau d'eau, pique-nique", warn: "Rochers glissants autour du bassin",
+      glance: ["15 min à pied", "Oui, bassin et grotte", "≈ 6 m", "Gratuit"] }
+  ],
+  fallsNote: "Pour se baigner : les 7 cascades, Rochester, Eau Bleue, Cascade Léon et le troisième bassin d'Eureka. Les belvédères (Chamarel, Alexandra) se font en passant. Tôt le matin, l'eau est à vous ; en novembre, avant les pluies d'été, certaines chutes sont maigres.",
+  fallsWarn: "Après une grosse pluie, les rivières grossissent en quelques heures et les rochers deviennent savonneux : on reporte. Jamais seul dans les vasques, et on regarde la couleur de l'eau avant d'y aller.",
+
   beachesNote: "Coucher de soleil : toute la côte ouest (Le Morne, La Prairie, Flic-en-Flac, Trou aux Biches). Snorkeling depuis le sable : Blue Bay, Trou aux Biches, Pereybère. Calme absolu : Riambel, Cambuse, Pointe d'Esny, Jacotet. Les plages du sud sont à 30-45 min de Rivière Noire mais à plus d'1 h 15 de Trou aux Biches : à faire la première semaine.",
   // Pour aller plus loin, en bas de la page Plages
   beachesLinks: [

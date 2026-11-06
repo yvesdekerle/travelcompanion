@@ -2,7 +2,7 @@
    Une URL par page :
    /  (aujourd'hui)   /jour/3   /reservations   /logements   /todo   /todo/checklist   /todo/voiture
    /todo/a-reserver   /todo/a-verifier   /infos   /convertisseur   /plages   /randos   /bons-plans
-   /annexes   /notes   /bienvenue   /installer   /plus   /menu   /commander   /edition */
+   /cascades   /annexes   /notes   /bienvenue   /installer   /plus   /menu   /commander   /edition */
 (function () {
   "use strict";
   const G = window.GUIDE;
@@ -101,7 +101,7 @@
     (wps.length ? "&waypoints=" + encodeURIComponent(wps.map(withMU).join("|")) : "");
 
   const VILLA = G.stays[0].mapsQ, SERGE = G.stays[1].mapsQ, AIRPORT = "SSR International Airport, Plaine Magnien, Mauritius";
-  const PLACE_NAME = { [VILLA]: "la villa", [SERGE]: "l'appartement", [AIRPORT]: "l'aéroport" };
+  const PLACE_NAME = { [VILLA]: "Villamly", [SERGE]: "Villa Serge", [AIRPORT]: "l'aéroport" };
   const dayStart = (n) => (n === 1 ? AIRPORT : n <= 11 ? VILLA : SERGE);
   const dayEnd = (n) => (n <= 10 ? VILLA : n <= 15 ? SERGE : AIRPORT);
 
@@ -227,6 +227,7 @@
     booked: { href: "/reservations", t: "Résas", tl: "Réservations", i: "ticket" },
     beaches: { href: "/plages", t: "Plages", i: "beach" },
     hikes: { href: "/randos", t: "Randos", i: "boot" },
+    falls: { href: "/cascades", t: "Cascades", i: "drop" },
     menu: { href: "/menu", t: "Menu", i: "food" },
     order: { href: "/commander", t: "Commander", i: "bag" },
     stays: { href: "/logements", t: "Logements", i: "bed" },
@@ -239,8 +240,8 @@
   // Le menu de Sheila reste dans la partie visible de la barre du bas (4e avant l'arrivée, 5e ensuite), la commande
   // juste après lui.
   const NAV_ORDER = () => (nowMs() < ARRIVAL
-    ? ["route", "maps", "conv", "menu", "order", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
-    : ["route", "maps", "conv", "booked", "menu", "order", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
+    ? ["route", "maps", "conv", "menu", "order", "todo", "beaches", "hikes", "falls", "booked", "stays", "info", "annex", "more"]
+    : ["route", "maps", "conv", "booked", "menu", "order", "beaches", "hikes", "falls", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   const bar = $("#tabbar");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
@@ -266,7 +267,7 @@
   topnav.addEventListener("click", (e) => { if (Date.now() - navDragged < 300) { e.preventDefault(); e.stopPropagation(); } }, true);
   function renderNav(path) {
     const NAV = NAV_ORDER();
-    // Libellés courts (Convertir, Résas) : les treize entrées tiennent alors sur une ligne dans le conteneur de 1 200 px
+    // Libellés courts (Convertir, Résas) : les quatorze entrées tiennent alors sur une ligne dans le conteneur de 1 200 px
     const lbl = (n) => `<span title="${esc(n.tl || n.t)}">${n.t}</span>`;
     $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${lbl(n)}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${lbl(n)}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
@@ -345,7 +346,7 @@
 
   /* ───────── Programme modifiable, partagé avec le groupe via le dépôt GitHub ─────────
      plan.days[n] = { order: [[id, titre, heure], …] | null, removed: [[id, titre], …], at: ISO, by: prénom }
-     id = "jour:index" pour une étape du guide, "hike:k" ou "beach:k" pour une rando ou une plage ajoutée ;
+     id = "jour:index" pour une étape du guide, "hike:k", "beach:k" ou "fall:k" pour une rando, une plage ou une cascade ajoutée ;
      heure = "HHhMM" quand elle a été choisie (vide : celle du guide). order null = ordre du guide (trace d'une
      remise à zéro, pour la fusion jour par jour : le plus récent gagne). Les trajets d'un jour modifié sont recalculés. */
   const PLAN_EMPTY = () => ({ v: 1, days: {} });
@@ -362,13 +363,15 @@
     const [n, i] = String(id).split(":").map(Number), d = G.days[n - 1], s = d && d.steps[i];
     return s && s.t !== "drive" && s.title === title ? { n, i, s, id: `${n}:${i}` } : null;
   }
-  // Une plage ou une rando ajoutée au programme : une étape synthétique, avec son lieu, sa fiche et sa note
+  // Une plage, une rando ou une cascade ajoutée au programme : une étape synthétique, avec son lieu, sa fiche et sa note
   function customAct(id, title, when, n) {
-    const [kind, k] = String(id).split(":"), it = (kind === "hike" ? allHikes : kind === "beach" ? G.beaches : [])[+k];
+    const [kind, k] = String(id).split(":"), it = (kind === "hike" ? allHikes : kind === "beach" ? G.beaches : kind === "fall" ? G.falls : [])[+k];
     if (!it || it.name !== title) return null;
     const text = esc(it.see) + (it.warn ? ` <b>${esc(it.warn)}</b>` : "");
     const s = kind === "hike"
       ? { when: when || "", where: `Randonnée · ${it.zone}`, title: it.name, text, places: [[it.name, it.q || it.name + ", Mauritius"]], links: it.url ? [[`${traceSite(it.url)} · ${it.name}`, it.url, "trail"]] : [], tags: [["info", [it.diff, it.prog].filter(Boolean).join(" · ")], ...(it.note && it.note !== "—" ? [["info", `Note ${it.note}/20`]] : [])] }
+      : kind === "fall"
+      ? { when: when || "", where: `Cascade · ${it.zone}`, title: it.name, text, places: [[it.name, it.q]], links: it.url ? [[`${traceSite(it.url)} · ${it.name}`, it.url, "trail"]] : [], tags: [["info", `Note ${it.note}/20 · Google ${it.g}`], ...(it.glance && it.glance[0] ? [["info", it.glance[0]]] : [])] }
       : { when: when || "", where: `Plage · ${it.zone}`, title: it.name, text, places: [[it.name, it.q]], tags: [["info", `Note ${it.note}/20 · Google ${it.g}`]] };
     return { n, i: -1, id, s, custom: kind, when: when || "" };
   }
@@ -486,7 +489,7 @@
   function addToDay(id, n, when) {
     const d = G.days[n - 1], acts = dayActs(d);
     if (acts.some((o) => o.id === id)) return toast(`Déjà dans le jour ${n}`);
-    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : G.beaches)[+k];
+    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : kind === "fall" ? G.falls : G.beaches)[+k];
     const x = it && customAct(id, it.name, when, n); if (!x) return;
     insertByTime(acts, x); setOrder(n, acts); savePlan();
     toast(`Ajouté au jour ${n} — voir`, () => go("/jour/" + n));
@@ -515,10 +518,10 @@
   }
   // Ajouter une plage ou une rando à un jour : feuille avec l'heure et la liste des jours
   function openAddSheet(id) {
-    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : G.beaches)[+k]; if (!it) return;
+    const [kind, k] = id.split(":"), it = (kind === "hike" ? allHikes : kind === "fall" ? G.falls : G.beaches)[+k]; if (!it) return;
     const td = todayDay();
     $("#sheetBody").innerHTML = `<h4>Ajouter au programme</h4>
-      <div class="add-head"><b>${esc(it.name)}</b><label>${I.clock}<input type="time" id="addTime" value="${kind === "hike" ? "07:00" : "14:00"}" aria-label="Heure"></label></div>
+      <div class="add-head"><b>${esc(it.name)}</b><label>${I.clock}<input type="time" id="addTime" value="${kind === "hike" ? "07:00" : kind === "fall" ? "09:00" : "14:00"}" aria-label="Heure"></label></div>
       <h4>Quel jour ?</h4>${G.days.map((d) => `<button type="button" class="dl" data-add-day="${d.n}"><span class="n">${dow(d)}<b>${+d.date.slice(8)}</b></span><span class="t">${esc(d.title)}<small>${esc(d.sub)}</small></span>${td && td.n === d.n ? '<span class="today-tag">Aujourd\'hui</span>' : ""}</button>`).join("")}`;
     const sh = showSheet();
     $$("[data-add-day]", sh).forEach((b) => (b.onclick = () => { const t = $("#addTime").value; addToDay(id, +b.dataset.addDay, t ? t.replace(":", "h") : ""); closeSheet(); }));
@@ -1027,12 +1030,12 @@
 
   /* ───────── Plages & randonnées ───────── */
   // Le logement d'où l'on trie est mis en avant
-  const fromStays = (f, hl) => `<div class="from"><span class="pill ${hl === "villa" ? "hl" : ""}">${ico("home", 12)} Villa ${esc(f[0])}</span><span class="pill ${hl === "serge" ? "hl" : ""}">${ico("home", 12)} Trou aux Biches ${esc(f[1])}</span></div>`;
+  const fromStays = (f, hl) => `<div class="from"><span class="pill ${hl === "villa" ? "hl" : ""}">${ico("home", 12)} Villamly ${esc(f[0])}</span><span class="pill ${hl === "serge" ? "hl" : ""}">${ico("home", 12)} Villa Serge ${esc(f[1])}</span></div>`;
   // Tri : par note, par temps de route depuis l'un ou l'autre logement, ou par zone (dans le sens des aiguilles d'une montre depuis le nord)
   const toMin = (s) => { if (/sur place/i.test(s)) return 0; const h = /(\d+)\s*h\s*(\d*)/.exec(s); if (h) return +h[1] * 60 + (+h[2] || 0); const m = /(\d+)\s*min/.exec(s); return m ? +m[1] : 999; };
   const noteNum = (n) => parseFloat(String(n).replace(",", ".")) || 0;
-  const ZONES = ["Nord", "Nord-est", "Est", "Sud-est", "Sud", "Sud-ouest", "Gorges", "Ouest", "Nord-ouest"];
-  const SORTS = { note: "Par note", villa: "Près de la villa", serge: "Près de Trou aux Biches", zone: "Par zone" };
+  const ZONES = ["Nord", "Nord-est", "Est", "Sud-est", "Sud", "Sud-ouest", "Gorges", "Ouest", "Nord-ouest", "Centre"];
+  const SORTS = { note: "Par note", villa: "Près de Villamly", serge: "Près de Villa Serge", zone: "Par zone" };
   const byNote = (a, b) => noteNum(b.note) - noteNum(a.note);
   function sorted(list, by) {
     const l = [...list];
@@ -1083,6 +1086,24 @@
       ${credits(G.beaches)}
     </div>`;
   }
+  // « En un coup d'œil » des cascades : accès à pied, baignade, hauteur de la chute et entrée (champ `glance`)
+  const fglance = (f) => f.glance ? `<dl class="glance">${[[I.walk, "Accès", f.glance[0]], [I.wave, "Baignade", f.glance[1]], [I.up, "Hauteur", f.glance[2]], [I.cash, "Entrée", f.glance[3]]].filter((r) => r[2]).map((r) => `<div><dt>${r[0]}${esc(r[1])}</dt><dd>${esc(r[2])}</dd></div>`).join("")}</dl>` : "";
+  const fallCard = (f, by) => { const d = hikeDay(f); return `<div class="card lc">
+    ${cover(f)}
+    <div class="head"><div><div class="eyebrow">${esc(f.day || f.zone)}</div><h4>${esc(f.name)}</h4></div><div class="score">${esc(f.note)}<small>/20</small></div></div>
+    <div class="meta">${f.g ? `<span>Google ${esc(f.g)}</span>` : ""}${f.prog ? `<span>${esc(f.prog)}</span>` : ""}</div><div class="see">${esc(f.see)}</div>${fglance(f)}
+    ${f.warn ? `<div class="warn">⚠ ${esc(f.warn)}</div>` : ""}${fromStays(f.from, by)}
+    <div class="card-actions cols"><a class="btn sm primary" ${ext(dirUrl(f.q))}>${I.nav}Y aller</a><a class="btn sm" ${ext(searchUrl(f.q))}>${I.map}Carte</a><a class="btn sm" ${ext("https://www.google.com/search?tbm=isch&q=" + encodeURIComponent(f.q + " Mauritius"))}>${I.photo}Photos</a>${f.url ? `<a class="btn sm" ${ext(f.url)}>${I.boot}Trace ${traceSite(f.url)}</a>` : ""}${d ? `<a class="btn sm" href="/jour/${d.n}">${I.route}Jour ${d.n}</a>` : ""}${canEdit() ? `<button type="button" class="btn sm" data-add="fall:${G.falls.indexOf(f)}">${I.plus}Ajouter à un jour</button>` : ""}</div></div>`; };
+  function pageFalls() {
+    const by = store.get("sort:cascades", "note"), list = sorted(G.falls, by), card = (f) => fallCard(f, by);
+    return `<div class="container">${pageHead("", "Cascades et piscines naturelles", `Les ${G.falls.length} chutes et vasques où l'on marche, on regarde ou l'on se baigne ; note Google convertie sur 20 (note /5 × 4), temps de route depuis chaque logement.`)}
+      ${sortBar("cascades", by)}
+      ${by === "zone" ? grouped(list, card) : `<div class="grid c3">${list.map(card).join("")}</div>`}
+      <div class="callout"><span class="k">Pour choisir</span><span>${esc(G.fallsNote)}</span></div>
+      <div class="callout warn"><span class="k">Après la pluie</span><span>${esc(G.fallsWarn)}</span></div>
+      ${credits(G.falls)}
+    </div>`;
+  }
   function pageHikes() {
     const by = store.get("sort:randos", "prog"), all = [...G.hikes, ...G.hikesMore], card = (h) => hikeCard(h, by);
     const body = by === "prog"
@@ -1104,7 +1125,7 @@
   function pageAnnex() {
     const total = G.cash.reduce((a, r) => a + r[3], 0);
     return `<div class="container">${pageHead("", "Annexes", "Numéros d'urgence, lexique créole, plats à goûter et cash à prévoir.")}
-      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#lexique">Lexique</a><a href="/menu#a-gouter">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a><a href="/plages">Plages</a><a href="/randos">Randonnées</a></nav>
+      <nav class="chips"><a href="/annexes#urgences">Urgences</a><a href="/annexes#contacts">Contacts</a><a href="/annexes#lexique">Lexique</a><a href="/menu#a-gouter">Plats</a><a href="/annexes#cash">Cash</a><a href="/annexes#outils">Outils</a><a href="/plages">Plages</a><a href="/randos">Randonnées</a><a href="/cascades">Cascades</a></nav>
       ${section("urgences", "Annexes", "Urgences", "", `<div class="tels">${tels(G.emergency, 3)}</div><div class="callout warn"><span class="k">À recontrôler</span><span>${esc(G.emergencyNote)}</span></div>`)}
       ${section("contacts", "Annexes", "Numéros des activités", "Les prestataires réservés : un appel ou un WhatsApp le matin même si besoin.", `<div class="tels">${tels(G.contacts)}</div>`)}
       ${section("lexique", "Annexes", "Mini-lexique créole", esc(G.lexiconNote), `<div class="lex">${G.lexicon.map(([fr, kr]) => `<div><small>${esc(fr)}</small><b>${esc(kr)}</b></div>`).join("")}</div>`)}
@@ -1199,6 +1220,7 @@
         <div class="menu-group"><span class="eyebrow">Accès rapide</span><div class="menu-list">
           ${item("/plages", "beach", "Les plages", `${G.beaches.length} plages notées, avec « Y aller »`)}
           ${item("/randos", "boot", "Les randonnées", "Fiches, traces et temps de route")}
+          ${item("/cascades", "drop", "Les cascades", "Chutes et piscines naturelles, avec « Y aller »")}
           ${item("/annexes#cash", "cash", "Cash à prévoir", G.cashTotals.group + " pour le groupe")}
           ${item("/annexes#lexique", "lex", "Lexique créole", "Bonzour, mersi boukou…")}
           ${item("/menu#a-gouter", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
@@ -1236,19 +1258,29 @@
   const choiceDay = () => { const s = store.get("choix:day", ""); if (G.days.some((d) => d.date === s)) return s; const t = isoMU(nowMs() + 864e5); return G.days.some((d) => d.date === t) ? t : G.days[0].date; };
   const dayAt = (iso, n, long) => new Date(Date.parse(iso + "T12:00:00+04:00") + n * 864e5).toLocaleDateString("fr-FR", long ? { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" } : { timeZone: "Indian/Mauritius", weekday: "short", day: "numeric" });
   const fmtTime = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t); return m ? `${+m[1]}h${m[2] === "00" ? "" : m[2]}` : ""; }; // « 19:30 » → « 19h30 », « 19:00 » → « 19h »
+  const fmtRs = (n) => `${n.toLocaleString("fr-FR")} Rs`;
+  // Prix d'un plat choisi : « Plat · variante » renvoie au plat de la carte (les salades sont au prix par personne)
+  const dishPrice = (label) => { const it = G.menu.sections.flatMap((s) => s.items).find((i) => i.name === String(label).split(" · ")[0]); return it ? it.rs : 0; };
+  // Sur mobile, les lignes longues se replient et les retours à la ligne se perdent : une ligne par plat (quantité,
+  // prix) sous « Commande globale », puis le prénom en gras de chacun sous « Détail par personne »
   const choicesText = () => {
     const d0 = choiceDay(), dayLabel = (n) => dayAt(d0, n - 1, true);
     const cast = [...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr"));
-    const blocks = [["Demain", 1], ["Après-demain", 2]].map(([label, col]) => {
+    const built = [["Demain", 1], ["Après-demain", 2]].map(([label, col]) => {
       const rows = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]).filter(([, c]) => c.d);
-      if (!rows.length) return "";
-      const count = (key, lower) => { const m = new Map(); rows.forEach(([, c]) => { if (c[key]) { const k = lower ? c[key].toLowerCase() : c[key]; m.set(k, (m.get(k) || 0) + 1); } }); return [...m].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${n} × ${k}`).join(", "); };
-      const sides = count("s", true), time = fmtTime(store.get(`choix:time:${col}`, ""));
-      return [`*${label}, ${dayLabel(col)} — commande pour ${rows.length} personne${rows.length > 1 ? "s" : ""}*`, time ? `Livraison souhaitée : ${time}` : "", `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
-        ...rows.map(([name, c]) => `– ${name} : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`)].filter(Boolean).join("\n");
+      if (!rows.length) return null;
+      const counts = (key, lower) => { const m = new Map(); rows.forEach(([, c]) => { if (c[key]) { const k = lower ? c[key].toLowerCase() : c[key]; m.set(k, (m.get(k) || 0) + 1); } }); return [...m].sort((a, b) => b[1] - a[1]); };
+      const sub = rows.reduce((a, [, c]) => a + dishPrice(c.d), 0), time = fmtTime(store.get(`choix:time:${col}`, "")), sides = counts("s", true);
+      const lines = [`*${label}, ${dayLabel(col)} — commande pour ${rows.length} personne${rows.length > 1 ? "s" : ""}*`, time ? `Livraison souhaitée : ${time}` : null, "",
+        "*Commande globale*", ...counts("d").map(([k, n]) => `${n} × ${k} — ${fmtRs(n * dishPrice(k))}`), sides.length ? `Avec ${sides.map(([k, n]) => `${n} × ${k}`).join(", ")}` : null, `Sous-total : ${fmtRs(sub)}`, "",
+        "*Détail par personne*", ...rows.map(([name, c]) => `*${name}* : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`)].filter((l) => l !== null);
+      return { lines, sub };
     }).filter(Boolean);
+    if (!built.length) return "";
+    const multi = built.length > 1, total = built.reduce((a, b) => a + b.sub, 0);
+    const blocks = built.map((b) => (multi ? b.lines : b.lines.filter((l) => !l.startsWith("Sous-total"))).join("\n")); // un seul jour : le sous-total serait le total
     const hello = store.get("choix:friend", false) ? "Bonjour Sheila, je suis un copain de Mathieu. Voici notre commande pour les prochains dîners." : "Bonjour Sheila, voici notre commande pour les prochains dîners.";
-    return blocks.length ? `${hello}\n\n${blocks.join("\n\n")}\n\nMerci !` : "";
+    return `${hello}\n\n${blocks.join("\n\n")}\n\n*Total : ${fmtRs(total)}*\n\nMerci !`;
   };
 
   function pageMenu() {
@@ -1494,7 +1526,7 @@
     "/todo": [pageTodo, "To-do"], "/todo/checklist": [pageChecklist, "Checklist"], "/todo/voiture": [pageCar, "Voiture"],
     "/todo/a-reserver": [pageToBook, "À réserver"], "/todo/a-verifier": [pageToCheck, "Points à vérifier"],
     "/infos": [pageInfo, "Infos pratiques"], "/convertisseur": [pageConverter, "Convertisseur"], "/bons-plans": [pageTips, "Bons plans"],
-    "/plages": [pageBeaches, "Plages"], "/randos": [pageHikes, "Randonnées"],
+    "/plages": [pageBeaches, "Plages"], "/randos": [pageHikes, "Randonnées"], "/cascades": [pageFalls, "Cascades"],
     "/annexes": [pageAnnex, "Annexes"], "/notes": [pageNotes, "Notes"], "/bienvenue": [pageWelcome, "Bienvenue"],
     "/installer": [pageInstall, "Installer"], "/plus": [pagePlus, "Plus"],
     "/menu": [pageMenu, "Menu Morisyen"], "/commander": [pageOrder, "Commander"], "/edition": [pageEdit, "Édition partagée"]

@@ -525,6 +525,36 @@
     -20.162,
     57.609
    ]
+  },
+  "Chamarel Waterfall, Mauritius": {
+   "ll": [
+    -20.44305,
+    57.38598
+   ],
+   "name": "Chamarel Waterfalls, Baie du Cap VCA"
+  },
+  "Rochester Falls, Souillac, Mauritius": {
+   "ll": [
+    -20.50258,
+    57.51696
+   ],
+   "name": "Rochester Falls, Souillac"
+  },
+  "Alexandra Falls Viewpoint, Mauritius": {
+   "ll": [
+    -20.43411,
+    57.45733
+   ],
+   "name": "Alexandra Falls, Plaine Champagne Road"
+  },
+  "Eau Bleu Waterfall, Cluny, Mauritius": {
+   "miss": true
+  },
+  "GRSE Waterfall, Mauritius": {
+   "miss": true
+  },
+  "Cascade Leon, Mauritius": {
+   "miss": true
   }
  },
  "routes": {

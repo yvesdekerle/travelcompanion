@@ -33,6 +33,10 @@ const FIX = {
   "La Prairie Public Beach, Mauritius": [-20.4846, 57.3600],
   "Vanill Art Chamouny, Mauritius": [-20.4813, 57.4677],
   "Cascade 500 Pieds Chamouny, Mauritius": [-20.4586, 57.4698],
+  // Cascades absentes de Nominatim : repères Google Maps (Eau Bleue, Cascade Léon) et départ du sentier OSM (GRSE)
+  "Eau Bleu Waterfall, Cluny, Mauritius": [-20.3719, 57.6239],
+  "GRSE Waterfall, Mauritius": [-20.2796, 57.7749],
+  "Cascade Leon, Mauritius": [-20.4794, 57.5203],
   "Pointe Jerome Embarkation Point, Mahebourg, Mauritius": [-20.4196, 57.7258],
   "Exploration Sous-Marine Flic en Flac, Mauritius": [-20.2891, 57.3672],
   "Corail Helicopteres Triolet, Mauritius": [-20.0611, 57.5480],
@@ -95,8 +99,8 @@ function dayStops(d) {
 }
 const queries = new Set([VILLA, SERGE, AIRPORT]);
 G.days.forEach((d) => d.steps.forEach((s) => { (s.places || []).forEach(([, q]) => queries.add(q)); (s.sea || []).forEach((q) => queries.add(q)); }));
-// Plages et randonnées, ajoutables au programme depuis l'application : un lieu introuvable n'est pas bloquant
-const extra = new Set([...G.beaches.map((b) => b.q), ...[...G.hikes, ...G.hikesMore].map((h) => h.q).filter(Boolean)]);
+// Plages, randonnées et cascades, ajoutables au programme depuis l'application : un lieu introuvable n'est pas bloquant
+const extra = new Set([...G.beaches.map((b) => b.q), ...[...G.hikes, ...G.hikesMore].map((h) => h.q).filter(Boolean), ...(G.falls || []).map((f) => f.q)]);
 const allQueries = new Set([...queries, ...extra]);
 
 /* 1. Coordonnées */

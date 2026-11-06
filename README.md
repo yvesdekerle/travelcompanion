@@ -36,6 +36,7 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/todo`, `/todo/checklist`, `/todo/voiture`, `/todo/a-reserver`, `/todo/a-verifier` | Tout ce qui se coche |
 | `/plages` | Les 17 plages notées, chacune avec sa photo et son « coup d'œil » (affluence, baignade, clarté de l'eau, sable), triables par note, par temps de route depuis chaque logement ou par zone ; lien vers la fiche Mauritius Beach Life |
 | `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo et « coup d'œil » (distance, dénivelé, durée, note de la fiche AllTrails, Wikiloc ou Visorando), mêmes tris |
+| `/cascades` | Les cascades et piscines naturelles (7 cascades, Chamarel, Rochester, Alexandra, 500 pieds, Eau Bleue, GRSE, Eureka, Cascade Léon), avec photo, « coup d'œil » (accès à pied, baignade, hauteur, entrée), note Google convertie sur 20, lien vers le jour du programme, mêmes tris |
 | `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
 | `/commander` | Les plats de chacun pour Sheila sur deux jours, l'heure de livraison souhaitée, le message prêt pour WhatsApp |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
@@ -57,7 +58,10 @@ copain de Mathieu » dans le message » (clé `choix:friend`) complète la salut
 (un lien de groupe n'accepte pas de texte prérempli ; « Ouvrir le groupe » pointe sur `menu.group` dans data.js).
 Le message : « Bonjour Sheila » (suivi de « je suis un copain de Mathieu » si la case est cochée), puis pour chaque
 jour où quelqu'un a choisi, « commande pour x personnes », « Livraison souhaitée : 19h30 » si une heure est saisie,
-le total par plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas.
+« Commande globale » (une ligne par plat : quantité et prix de la carte, les salades au prix par personne, puis les
+accompagnements), « Détail par personne » (prénom en gras), un sous-total par jour quand il y en a deux et
+« Total : x Rs » à la fin ; ceux qui ne prennent rien n'apparaissent pas. Une ligne par plat, parce que sur mobile les
+lignes longues se replient et les retours à la ligne ne se voient plus.
 « Voir le message » l'affiche sous le bouton, et il suit chaque changement. Les `<select>` sont écoutés sur `change`
 (Safari iOS ne lève pas toujours `input`).
 
