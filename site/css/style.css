@@ -799,19 +799,28 @@ a.tl:hover { color: var(--brand-ink); }
 /* Photo du plat sous le descriptif, aussi large que le texte ; un toucher ouvre la visionneuse */
 .dish .ph { grid-column: 2; width: 100%; max-width: 70ch; margin-top: 12px; aspect-ratio: 3 / 2; border-radius: 12px; object-fit: cover; background: var(--bg); cursor: zoom-in; }
 @media (min-width: 720px) { .dish .ph { aspect-ratio: 5 / 2; } }
-/* Choix des dîners : une ligne par personnage, colonnes Demain / Après-demain (plat, accompagnement, piment) */
+/* Commander (page /commander) : une ligne par personnage, colonnes Demain / Après-demain (plat, accompagnement,
+   piment), l'heure de livraison souhaitée en première ligne */
 .choices .choice-head, .choices .choice-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .choices .choice-head { position: sticky; top: 0; z-index: 5; padding: 8px 12px 6px; margin: 0 0 6px; background: rgba(245, 241, 232, .94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .choices .choice-head span { font: 600 13px/1.3 var(--label); color: var(--ink-2); }
 .choices .choice-head small { display: block; font: 500 12px/1.3 var(--sans); color: var(--muted); }
-/* Jour du premier dîner : liste des jours du voyage, demain par défaut */
-.choices .choice-day { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; color: var(--ink-2); }
+/* Options en tête : jour du premier dîner (liste des jours du voyage, demain par défaut) et « copain de Mathieu » */
+.choices .choice-opts { display: grid; gap: 10px; margin-bottom: 14px; }
+.choices .choice-day { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); }
 .choices .choice-day select { width: auto; flex: 1; max-width: 240px; }
+.choices .choice-opt { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); cursor: pointer; }
 .choices .choice-rows { display: grid; gap: 8px; }
 .choices .choice-row { padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); align-items: center; }
 .choices .who { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
 .choices .who img { height: 76px; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(26, 43, 61, .16)); }
 .choices .who b { font: 600 13px/1.2 var(--serif); color: var(--ink); text-align: center; }
+/* Première ligne : heure de livraison souhaitée pour chaque jour */
+.choices .delivery .who { color: var(--muted); gap: 2px; }
+.choices .delivery .who svg { width: 22px; height: 22px; }
+.choices input[type="time"] { width: 100%; min-width: 0; height: 34px; appearance: none; -webkit-appearance: none; border: 1px solid var(--line-2); border-radius: 9px; background: var(--surface); color: var(--ink); font: 500 13px var(--sans); padding: 0 9px; }
+.choices input[type="time"]::-webkit-date-and-time-value { text-align: left; }
+.choices input[type="time"]:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
 .choices .pick { display: grid; gap: 6px; min-width: 0; }
 .choices select { width: 100%; min-width: 0; appearance: none; -webkit-appearance: none; height: 34px; border: 1px solid var(--line-2); border-radius: 9px; color: var(--ink); font: 500 13px var(--sans); padding: 0 24px 0 9px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; cursor: pointer;
   background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8594' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 7px center / 13px; }
@@ -835,6 +844,8 @@ a.tl:hover { color: var(--brand-ink); }
   .choices .who img { height: 64px; }
   .choices .who b { font-size: 12px; }
   .choices select { font-size: 12px; padding: 0 20px 0 7px; height: 32px; background-position: right 5px center; }
+  .choices input[type="time"] { font-size: 12px; height: 32px; padding: 0 7px; }
+  .choices .delivery .who b { font-size: 11px; }
   .choices .chili { flex-direction: column; align-items: flex-start; gap: 0; }
   .choices .dot { width: 26px; height: 28px; }
 }

@@ -37,23 +37,29 @@ HTML, CSS et JavaScript natifs : pas de framework, pas de dépendance, pas de bu
 | `/plages` | Les 17 plages notées, chacune avec sa photo et son « coup d'œil » (affluence, baignade, clarté de l'eau, sable), triables par note, par temps de route depuis chaque logement ou par zone ; lien vers la fiche Mauritius Beach Life |
 | `/randos` | Les randonnées du programme (lien vers le jour) et d'autres idées, avec photo et « coup d'œil » (distance, dénivelé, durée, note de la fiche AllTrails, Wikiloc ou Visorando), mêmes tris |
 | `/menu` | Le Menu Morisyen de Catering Sheila (plats, prix en roupies et en euros, une couleur et un picto par section comme sur la carte imprimée), commande sur WhatsApp ; en dessous, la liste « À goûter à Maurice » à cocher |
+| `/commander` | Les plats de chacun pour Sheila sur deux jours, l'heure de livraison souhaitée, le message prêt pour WhatsApp |
 | `/edition` | Édition partagée : prénom, jeton GitHub, jours dont l'ordre a été modifié |
 | `/infos`, `/convertisseur`, `/bons-plans`, `/annexes`, `/notes`, `/bienvenue`, `/installer`, `/plus` | Le reste du guide |
 
 La liste « À goûter à Maurice » (entrées, plats, desserts, boissons) a une case par plat, cochée sur l'appareil, avec
 un compteur par catégorie ; elle est sous le menu de Sheila (`/menu#a-gouter`), plus dans les annexes.
 
-Tout en bas du menu, « Choix » (`/menu#choix`) : une ligne par personnage du groupe (ordre alphabétique, dessin et
-prénom), deux colonnes « Demain » et « Après-demain » (le jour de « Demain » se choisit parmi les jours du voyage,
-demain par défaut, clé `choix:day` ; la date est affichée sous chaque colonne), chacune avec un plat de la carte de Sheila (une entrée par
-variante : « Porc ou poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et cinq piments à toucher
-(niveau 0 à 5 ; pas de curseur, sur iOS le glissé déclenchait la sélection de texte). Les choix sont enregistrés sur
-l'appareil (clés `choix:<personnage>:<colonne>`), pas partagés. Le bouton « Envoyer la commande sur WhatsApp » ouvre
+La page « Commander » (`/commander`, entrée de navigation juste après Menu ; l'ancien `/menu#choix` y renvoie) :
+une ligne par personnage du groupe (ordre alphabétique, dessin et prénom), deux colonnes « Demain » et
+« Après-demain » (le jour de « Demain » se choisit parmi les jours du voyage, demain par défaut, clé `choix:day` ; la
+date est affichée sous chaque colonne), chacune avec un plat de la carte de Sheila (une entrée par variante : « Porc ou
+poulet » en fait deux), l'accompagnement (riz blanc, pain, les deux) et cinq piments à toucher (niveau 0 à 5 ; pas de
+curseur, sur iOS le glissé déclenchait la sélection de texte). La première ligne, « Livraison », reçoit l'heure
+souhaitée pour chaque jour (`<input type="time">`, clés `choix:time:<colonne>`). Une case « Préciser « je suis un
+copain de Mathieu » dans le message » (clé `choix:friend`) complète la salutation. Tout est enregistré sur l'appareil
+(clés `choix:<personnage>:<colonne>`), pas partagé. Le bouton « Envoyer la commande sur WhatsApp » ouvre
 `wa.me/?text=…` sans numéro : WhatsApp s'ouvre avec le message prêt et laisse choisir la discussion, groupe compris
 (un lien de groupe n'accepte pas de texte prérempli ; « Ouvrir le groupe » pointe sur `menu.group` dans data.js).
-Le message : pour chaque jour où quelqu'un a choisi, « commande pour x personnes », le total par plat et par
-accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas. « Voir le message »
-l'affiche sous le bouton. Les `<select>` sont écoutés sur `change` (Safari iOS ne lève pas toujours `input`).
+Le message : « Bonjour Sheila » (suivi de « je suis un copain de Mathieu » si la case est cochée), puis pour chaque
+jour où quelqu'un a choisi, « commande pour x personnes », « Livraison souhaitée : 19h30 » si une heure est saisie,
+le total par plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas.
+« Voir le message » l'affiche sous le bouton, et il suit chaque changement. Les `<select>` sont écoutés sur `change`
+(Safari iOS ne lève pas toujours `input`).
 
 Clin d'œil : trois touchers rapides n'importe où (appuis brefs, pas un défilement) font surgir un personnage du
 groupe (dessins dans `site/img/p/`, liste `cast` dans data.js) avec une animation tirée au sort parmi seize (CSS

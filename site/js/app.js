@@ -2,7 +2,7 @@
    Une URL par page :
    /  (aujourd'hui)   /jour/3   /reservations   /logements   /todo   /todo/checklist   /todo/voiture
    /todo/a-reserver   /todo/a-verifier   /infos   /convertisseur   /plages   /randos   /bons-plans
-   /annexes   /notes   /bienvenue   /installer   /plus   /menu   /edition */
+   /annexes   /notes   /bienvenue   /installer   /plus   /menu   /commander   /edition */
 (function () {
   "use strict";
   const G = window.GUIDE;
@@ -80,6 +80,7 @@
     people: sv('<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19v-1.2a4.5 4.5 0 0 1 4.5-4.5h2a4.5 4.5 0 0 1 4.5 4.5V19"/><path d="M15.5 4.6a3.2 3.2 0 0 1 0 6.4"/><path d="M17.3 13.4a4.5 4.5 0 0 1 3.2 4.3V19"/>'),
     drop: sv('<path d="M12 3.5s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11z"/>'),
     clock: sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+    bag: sv('<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'),
     down: sv('<path d="M12 5v14M19 12l-7 7-7-7"/>'),
     undo: sv('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
     key: sv('<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M15 7l3 3M12 10l3 3"/>'),
@@ -227,6 +228,7 @@
     beaches: { href: "/plages", t: "Plages", i: "beach" },
     hikes: { href: "/randos", t: "Randos", i: "boot" },
     menu: { href: "/menu", t: "Menu", i: "food" },
+    order: { href: "/commander", t: "Commander", i: "bag" },
     stays: { href: "/logements", t: "Logements", i: "bed" },
     todo: { href: "/todo", t: "To-do", i: "todo", match: (p) => p.startsWith("/todo") },
     info: { href: "/infos", t: "Infos", i: "info" },
@@ -234,10 +236,11 @@
     more: { href: "/plus", t: "Plus", i: "more", match: (p) => ["/plus", "/bons-plans", "/notes", "/bienvenue", "/installer", "/edition"].includes(p) }
   };
   // Avant l'atterrissage, la to-do est en 5e position ; une fois sur place, elle passe en dernier.
-  // Le menu de Sheila reste dans la partie visible de la barre du bas (4e avant l'arrivée, 5e ensuite).
+  // Le menu de Sheila reste dans la partie visible de la barre du bas (4e avant l'arrivée, 5e ensuite), la commande
+  // juste après lui.
   const NAV_ORDER = () => (nowMs() < ARRIVAL
-    ? ["route", "maps", "conv", "menu", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
-    : ["route", "maps", "conv", "booked", "menu", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
+    ? ["route", "maps", "conv", "menu", "order", "todo", "beaches", "hikes", "booked", "stays", "info", "annex", "more"]
+    : ["route", "maps", "conv", "booked", "menu", "order", "beaches", "hikes", "stays", "info", "annex", "more", "todo"]).map((k) => NAV_ITEMS[k]);
   const bar = $("#tabbar");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   let barKey = "";
@@ -263,7 +266,7 @@
   topnav.addEventListener("click", (e) => { if (Date.now() - navDragged < 300) { e.preventDefault(); e.stopPropagation(); } }, true);
   function renderNav(path) {
     const NAV = NAV_ORDER();
-    // Libellés courts (Convertir, Résas) : les douze entrées tiennent alors sur une ligne dans le conteneur de 1 200 px
+    // Libellés courts (Convertir, Résas) : les treize entrées tiennent alors sur une ligne dans le conteneur de 1 200 px
     const lbl = (n) => `<span title="${esc(n.tl || n.t)}">${n.t}</span>`;
     $("#topnav").innerHTML = NAV.map((n) => { const on = n.match ? n.match(path) : path === n.href; return n.sheet ? `<button type="button" data-sheet="${n.sheet}">${lbl(n)}</button>` : `<a href="${n.href}" class="${on ? "active" : ""}">${lbl(n)}</a>`; }).join("");
     $$("#topnav [data-sheet]").forEach((b) => (b.onclick = openMapsSheet));
@@ -1200,6 +1203,7 @@
           ${item("/annexes#lexique", "lex", "Lexique créole", "Bonzour, mersi boukou…")}
           ${item("/menu#a-gouter", "food", "Plats à goûter", "Dholl puri, alouda, rougaille…")}
           ${item("/menu", "food", "Menu Morisyen", "La carte de Sheila, commande sur WhatsApp")}
+          ${item("/commander", "bag", "Commander à Sheila", "Les plats de chacun, envoyés sur WhatsApp")}
         </div></div>
       </div></div>`;
   }
@@ -1221,14 +1225,17 @@
     document.body.appendChild(box); box.querySelector(".x").focus();
   };
 
-  // Récapitulatif des choix (message pour le groupe WhatsApp) : pour chaque jour où quelqu'un a choisi, « commande
-  // pour x personnes », le total par plat et par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien
-  // n'apparaissent pas. Chaîne vide si personne n'a rien choisi
+  // Récapitulatif de la commande (message pour le groupe WhatsApp) : « Bonjour Sheila » (avec « je suis un copain de
+  // Mathieu » si l'option est cochée, clé choix:friend), puis pour chaque jour où quelqu'un a choisi, « commande pour
+  // x personnes », l'heure de livraison souhaitée si elle est saisie (clé choix:time:<colonne>), le total par plat et
+  // par accompagnement, puis la ligne de chacun ; ceux qui ne prennent rien n'apparaissent pas. Chaîne vide si
+  // personne n'a rien choisi
   // Jour de la colonne « Demain » : choisi parmi les jours du voyage (clé choix:day), demain par défaut ;
   // « Après-demain » est le lendemain de ce jour
   const isoMU = (ms) => new Intl.DateTimeFormat("en-CA", { timeZone: "Indian/Mauritius", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(ms));
   const choiceDay = () => { const s = store.get("choix:day", ""); if (G.days.some((d) => d.date === s)) return s; const t = isoMU(nowMs() + 864e5); return G.days.some((d) => d.date === t) ? t : G.days[0].date; };
   const dayAt = (iso, n, long) => new Date(Date.parse(iso + "T12:00:00+04:00") + n * 864e5).toLocaleDateString("fr-FR", long ? { timeZone: "Indian/Mauritius", weekday: "long", day: "numeric", month: "long" } : { timeZone: "Indian/Mauritius", weekday: "short", day: "numeric" });
+  const fmtTime = (t) => { const m = /^(\d{1,2}):(\d{2})/.exec(t); return m ? `${+m[1]}h${m[2] === "00" ? "" : m[2]}` : ""; }; // « 19:30 » → « 19h30 », « 19:00 » → « 19h »
   const choicesText = () => {
     const d0 = choiceDay(), dayLabel = (n) => dayAt(d0, n - 1, true);
     const cast = [...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr"));
@@ -1236,11 +1243,12 @@
       const rows = cast.map(([f, name]) => [name, store.get(`choix:${f}:${col}`, {})]).filter(([, c]) => c.d);
       if (!rows.length) return "";
       const count = (key, lower) => { const m = new Map(); rows.forEach(([, c]) => { if (c[key]) { const k = lower ? c[key].toLowerCase() : c[key]; m.set(k, (m.get(k) || 0) + 1); } }); return [...m].sort((a, b) => b[1] - a[1]).map(([k, n]) => `${n} × ${k}`).join(", "); };
-      const sides = count("s", true);
-      return [`*${label}, ${dayLabel(col)} — commande pour ${rows.length} personne${rows.length > 1 ? "s" : ""}*`, `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
+      const sides = count("s", true), time = fmtTime(store.get(`choix:time:${col}`, ""));
+      return [`*${label}, ${dayLabel(col)} — commande pour ${rows.length} personne${rows.length > 1 ? "s" : ""}*`, time ? `Livraison souhaitée : ${time}` : "", `Total : ${count("d")}`, sides ? `Accompagnements : ${sides}` : "",
         ...rows.map(([name, c]) => `– ${name} : ${c.d}${c.s ? ", " + c.s.toLowerCase() : ""}, ${+c.p ? `piment ${+c.p}/5` : "sans piment"}`)].filter(Boolean).join("\n");
     }).filter(Boolean);
-    return blocks.length ? `Bonjour, voici notre commande pour les prochains dîners.\n\n${blocks.join("\n\n")}\n\nMerci !` : "";
+    const hello = store.get("choix:friend", false) ? "Bonjour Sheila, je suis un copain de Mathieu. Voici notre commande pour les prochains dîners." : "Bonjour Sheila, voici notre commande pour les prochains dîners.";
+    return blocks.length ? `${hello}\n\n${blocks.join("\n\n")}\n\nMerci !` : "";
   };
 
   function pageMenu() {
@@ -1248,9 +1256,28 @@
     // Chaque section garde la couleur et le picto de la carte imprimée (astérisque bleu, hibiscus rouge, feuille verte)
     const dish = (it, ic) => `<div class="dish"><i class="pic">${ic}</i><div class="dish-top"><div><h4>${esc(it.name)}</h4>${it.opt ? `<div class="opt">${esc(it.opt)}</div>` : ""}</div>
       <div class="price"><b>${it.rs.toLocaleString("fr-FR")} Rs</b><small>≈ ${eur(it.rs)} €${it.per ? " · par pers." : ""}</small></div></div><p>${esc(it.text)}</p>${it.pic ? plate(it.pic, it.name, it.credit) : ""}</div>`;
-    // Choix des deux prochains dîners : une ligne par personnage (ordre alphabétique), colonnes Demain / Après-demain,
-    // chacune avec un plat de la carte (une entrée par variante : « Porc ou poulet » en fait deux), l'accompagnement et
-    // le piment de 0 à 5. Enregistré sur l'appareil (clé choix:<personnage>:<colonne>)
+    // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
+    const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
+    return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
+      <div class="menu-page">
+        <div class="strokes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="card order"><div><h3>Commander</h3><p class="text">${linkify(m.order)}</p></div>
+          <div class="card-actions"><a class="btn wa" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a><a class="btn" href="/commander">${I.bag}Les plats de chacun</a></div></div>
+        ${m.sections.map((sec, k) => `<section class="section menu-sec ${sec.tone}" id="menu-${k + 1}"><h2><i>${I[sec.icon]}</i>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map((it) => dish(it, I[sec.icon])).join("")}</div></section>`).join("")}
+        <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
+        <hr class="rule">
+        ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
+        ${photoCredits}
+      </div></div>`;
+  }
+
+  /* ───────── Commander : les plats de chacun pour Sheila ───────── */
+  // Une ligne par personnage (ordre alphabétique), colonnes Demain / Après-demain, chacune avec un plat de la carte
+  // (une entrée par variante : « Porc ou poulet » en fait deux), l'accompagnement et le piment de 0 à 5 ; en première
+  // ligne, l'heure de livraison souhaitée pour chaque jour. Tout est enregistré sur l'appareil (clés
+  // choix:<personnage>:<colonne>, choix:time:<colonne>, choix:day et choix:friend), pas partagé
+  function pageOrder() {
+    const m = G.menu;
     const dishOptions = m.sections.map((sec) => [sec.title, sec.items.flatMap((it) => {
       const o = it.opt || "";
       if (/sur demande/.test(o)) return [it.name, `${it.name} · végétarienne`];
@@ -1262,27 +1289,21 @@
       ${sel("dish-sel", c.d || "", "Plat", dishOptions)}
       ${sel("side-sel", c.s || "", "Accompagnement", [["Avec", ["Riz blanc", "Pain", "Riz blanc et pain"]]])}
       <div class="chili" role="group" aria-label="Piment de 0 à 5"><span>Piment <b>${p}</b>/5</span><div class="dots">${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="dot ${n <= p ? "on" : ""}" data-p="${n}" aria-label="Piment ${n} sur 5" aria-pressed="${n <= p}">${I.chili}</button>`).join("")}</div></div></div>`; };
+    const timeCell = (col) => `<input type="time" class="time-sel" data-col="${col}" value="${esc(store.get(`choix:time:${col}`, ""))}" aria-label="Heure de livraison ${col === 1 ? "demain" : "après-demain"}">`;
     const d0 = choiceDay();
-    const choices = `<div class="choices">
-      <label class="choice-day">Demain, c'est le <select id="choiceDay" aria-label="Jour du premier dîner">${G.days.map((d) => `<option value="${d.date}" ${d.date === d0 ? "selected" : ""}>${esc(d.label.toLowerCase())}</option>`).join("")}</select></label>
-      <div class="choice-head"><span></span><span>Demain<small>${dayAt(d0, 0)}</small></span><span>Après-demain<small>${dayAt(d0, 1)}</small></span></div>
-      <div class="choice-rows">${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}</div>
-      <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a></div>
-      <p class="hint">WhatsApp s'ouvre avec le message prêt : choisis le groupe dans la liste des discussions. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre></div>`;
-    // Crédits des photos : plats de Sheila (champ credit) et lignes « À goûter » ([nom, desc, photo, crédit])
-    const photoCredits = credits([...m.sections.flatMap((s) => s.items), ...G.food.flatMap(([, rows]) => rows.filter((r) => r[3]).map(([name, , , credit]) => ({ name, credit })))]);
-    return `<div class="container">${pageHead("", esc(m.title), `${esc(m.by)}. ${esc(m.intro)}`)}
-      <div class="menu-page">
-        <div class="strokes" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <div class="card order"><div><h3>Commander</h3><p class="text">${linkify(m.order)}</p></div>
-          <div class="card-actions"><a class="btn wa" ${ext(waUrl(m.wa))}>${I.wa}Commander sur WhatsApp</a><a class="btn" href="tel:${m.tel}">${I.phone}Appeler Sheila</a></div></div>
-        ${m.sections.map((sec, k) => `<section class="section menu-sec ${sec.tone}" id="menu-${k + 1}"><h2><i>${I[sec.icon]}</i>${esc(sec.title)}</h2>${sec.note ? `<p class="lede">${esc(sec.note)}</p>` : ""}<div class="dishes">${sec.items.map((it) => dish(it, I[sec.icon])).join("")}</div></section>`).join("")}
-        <p class="hint">Carte de novembre 2026 ; conversion au taux du carnet, 1 € ≈ ${String(G.rate).replace(".", ",")} Rs.</p>
-        <hr class="rule">
-        ${section("a-gouter", "", "À goûter à Maurice", esc(G.foodIntro), foodCards())}
-        <hr class="rule">
-        ${section("choix", "", "Choix", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement et la force du piment. Enregistré sur ce téléphone ; le bouton du bas envoie la commande sur WhatsApp, le total puis le détail par personne.", choices)}
-        ${photoCredits}
+    return `<div class="container">${pageHead("", "Commander", "Ce que chacun commande à Sheila pour les deux prochains dîners : le plat, l'accompagnement, la force du piment et l'heure à laquelle on veut être livrés. Enregistré sur ce téléphone ; le bouton du bas envoie la commande sur WhatsApp, le total puis le détail par personne.")}
+      <div class="choices">
+        <div class="choice-opts">
+          <label class="choice-day">Demain, c'est le <select id="choiceDay" aria-label="Jour du premier dîner">${G.days.map((d) => `<option value="${d.date}" ${d.date === d0 ? "selected" : ""}>${esc(d.label.toLowerCase())}</option>`).join("")}</select></label>
+          <label class="choice-opt"><input class="chk" type="checkbox" id="choiceFriend" ${store.get("choix:friend", false) ? "checked" : ""}><span>Préciser « je suis un copain de Mathieu » dans le message</span></label>
+        </div>
+        <div class="choice-head"><span></span><span>Demain<small>${dayAt(d0, 0)}</small></span><span>Après-demain<small>${dayAt(d0, 1)}</small></span></div>
+        <div class="choice-rows">
+          <div class="choice-row delivery"><div class="who">${I.clock}<b>Livraison</b></div>${timeCell(1)}${timeCell(2)}</div>
+          ${[...G.cast].sort((a, b) => a[1].localeCompare(b[1], "fr")).map(([file, name]) => `<div class="choice-row"><div class="who"><img src="/img/p/${file}.png" alt="" loading="lazy" decoding="async"><b>${esc(name)}</b></div>${pick(file, 1)}${pick(file, 2)}</div>`).join("")}
+        </div>
+        <div class="card-actions"><a class="btn wa" id="sendChoices" href="https://wa.me/" target="_blank" rel="noopener">${I.wa}Envoyer la commande sur WhatsApp</a><a class="btn sm" ${ext(m.group)}>${I.wa}Ouvrir le groupe</a><a class="btn sm" href="/menu">${I.food}Voir la carte</a></div>
+        <p class="hint">WhatsApp s'ouvre avec le message prêt : choisis le groupe dans la liste des discussions. <a href="#" id="showChoices">Voir le message</a></p><pre class="recap" id="choicesRecap" hidden></pre>
       </div></div>`;
   }
 
@@ -1347,19 +1368,23 @@
       else { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain" })); a.download = "notes-maurice.txt"; a.click(); }
     };
     $$("[data-store]", main).forEach((el) => el.addEventListener("input", () => store.set(el.dataset.store, el.value)));
-    // Choix des dîners (page menu) : chaque changement est enregistré aussitôt, le chiffre du piment suit le curseur
+    // Commande (page Commander) : chaque changement est enregistré aussitôt et le message affiché, s'il l'est, suit
+    const refreshRecap = () => { const pre = $("#choicesRecap", main); if (pre && !pre.hidden) pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; };
     $$(".choices .pick", main).forEach((p) => {
       const save = (fn) => { const v = store.get("choix:" + p.dataset.key, {}); fn(v); store.set("choix:" + p.dataset.key, v); };
       // « change » et non « input » : Safari iOS ne lève pas toujours « input » sur un <select>
-      p.addEventListener("change", (e) => { const t = e.target; if (t.tagName !== "SELECT") return; t.classList.toggle("empty", !t.value); save((v) => { v[t.matches(".dish-sel") ? "d" : "s"] = t.value; }); });
+      p.addEventListener("change", (e) => { const t = e.target; if (t.tagName !== "SELECT") return; t.classList.toggle("empty", !t.value); save((v) => { v[t.matches(".dish-sel") ? "d" : "s"] = t.value; }); refreshRecap(); });
       // Piments : toucher le n-ième met le niveau à n ; toucher à nouveau le dernier allumé remet à zéro
       p.addEventListener("click", (e) => {
         const b = e.target.closest(".dot"); if (!b) return;
         const cur = $$(".dot.on", p).length, n = +b.dataset.p === cur ? 0 : +b.dataset.p;
         $$(".dot", p).forEach((d) => { const on = +d.dataset.p <= n; d.classList.toggle("on", on); d.setAttribute("aria-pressed", on); });
-        $(".chili b", p).textContent = n; save((v) => { v.p = n; });
+        $(".chili b", p).textContent = n; save((v) => { v.p = n; }); refreshRecap();
       });
     });
+    // Heure de livraison souhaitée (une par jour) et option « je suis un copain de Mathieu »
+    $$(".choices .time-sel", main).forEach((t) => t.addEventListener("change", () => { store.set("choix:time:" + t.dataset.col, t.value); refreshRecap(); }));
+    const cf = $("#choiceFriend", main); if (cf) cf.addEventListener("change", () => { store.set("choix:friend", cf.checked); refreshRecap(); });
     // Commande sur WhatsApp : un lien de groupe n'accepte pas de texte prérempli, mais wa.me sans numéro ouvre
     // WhatsApp avec le message et laisse choisir la discussion (groupe compris). Le lien est un vrai <a> dont le href
     // est fixé au moment du toucher, le plus fiable sur iPhone ; le message reste visible sous le bouton
@@ -1368,7 +1393,7 @@
       sc.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
       const pre = $("#choicesRecap", main); pre.textContent = text; pre.hidden = false;
     });
-    const cd = $("#choiceDay", main); if (cd) cd.addEventListener("change", () => { store.set("choix:day", cd.value); const h = $$(".choice-head small", main); h[0].textContent = dayAt(cd.value, 0); h[1].textContent = dayAt(cd.value, 1); const pre = $("#choicesRecap", main); if (!pre.hidden) pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; });
+    const cd = $("#choiceDay", main); if (cd) cd.addEventListener("change", () => { store.set("choix:day", cd.value); const h = $$(".choice-head small", main); h[0].textContent = dayAt(cd.value, 0); h[1].textContent = dayAt(cd.value, 1); refreshRecap(); });
     const sh = $("#showChoices", main); if (sh) sh.addEventListener("click", (e) => { e.preventDefault(); const pre = $("#choicesRecap", main); pre.textContent = choicesText() || "Aucun plat choisi pour l'instant."; pre.hidden = !pre.hidden; });
     $$("img.ph", main).forEach((el) => el.addEventListener("click", () => lightbox(el))); // photos des plats en grand
     $$("[data-store-check]", main).forEach((el) => el.addEventListener("change", () => {
@@ -1472,11 +1497,11 @@
     "/plages": [pageBeaches, "Plages"], "/randos": [pageHikes, "Randonnées"],
     "/annexes": [pageAnnex, "Annexes"], "/notes": [pageNotes, "Notes"], "/bienvenue": [pageWelcome, "Bienvenue"],
     "/installer": [pageInstall, "Installer"], "/plus": [pagePlus, "Plus"],
-    "/menu": [pageMenu, "Menu Morisyen"], "/edition": [pageEdit, "Édition partagée"]
+    "/menu": [pageMenu, "Menu Morisyen"], "/commander": [pageOrder, "Commander"], "/edition": [pageEdit, "Édition partagée"]
   };
   const ALIAS = { "/checklist": "/todo/checklist", "/aujourdhui": "/", "/itineraire": "/", "/plage": "/plages", "/rando": "/randos", "/randonnees": "/randos" };
   // Anciens liens vers les sections d'annexes devenues des pages
-  const MOVED = { "/annexes#randos": "/randos", "/annexes#autres-randos": "/randos#autres", "/annexes#plages": "/plages" };
+  const MOVED = { "/annexes#randos": "/randos", "/annexes#autres-randos": "/randos#autres", "/annexes#plages": "/plages", "/menu#choix": "/commander" };
   let lastPath = null;
   function render(restoreY) {
     if (typeof restoreY !== "number") restoreY = undefined;
